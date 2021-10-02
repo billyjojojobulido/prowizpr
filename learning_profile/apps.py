@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class LearnAppConfig(AppConfig):
+class LearningProfileConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'learn_app'
+    name = 'learning_profile'
