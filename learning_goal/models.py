@@ -14,4 +14,4 @@ class Goals(models.Model):
         return self.description
 
     class Meta:
-        db_table = 'goals'
+        db_table = 'Goals'
