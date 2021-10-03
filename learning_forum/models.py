@@ -15,11 +15,11 @@ class Posts(models.Model):
         return self.content
 
     class Meta:
-        db_table = 'posts'
+        db_table = 'Posts'
 
 
 class Comments(models.Model):
-    post = models.ForeignKey('learning_profile.Posts', on_delete=models.CASCADE)
+    post = models.ForeignKey('Posts', on_delete=models.CASCADE)
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
@@ -29,4 +29,4 @@ class Comments(models.Model):
         return self.content
 
     class Meta:
-        db_table = 'comments'
+        db_table = 'Comments'
