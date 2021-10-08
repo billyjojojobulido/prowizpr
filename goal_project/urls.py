@@ -19,7 +19,9 @@ from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('forum/', include('learning_forum.urls', namespace='forum')),
-    path('goal/', include('learning_goal.urls', namespace='goal')),
-    path('profile/', include('learning_profile.urls', namespace='profile')),
+    path('forum/', include('learning_forum.urls')),
+    path('goal/', include('learning_goal.urls')),
+    path('profile/', include('learning_profile.urls')),
+    # path('', include('goal_project.urls')),
+
 ]

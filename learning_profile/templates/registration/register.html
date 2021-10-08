@@ -5,6 +5,14 @@
     <title>Title</title>
 </head>
 <body>
+{% block content %}
+    <form method='post' action="{% url 'profile:register' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
 
+        <button name="submit">Register</button>
+        <input type="hidden" name="next" value="{% url 'profile:login' %}">
+    </form>
+{% endblock %}
 </body>
 </html>
