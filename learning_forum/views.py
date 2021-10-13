@@ -63,6 +63,46 @@ def get_todo(request):
 
 
 @require_http_methods(["POST"])
+def get_progress(request):
+    response = {}
+    try:
+        user = json.loads(request.body.decode()).get("user")
+        # TODO User authentication
+        print(user)
+
+        # TODO How to calculate percentage
+        a = 11
+        b = 15
+        percentage = round(a/b * 100, 2)
+        if percentage < 0:
+            percentage = 0
+        elif percentage > 100:
+            percentage = 100
+
+        if percentage < 20:
+            response['color'] = "#f56c6c"
+        elif percentage < 40:
+            response['color'] = "#e6a23c"
+        elif percentage < 60:
+            response['color'] = "#5cb87a"
+        elif percentage < 60:
+            response['color'] = "#1989fa"
+        elif percentage <= 100:
+            response['color'] = "#6f7ad3"
+        response['percentage'] = percentage
+
+        response['info'] = "{}/{} tasks are completed".format(a, b)
+        response['status'] = "success"
+    except Exception as e:
+
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to transmit'
+        print(e)
+
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
 def like(request):
     response = {}
     try:

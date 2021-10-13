@@ -5,6 +5,7 @@ from . import views
 app_name = 'forum'
 
 urlpatterns = [
+    path('progress', views.get_progress, name='progress'),
     path('comments', views.get_comments, name='comments'),
     path('todo', views.get_todo, name='todo'),
     path('like', views.like, name='like'),
