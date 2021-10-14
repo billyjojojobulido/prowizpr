@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from learning_profile.models import User
 from learning_forum.models import Comments, Posts
 import json
-import utils
+import learning_forum.utils as utils
 
 
 @require_http_methods(["POST"])
