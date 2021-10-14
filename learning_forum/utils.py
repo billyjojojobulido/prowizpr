@@ -1,10 +1,10 @@
 import time
-import const
+import learning_forum.const as const
 
 
 # time_format() format the time value to
 def time_format(t):
-    return time.strftime(const.TIME_FORMAT, t)
+    return time.strftime(const.TIME_FORMAT, time.localtime(t))
 
 
 # get_color() return the color with reference to the percentage
@@ -22,7 +22,7 @@ def get_color(percentage):
         return const.COLOR_BROWN
     elif percentage < 60:
         return const.COLOR_GREEN
-    elif percentage < 60:
+    elif percentage < 80:
         return const.COLOR_BLUE
     elif percentage <= 100:
         return const.COLOR_PURPLE
