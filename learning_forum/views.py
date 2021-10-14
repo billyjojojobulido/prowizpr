@@ -34,25 +34,7 @@ def get_posts(request):
                     "goal": p.post_type,    # post_type: 1 -> trivial post, 2 -> goal post
                 }
             )
-        # MOCKED DATA
-        # response[posts"] = [
-        #     {
-        #         "avatar": "https://encrypted-tbn0.gstatic.\
-        #         com/images?q=tbn:ANd9GcTF6gxcpCNbqxso3AXdPSq41k-bLC0udTNR3w&usqp=CAU",
-        #         "name": "Baocheng Wang", "date": "2021-10-28", "comment": "ELEC3609 get HD", "liked": 1,
-        #         "goal": 1},
-        #     {"avatar": "", "name": "Alan Kang", "date": "2021-10-27", "comment": "ELEC3609 get PS", "liked": 0,
-        #      "goal": 1},
-        #     {"avatar": "", "name": "Yanhao Xu", "date": "2021-10-26", "comment": "ELEC3609 get DI", "liked": 0,
-        #      "goal": 1},
-        #     {"avatar": "", "name": "Alan Kang", "date": "2021-10-25", "comment": "I am Baocheng's Son", "liked": 1,
-        #      "goal": 0},
-        #     {"avatar": "", "name": "Baocheng Wang", "date": "2021-10-24", "comment": "Hello Food", "liked": 0,
-        #      "goal": 0},
-        #     {"avatar": "", "name": "Baocheng Wang", "date": "2021-10-23", "comment": "Hello, World", "liked": 1,
-        #      "goal": 0},
-        # ]
-        print(response["posts"])
+            
         response['status'] = "success"
     except Exception as e:
         response['status'] = 'failed'
