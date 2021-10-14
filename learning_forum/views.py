@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from learning_profile.models import User
 from learning_forum.models import Comments, Posts
 import json
+import utils
 
 
 @require_http_methods(["POST"])
@@ -13,19 +14,12 @@ def get_posts(request):
 
         current_user = payload.get("user")
         # TODO Pagination
-        # page = payload.get("page")
-        # limit = page["limit"]
-        # offset = page["offset"]
-        # if limit < 0:
-        #     limit = 5
-        # if offset <= 0:
-        #     offset = 1
-
         # TODO User authentication
         uid = current_user["userId"]
         user = User.objects.get(id=uid)
 
-        posts = Posts.objects.all()
+        # TODO order by created_at
+        posts = Posts.objects.all().order_by("-created_at")     # -created_at => created_at DESC
         print(posts)
         response["posts"] = []
         for p in posts:
@@ -40,13 +34,11 @@ def get_posts(request):
                     "goal": p.post_type,    # post_type: 1 -> trivial post, 2 -> goal post
                 }
             )
-
-        print(response["posts"])
-        # TODO DB query
-        # comments = Comments.objects.filter().order_by("created_at")
-        # response["comments"] = [
+        # MOCKED DATA
+        # response[posts"] = [
         #     {
-        #         "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF6gxcpCNbqxso3AXdPSq41k-bLC0udTNR3w&usqp=CAU",
+        #         "avatar": "https://encrypted-tbn0.gstatic.\
+        #         com/images?q=tbn:ANd9GcTF6gxcpCNbqxso3AXdPSq41k-bLC0udTNR3w&usqp=CAU",
         #         "name": "Baocheng Wang", "date": "2021-10-28", "comment": "ELEC3609 get HD", "liked": 1,
         #         "goal": 1},
         #     {"avatar": "", "name": "Alan Kang", "date": "2021-10-27", "comment": "ELEC3609 get PS", "liked": 0,
@@ -102,6 +94,7 @@ def get_progress(request):
         user = json.loads(request.body.decode()).get("user")
         # TODO User authentication
 
+
         # TODO How to calculate percentage
         a = 11
         b = 15
@@ -111,16 +104,7 @@ def get_progress(request):
         elif percentage > 100:
             percentage = 100
 
-        if percentage < 20:
-            response['color'] = "#f56c6c"
-        elif percentage < 40:
-            response['color'] = "#e6a23c"
-        elif percentage < 60:
-            response['color'] = "#5cb87a"
-        elif percentage < 60:
-            response['color'] = "#1989fa"
-        elif percentage <= 100:
-            response['color'] = "#6f7ad3"
+        response['color'] = utils.get_color(percentage)
         response['percentage'] = percentage
 
         response['info'] = "{}/{} tasks are completed".format(a, b)
