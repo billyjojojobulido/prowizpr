@@ -16,7 +16,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/learn_venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.9 (learing_log)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.9 (F15-Group-7)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
