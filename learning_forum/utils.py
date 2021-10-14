@@ -28,3 +28,21 @@ def get_color(percentage):
     elif percentage <= 100:
         return const.COLOR_PURPLE
 
+
+# check_str_empty() check if the input string is empty: None or ""
+def check_str_empty(param):
+    if param is None or len(param) == 0:
+        return True
+    return False
+
+
+# get_full_name() generate the full name of the user
+def get_full_name(first_name, last_name):
+    if not check_str_empty(first_name) and not check_str_empty(last_name):
+        return "{} {}".format(first_name, last_name)
+    elif not check_str_empty(first_name) and check_str_empty(last_name):
+        return first_name
+    elif check_str_empty(first_name) and not check_str_empty(last_name):
+        return last_name
+    else:
+        return "Unnamed User"
