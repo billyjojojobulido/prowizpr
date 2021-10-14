@@ -27,7 +27,7 @@ def get_posts(request):
                 {
                     "avatar": p.user.profile_image,
                     "name": p.user.first_name + " " + p.user.last_name,
-                    "date": p.created_at,
+                    "date": utils.time_format(p.created_at),
                     "content": p.content,
                     # TODO liked
                     "liked": 0,
