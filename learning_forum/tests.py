@@ -41,3 +41,25 @@ class TestForum(TestCase):
         # might result in a problem: localtime -> running in different time zone
         self.assertEqual(utils.time_format(date_time), time_format)
 
+    def test_empty_check(self):
+        self.assertTrue(utils.check_str_empty(""))
+        self.assertTrue(utils.check_str_empty(None))
+        self.assertFalse(utils.check_str_empty("a"))
+
+    def test_invalid_full_name(self):
+        self.assertEqual(utils.get_full_name(None, None), "Unnamed User")
+        self.assertEqual(utils.get_full_name("", None), "Unnamed User")
+        self.assertEqual(utils.get_full_name(None, ""), "Unnamed User")
+        self.assertEqual(utils.get_full_name("", ""), "Unnamed User")
+
+    def test_first_name(self):
+        self.assertEqual(utils.get_full_name("Billy", None), "Billy")
+        self.assertEqual(utils.get_full_name("Billy", ""), "Billy")
+
+    def test_last_name(self):
+        self.assertEqual(utils.get_full_name(None, "Wong"), "Wong")
+        self.assertEqual(utils.get_full_name("", "Wong"), "Wong")
+
+    def test_full_name(self):
+        self.assertEqual(utils.get_full_name("Billy", "Wong"), "Billy Wong")
+        
