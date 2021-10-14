@@ -4,7 +4,8 @@ import learning_forum.const as const
 
 # time_format() format the time value to
 def time_format(t):
-    return time.strftime(const.TIME_FORMAT, time.localtime(t))
+    ret = t.strftime(const.TIME_FORMAT)
+    return ret
 
 
 # get_color() return the color with reference to the percentage

@@ -1,7 +1,6 @@
 # from django.test import TestCase
-from unittest import TestCase
-import time
-from unittest import mock
+from unittest import TestCase   # using unittest.TestCase instead of django.test.TestCase
+from datetime import datetime
 import learning_forum.utils as utils
 import learning_forum.const as const
 
@@ -37,6 +36,8 @@ class TestForum(TestCase):
 
     def test_time_format(self):
         timestamp = 1462451334
-        time_format = "2016-05-05 20:28:54"
-        self.assertEqual(utils.time_format(timestamp), time_format)
+        date_time = datetime.fromtimestamp(timestamp)
+        time_format = "2016-05-05 12:28:54"
+        # might result in a problem: localtime -> running in different time zone
+        self.assertEqual(utils.time_format(date_time), time_format)
 
