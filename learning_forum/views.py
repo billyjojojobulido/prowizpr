@@ -36,6 +36,7 @@ def get_posts(request):
             )
             
         response['status'] = "success"
+
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to transmit'
