@@ -8,6 +8,11 @@ def time_format(t):
     return ret
 
 
+def date_format(t):
+    ret = t.strftime(const.DATE_FORMAT)
+    return ret
+
+
 # get_color() return the color with reference to the percentage
 def get_color(percentage):
     # ensure percentage is in the range 0 - 1
