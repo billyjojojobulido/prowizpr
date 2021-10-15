@@ -52,7 +52,7 @@ def show(request):
                 {
                     "activity": t.content,
                     "due": utils.date_format(t.deadline),
-                    "progress": t.status,
+                    "progress": utils.get_progress_msg(t.status),
                     "created_at": t.created_at,
                 }
             )
