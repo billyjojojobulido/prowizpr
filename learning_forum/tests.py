@@ -1,5 +1,4 @@
-# from django.test import TestCase
-from unittest import TestCase   # using unittest.TestCase instead of django.test.TestCase
+from django.test import TestCase
 from datetime import datetime
 import learning_forum.utils as utils
 import learning_forum.const as const
@@ -62,4 +61,6 @@ class TestForum(TestCase):
 
     def test_full_name(self):
         self.assertEqual(utils.get_full_name("Billy", "Wong"), "Billy Wong")
+
+
         

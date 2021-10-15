@@ -18,8 +18,7 @@ def get_posts(request):
         uid = current_user["userId"]
         user = User.objects.get(id=uid)
 
-        # TODO order by created_at
-        posts = Posts.objects.all().order_by("-created_at")     # -created_at => created_at DESC
+        posts = Posts.objects.get_all_posts_desc()  # -created_at => created_at DESC
         print(posts)
         response["posts"] = []
         for p in posts:
@@ -31,10 +30,10 @@ def get_posts(request):
                     "content": p.content,
                     # TODO liked
                     "liked": 0,
-                    "goal": p.post_type,    # post_type: 1 -> trivial post, 2 -> goal post
+                    "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
                 }
             )
-            
+
         response['status'] = "success"
     except Exception as e:
         response['status'] = 'failed'
@@ -75,7 +74,6 @@ def get_progress(request):
     try:
         user = json.loads(request.body.decode()).get("user")
         # TODO User authentication
-
 
         # TODO How to calculate percentage
         a = 11
