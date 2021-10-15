@@ -60,7 +60,9 @@ def show(request):
                 completed += 1
 
         # Retrieve Progress
-        percentage = round(completed / total * 100, 2)
+        percentage = 0
+        if total != 0:  # caution of division by zero
+            percentage = round(completed / total * 100, 2)
         if percentage < 0:
             percentage = 0
         elif percentage > 100:
@@ -70,6 +72,7 @@ def show(request):
         response['percentage'] = percentage
 
         response['info'] = "{}/{} tasks are completed".format(completed, total)
+
         response['status'] = "success"
         print(response)
     except Exception as e:
