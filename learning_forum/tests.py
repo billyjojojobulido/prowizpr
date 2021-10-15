@@ -1,13 +1,14 @@
-from django.test import TestCase
+# from django.test import TestCase
+from unittest import TestCase
 from datetime import datetime
 import learning_forum.utils as utils
-import learning_forum.const as const
+import pytz
 
 
 class TestForum(TestCase):
 
     def setUp(self):
-        pass
+        self.tz = pytz.timezone("Asia/Shanghai")  # unite time zone
 
     def test_color_percentage(self):
         color_1 = utils.get_color(0)
@@ -35,10 +36,17 @@ class TestForum(TestCase):
 
     def test_time_format(self):
         timestamp = 1462451334
-        date_time = datetime.fromtimestamp(timestamp)
-        time_format = "2016-05-05 12:28:54"
+        date_time = datetime.fromtimestamp(timestamp, tz=self.tz)
+        time_format = "2016-05-05 20:28:54"
         # might result in a problem: localtime -> running in different time zone
         self.assertEqual(utils.time_format(date_time), time_format)
+
+    def test_date_format(self):
+        timestamp = 1462451334
+        date_time = datetime.fromtimestamp(timestamp)
+        time_format = "2016-05-05"
+        # might result in a problem: localtime -> running in different time zone
+        self.assertEqual(utils.date_format(date_time), time_format)
 
     def test_empty_check(self):
         self.assertTrue(utils.check_str_empty(""))
