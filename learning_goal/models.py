@@ -15,6 +15,7 @@ class Goals(models.Model):
 
     class Meta:
         db_table = 'Goals'
+        verbose_name_plural = 'Goal'
 
 
 class Tasks(models.Model):
@@ -30,3 +31,4 @@ class Tasks(models.Model):
 
     class Meta:
         db_table = 'Tasks'
+        verbose_name_plural = 'Task'
