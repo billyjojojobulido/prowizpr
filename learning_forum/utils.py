@@ -51,3 +51,14 @@ def get_full_name(first_name, last_name):
         return last_name
     else:
         return "Unnamed User"
+
+
+# get_progress_msg() generate the string msg based on the progress int
+def get_progress_msg(status):
+    if status == const.STATUS_TODO:
+        return "To Do"
+    if status == const.STATUS_ACTIVE:
+        return "In Progress"
+    if status == const.STATUS_COMPLETE:
+        return "Done"
+    return "Invalid Task Progress"

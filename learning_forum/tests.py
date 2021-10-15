@@ -70,5 +70,13 @@ class TestForum(TestCase):
     def test_full_name(self):
         self.assertEqual(utils.get_full_name("Billy", "Wong"), "Billy Wong")
 
+    def test_invalid_status(self):
+        self.assertEqual(utils.get_progress_msg(0), "Invalid Task Progress")
+        self.assertEqual(utils.get_progress_msg(-10), "Invalid Task Progress")
+        self.assertEqual(utils.get_progress_msg(1000), "Invalid Task Progress")
 
+    def test_status_msg(self):
+        self.assertEqual(utils.get_progress_msg(1), "To Do")
+        self.assertEqual(utils.get_progress_msg(2), "In Progress")
+        self.assertEqual(utils.get_progress_msg(3), "Done")
         
