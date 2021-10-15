@@ -15,3 +15,18 @@ class Goals(models.Model):
 
     class Meta:
         db_table = 'Goals'
+
+
+class Tasks(models.Model):
+    goal = models.ForeignKey("Goals", on_delete=models.CASCADE)
+    content = models.CharField(max_length=300)
+    deadline = models.DateTimeField(blank=True, null=True)
+    status = models.IntegerField()
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return self.content
+
+    class Meta:
+        db_table = 'Tasks'
