@@ -23,6 +23,7 @@ class Posts(models.Model):
 
     class Meta:
         db_table = 'Posts'
+        verbose_name_plural = 'Post'
 
 
 class Comments(models.Model):
@@ -37,3 +38,5 @@ class Comments(models.Model):
 
     class Meta:
         db_table = 'Comments'
+        verbose_name_plural = 'Comment'
+
