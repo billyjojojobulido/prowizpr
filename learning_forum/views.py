@@ -2,14 +2,20 @@ from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
 from learning_forum.models import Comments, Posts
+from learning_goal.models import Tasks
+import learning_forum.const as const
 import json
 import learning_forum.utils as utils
 
 
 @require_http_methods(["POST"])
-def get_posts(request):
-    response = {}
+def show(request):
+    response = {
+        "posts": [],
+        "todo": [],
+    }
     try:
+        # LOADING PARAM
         payload = json.loads(request.body.decode())
 
         current_user = payload.get("user")
@@ -18,9 +24,8 @@ def get_posts(request):
         uid = current_user["userId"]
         user = User.objects.get(id=uid)
 
-        posts = Posts.objects.get_all_posts_desc()  # -created_at => created_at DESC
-        print(posts)
-        response["posts"] = []
+        # Retrieving Posts data
+        posts = Posts.objects.get_all_posts_desc()
         for p in posts:
             response["posts"].append(
                 {
@@ -34,52 +39,28 @@ def get_posts(request):
                 }
             )
 
-        response['status'] = "success"
+        # Retrieving Tasks data
+        tasks = []
+        if posts is not None and len(posts) > 0:
+            tasks = Tasks.objects.get_tasks_from_gid(posts[0].id)
 
-    except Exception as e:
-        response['status'] = 'failed'
-        response['msg'] = 'Failed to transmit'
-        print(e)
-        print("ERROR in COMMENT")
-    return JsonResponse(response)
+        completed = 0
+        total = len(tasks)
 
+        for t in tasks:
+            response['todo'].append(
+                {
+                    "activity": t.content,
+                    "due": utils.date_format(t.deadline),
+                    "progress": t.status,
+                    "created_at": t.created_at,
+                }
+            )
+            if t.status == const.STATUS_COMPLETE:
+                completed += 1
 
-@require_http_methods(["POST"])
-def get_todo(request):
-    response = {}
-    try:
-        user = json.loads(request.body.decode()).get("user")
-        # TODO User authentication
-
-        response['todo'] = [
-            {"activity": "SOFT3888 Client Meeting", "due": "2021-10-13", "progress": "Completed"},
-            {"activity": "INFO3616 Asm 2 Pre", "due": "2021-10-18", "progress": "Ready to submit"},
-            {"activity": "ELEC3506 Lab Report 2", "due": "2021-10-20", "progress": "Not Started"},
-            {"activity": "ELEC3506 Quiz 2", "due": "2021-11-04", "progress": "Not Started"},
-            {"activity": "ELEC3609 Asm3", "due": "2021-11-05", "progress": "Work In Progress"},
-        ]
-
-        response['status'] = "success"
-    except Exception as e:
-
-        response['status'] = 'failed'
-        response['msg'] = 'Failed to transmit'
-        print(e)
-
-    return JsonResponse(response)
-
-
-@require_http_methods(["POST"])
-def get_progress(request):
-    response = {}
-    try:
-        user = json.loads(request.body.decode()).get("user")
-        # TODO User authentication
-
-        # TODO How to calculate percentage
-        a = 11
-        b = 15
-        percentage = round(a / b * 100, 2)
+        # Retrieve Progress
+        percentage = round(completed / total * 100, 2)
         if percentage < 0:
             percentage = 0
         elif percentage > 100:
@@ -88,14 +69,13 @@ def get_progress(request):
         response['color'] = utils.get_color(percentage)
         response['percentage'] = percentage
 
-        response['info'] = "{}/{} tasks are completed".format(a, b)
+        response['info'] = "{}/{} tasks are completed".format(completed, total)
         response['status'] = "success"
+        print(response)
     except Exception as e:
-
         response['status'] = 'failed'
         response['msg'] = 'Failed to transmit'
         print(e)
-
     return JsonResponse(response)
 
 

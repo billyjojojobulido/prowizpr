@@ -18,6 +18,11 @@ class Goals(models.Model):
         verbose_name_plural = 'Goal'
 
 
+class TasksManager(models.Manager):
+    def get_tasks_from_gid(self, gid):
+        return self.filter(goal_id=gid)
+
+
 class Tasks(models.Model):
     goal = models.ForeignKey("Goals", on_delete=models.CASCADE)
     content = models.CharField(max_length=300)
@@ -25,6 +30,7 @@ class Tasks(models.Model):
     status = models.IntegerField()
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
+    objects = TasksManager()
 
     def __str__(self):
         return self.content
