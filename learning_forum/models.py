@@ -43,6 +43,7 @@ class CommentsManager(models.Manager):
             'content',
             'user__first_name',
             'user__last_name',
+            'created_at',
         ).annotate(
             cid=F('id'),
             first_name=F('user__first_name'),
