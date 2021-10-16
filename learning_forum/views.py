@@ -121,6 +121,7 @@ def retrieve_comment(request):
                     "cid": c['id'],
                     "content": c['content'],
                     "commenter": utils.get_full_name(c['first_name'], c['last_name']),
+                    "comment_time": utils.time_format(c["created_at"]),
                 }
             )
         response["comments"] = ret_comment
