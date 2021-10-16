@@ -1,5 +1,8 @@
 from django.db import models
+from django.db.models import F
 import learning_forum.const as const
+from django.core import serializers
+
 
 # Create your models here.
 class PostsManager(models.Manager):
@@ -30,6 +33,22 @@ class CommentsManager(models.Manager):
     def get_comments_by_pid(self, pid):
         # TODO banned
         return self.filter(post=pid, post__status=const.POST_STATUS_PUBLIC).order_by("-created_at")
+
+    def get_comments_by_pid_transmit(self, pid):
+        comments = self.filter(
+            post=pid,
+            post__status=const.POST_STATUS_PUBLIC
+        ).order_by("-created_at").values(
+            'id',
+            'content',
+            'user__first_name',
+            'user__last_name',
+        ).annotate(
+            cid=F('id'),
+            first_name=F('user__first_name'),
+            last_name=F('user__last_name'),
+        )
+        return comments
 
 
 class Comments(models.Model):
