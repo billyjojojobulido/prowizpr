@@ -6,13 +6,16 @@ from learning_goal.models import Tasks
 import learning_forum.const as const
 import json
 import learning_forum.utils as utils
+import time
 
 
 @require_http_methods(["POST"])
 def show(request):
+    first_catch = time.time()
     response = {
         "posts": [],
         "todo": [],
+        "goal_user": "",
     }
     try:
         # LOADING PARAM
@@ -26,15 +29,19 @@ def show(request):
 
         # Retrieving Posts data
         posts = Posts.objects.get_all_posts_desc()
+        count = 0
         for p in posts:
-            comments = Comments.objects.get_comments_by_pid(p.id)
+            if count == 0:
+                count += 1
+                response["goal_user"] = utils.get_full_name(p.user.first_name, p.user.last_name)
+            comments = Comments.objects.get_comments_by_pid_transmit(p.id)
             ret_comment = []
             for c in comments:
                 ret_comment.append(
                     {
-                        "cid": c.id,
-                        "content": c.content,
-                        "commenter": utils.get_full_name(c.user.first_name, c.user.last_name),
+                        "cid": c['id'],
+                        "content": c['content'],
+                        "commenter": utils.get_full_name(c['first_name'], c['last_name']),
                     }
                 )
             ret_p = {
@@ -48,11 +55,6 @@ def show(request):
                     "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
                     "comments": ret_comment
                 }
-            # for c in comments:
-            #     ret_p["comments"].append({
-            #         "user":
-            #             ### TODO 修改models的函数，直接return 前端格式
-            #     })
             response["posts"].append(ret_p)
 
         # Retrieving Tasks data
@@ -90,11 +92,16 @@ def show(request):
         response['info'] = "{}/{} tasks are completed".format(completed, total)
 
         response['status'] = "success"
-        print(response)
+        before_transmit = time.time()
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to transmit'
         print(e)
+
+    final_catch = time.time()
+    print("===========================")
+    print("Total Time Consumed: {} s".format(final_catch - first_catch))
+    print("===========================")
     return JsonResponse(response)
 
 
