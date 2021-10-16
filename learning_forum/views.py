@@ -15,7 +15,6 @@ def show(request):
     response = {
         "posts": [],
         "todo": [],
-        "goal_user": "",
     }
     try:
         # LOADING PARAM
@@ -29,12 +28,9 @@ def show(request):
 
         # Retrieving Posts data
         posts = Posts.objects.get_all_posts_desc()
-        count = 0
         for p in posts:
-            if count == 0:
-                count += 1
-                response["goal_user"] = utils.get_full_name(p.user.first_name, p.user.last_name)
             ret_p = {
+                    "pid": p.id,
                     "avatar": p.user.profile_image,
                     "name": p.user.first_name + " " + p.user.last_name,
                     "date": utils.time_format(p.created_at),
@@ -81,7 +77,6 @@ def show(request):
         response['info'] = "{}/{} tasks are completed".format(completed, total)
 
         response['status'] = "success"
-        before_transmit = time.time()
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to transmit'
@@ -114,8 +109,10 @@ def like(request):
 def retrieve_comment(request):
     response = {}
     try:
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        pid = int(payload.get("pid"))   # post id
 
-        # TODO logic after user hit 'comment' button
         comments = Comments.objects.get_comments_by_pid_transmit(pid)
         ret_comment = []
         for c in comments:
@@ -126,10 +123,10 @@ def retrieve_comment(request):
                     "commenter": utils.get_full_name(c['first_name'], c['last_name']),
                 }
             )
+        response["comments"] = ret_comment
         response['status'] = "success"
         pass
     except Exception as e:
-
         response['status'] = 'failed'
         response['msg'] = 'Failed to comment'
         print(e)
