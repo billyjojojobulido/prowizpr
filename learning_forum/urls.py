@@ -7,6 +7,7 @@ app_name = 'forum'
 urlpatterns = [
     path('show', views.show, name='show'),
     path('like', views.like, name='like'),
-    path('comment', views.comment, name='comment'),
+    path('retrieve_comment', views.retrieve_comment, name='retrieve_comment'),
+    path('write_comment', views.write_comment, name='write_comment'),
     path('report', views.report, name='report'),
 ]

@@ -34,16 +34,6 @@ def show(request):
             if count == 0:
                 count += 1
                 response["goal_user"] = utils.get_full_name(p.user.first_name, p.user.last_name)
-            comments = Comments.objects.get_comments_by_pid_transmit(p.id)
-            ret_comment = []
-            for c in comments:
-                ret_comment.append(
-                    {
-                        "cid": c['id'],
-                        "content": c['content'],
-                        "commenter": utils.get_full_name(c['first_name'], c['last_name']),
-                    }
-                )
             ret_p = {
                     "avatar": p.user.profile_image,
                     "name": p.user.first_name + " " + p.user.last_name,
@@ -53,7 +43,6 @@ def show(request):
                     # TODO liked
                     "liked": 0,
                     "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
-                    "comments": ret_comment
                 }
             response["posts"].append(ret_p)
 
@@ -122,16 +111,43 @@ def like(request):
 
 
 @require_http_methods(["POST"])
-def comment(request):
+def retrieve_comment(request):
     response = {}
     try:
+
         # TODO logic after user hit 'comment' button
+        comments = Comments.objects.get_comments_by_pid_transmit(pid)
+        ret_comment = []
+        for c in comments:
+            ret_comment.append(
+                {
+                    "cid": c['id'],
+                    "content": c['content'],
+                    "commenter": utils.get_full_name(c['first_name'], c['last_name']),
+                }
+            )
         response['status'] = "success"
         pass
     except Exception as e:
 
         response['status'] = 'failed'
         response['msg'] = 'Failed to comment'
+        print(e)
+
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def write_comment(request):
+    response = {}
+    try:
+        # TODO logic after user hit 'write comment' button
+        response['status'] = "success"
+        pass
+    except Exception as e:
+
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to report'
         print(e)
 
     return JsonResponse(response)
