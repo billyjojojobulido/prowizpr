@@ -27,17 +27,33 @@ def show(request):
         # Retrieving Posts data
         posts = Posts.objects.get_all_posts_desc()
         for p in posts:
-            response["posts"].append(
-                {
+            comments = Comments.objects.get_comments_by_pid(p.id)
+            ret_comment = []
+            for c in comments:
+                ret_comment.append(
+                    {
+                        "cid": c.id,
+                        "content": c.content,
+                        "commenter": utils.get_full_name(c.user.first_name, c.user.last_name),
+                    }
+                )
+            ret_p = {
                     "avatar": p.user.profile_image,
                     "name": p.user.first_name + " " + p.user.last_name,
                     "date": utils.time_format(p.created_at),
                     "content": p.content,
+                    "is_admin": p.user.is_superuser,
                     # TODO liked
                     "liked": 0,
                     "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
+                    "comments": ret_comment
                 }
-            )
+            # for c in comments:
+            #     ret_p["comments"].append({
+            #         "user":
+            #             ### TODO 修改models的函数，直接return 前端格式
+            #     })
+            response["posts"].append(ret_p)
 
         # Retrieving Tasks data
         tasks = []

@@ -17,3 +17,14 @@ COLOR_PURPLE = "#6f7ad3"
 STATUS_TODO = 1
 STATUS_ACTIVE = 2
 STATUS_COMPLETE = 3
+
+# comments
+COMMENT_STATUS_ACTIVE = 1   # comments can be display
+COMMENT_STATUS_BANNED = 2   # comments force deleted by admin
+COMMENT_STATUS_DELETE = 3   # comments deleted by user who commented
+
+# comments
+POST_STATUS_PUBLIC = 1   # posts published in public
+POST_STATUS_PRIVATE = 2  # posts published in private
+POST_STATUS_BANNED = 3   # posts force deleted by admin
+POST_STATUS_DELETE = 4   # posts deleted by user who commented
