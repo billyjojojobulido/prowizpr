@@ -40,6 +40,7 @@ class Comments(models.Model):
     content = models.CharField(max_length=300, blank=True, null=True)
     likes = models.IntegerField(default=0)
     status = models.IntegerField(default=1)
+    objects = CommentsManager()
 
     def __str__(self):
         return self.content
