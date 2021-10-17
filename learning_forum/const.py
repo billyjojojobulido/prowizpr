@@ -28,3 +28,9 @@ POST_STATUS_PUBLIC = 1   # posts published in public
 POST_STATUS_PRIVATE = 2  # posts published in private
 POST_STATUS_BANNED = 3   # posts force deleted by admin
 POST_STATUS_DELETE = 4   # posts deleted by user who commented
+
+# like
+LIKE_LIKE = 1
+LIKE_DISLIKE = 0
+LIKE_TYPE_POST = 1       # like a post
+LIKE_TYPE_COMMENT = 2    # like a comment
