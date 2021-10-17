@@ -9,5 +9,5 @@ urlpatterns = [
     path('like', views.like, name='like'),
     path('retrieve_comment', views.retrieve_comment, name='retrieve_comment'),
     path('write_comment', views.write_comment, name='write_comment'),
-    path('report', views.report, name='report'),
+    path('report_post', views.report_post, name='report_post'),
 ]

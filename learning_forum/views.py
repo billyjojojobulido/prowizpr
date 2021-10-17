@@ -152,10 +152,10 @@ def write_comment(request):
 
 
 @require_http_methods(["POST"])
-def report(request):
+def report_post(request):
     response = {}
     try:
-        # TODO logic after user hit 'report' button
+
         response['status'] = "success"
         pass
     except Exception as e:
