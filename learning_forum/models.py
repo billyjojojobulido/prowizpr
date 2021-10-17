@@ -1,5 +1,3 @@
-# import datetime
-from django.utils import timezone as datetime
 from django.db import models
 from django.db.models import F
 import learning_forum.const as const
@@ -99,7 +97,6 @@ class LikeManager(models.Manager):
             self.create(
                 like_type=const.LIKE_TYPE_POST,
                 comment_id=-1,
-                like_time=datetime.datetime.today(),
                 post_id=pid,
                 user_id=uid,
             )
@@ -116,13 +113,18 @@ class LikeManager(models.Manager):
             print(e)
             return
 
+    def check_post_liked(self, pid, uid):
+        if self.filter(post_id=pid, user_id=uid).count() > 0:
+            return 1
+        return 0
+
 
 class Like(models.Model):
     like_type = models.SmallIntegerField()
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
     post = models.ForeignKey('Posts', on_delete=models.CASCADE)
     comment_id = models.IntegerField(null=True, blank=True)
-    like_time = models.DateTimeField()
+    like_time = models.DateTimeField(auto_now=True)
     objects = LikeManager()
 
     def __str__(self):
