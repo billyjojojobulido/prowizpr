@@ -1,7 +1,7 @@
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
-from learning_forum.models import Comments, Posts
+from learning_forum.models import Comments, Posts, Like
 from learning_goal.models import Tasks
 import learning_forum.const as const
 import json
@@ -90,22 +90,6 @@ def show(request):
 
 
 @require_http_methods(["POST"])
-def like(request):
-    response = {}
-    try:
-        # TODO logic after user hit 'like' button
-        response['status'] = "success"
-        pass
-    except Exception as e:
-
-        response['status'] = 'failed'
-        response['msg'] = 'Failed to like'
-        print(e)
-
-    return JsonResponse(response)
-
-
-@require_http_methods(["POST"])
 def retrieve_comment(request):
     response = {}
     try:
@@ -165,4 +149,27 @@ def report_post(request):
         response['status'] = 'failed'
         response['msg'] = 'Failed to report'
         print(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def like_post(request):
+    response = {}
+    try:
+        payload = json.loads(request.body.decode())
+        uid = payload.get("user_id")
+        pid = payload.get("post_id")    # post id
+        like = int(payload.get("like"))     # like or dislike
+        # Like
+        if like == const.LIKE_LIKE:
+            Like.objects.like_post(pid, uid)
+        elif like == const.LIKE_DISLIKE:
+            Like.objects.dislike_post(pid, uid)
+        response['status'] = "success"
+        pass
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to like'
+        print(e)
+
     return JsonResponse(response)
