@@ -10,6 +10,12 @@ class PostsManager(models.Manager):
         posts = self.all().order_by("-created_at")
         return posts
 
+    def report_post(self, pid):
+        post = self.get(id=pid)
+        post.report_times += 1
+        post.save()
+        return 
+
 
 class Posts(models.Model):
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)

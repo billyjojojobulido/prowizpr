@@ -155,13 +155,14 @@ def write_comment(request):
 def report_post(request):
     response = {}
     try:
+        payload = json.loads(request.body.decode())
+        # No need for authentication
+        pid = int(payload.get("pid"))   # post id
 
+        Posts.objects.report_post(pid)
         response['status'] = "success"
-        pass
     except Exception as e:
-
         response['status'] = 'failed'
         response['msg'] = 'Failed to report'
         print(e)
-
     return JsonResponse(response)
