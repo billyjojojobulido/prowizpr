@@ -19,6 +19,7 @@ class Posts(models.Model):
     updated_at = models.DateTimeField()
     content = models.CharField(max_length=255)
     post_type = models.IntegerField()
+    report_times = models.IntegerField(default=0)
     objects = PostsManager()
 
     def __str__(self):
