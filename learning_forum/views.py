@@ -20,10 +20,9 @@ def show(request):
         # LOADING PARAM
         payload = json.loads(request.body.decode())
 
-        current_user = payload.get("user")
+        uid = payload.get("user_id")
         # TODO Pagination
         # TODO User authentication
-        uid = current_user["userId"]
         user = User.objects.get(id=uid)
 
         # Retrieving Posts data
@@ -37,7 +36,7 @@ def show(request):
                     "content": p.content,
                     "is_admin": p.user.is_superuser,
                     # TODO liked
-                    "liked": 0,
+                    "liked": Like.objects.check_post_liked(p.id, uid),
                     "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
                 }
             response["posts"].append(ret_p)
