@@ -2,7 +2,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
 from learning_forum.models import Comments, Posts, Like
-from learning_goal.models import Tasks
+from learning_goal.models import Tasks, Goals
 import learning_forum.const as const
 import json
 import learning_forum.utils as utils
@@ -35,16 +35,39 @@ def show(request):
                     "date": utils.time_format(p.created_at),
                     "content": p.content,
                     "is_admin": p.user.is_superuser,
-                    # TODO liked
                     "liked": Like.objects.check_post_liked(p.id, uid),
                     "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
                 }
             response["posts"].append(ret_p)
 
+        response['status'] = "success"
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to transmit'
+        print(e)
+
+    final_catch = time.time()
+    print("===========================")
+    print("Total Time Consumed: {} s".format(final_catch - first_catch))
+    print("===========================")
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def retrieve_goal(request):
+    first_catch = time.time()
+    response = {
+        "todo": [],
+    }
+    try:
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+
+        uid = payload.get("user_id")
+        pid = payload.get("pid")
+        print("PID: {}".format(pid))
         # Retrieving Tasks data
-        tasks = []
-        if posts is not None and len(posts) > 0:
-            tasks = Tasks.objects.get_tasks_from_gid(posts[0].id)
+        tasks = Tasks.objects.get_tasks_from_pid(pid)
 
         completed = 0
         total = len(tasks)
@@ -74,8 +97,11 @@ def show(request):
         response['percentage'] = percentage
 
         response['info'] = "{}/{} tasks are completed".format(completed, total)
+        f_name, l_name = Goals.objects.get_full_name(pid)
+        response['goal_user'] = utils.get_full_name(f_name, l_name)
 
         response['status'] = "success"
+        print(response)
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to transmit'
