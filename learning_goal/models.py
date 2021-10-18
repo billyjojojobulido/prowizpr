@@ -1,6 +1,12 @@
 from django.db import models
 
 
+class GoalsManager(models.Manager):
+    def get_full_name(self, gid):
+        goal = self.get(pk=gid)
+        return goal.post.user.first_name, goal.post.user.last_name
+
+
 # Create your models here.
 class Goals(models.Model):
     post = models.ForeignKey('learning_forum.Posts', on_delete=models.CASCADE)
@@ -9,6 +15,7 @@ class Goals(models.Model):
     description = models.CharField(max_length=255)
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
+    objects = GoalsManager()
 
     def __str__(self):
         return self.description
@@ -19,8 +26,8 @@ class Goals(models.Model):
 
 
 class TasksManager(models.Manager):
-    def get_tasks_from_gid(self, gid):
-        return self.filter(goal_id=gid)
+    def get_tasks_from_pid(self, pid):
+        return self.filter(goal__post__id=pid)
 
 
 class Tasks(models.Model):
