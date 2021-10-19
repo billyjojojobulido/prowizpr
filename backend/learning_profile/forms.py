@@ -6,17 +6,17 @@ User = get_user_model()
 
 
 class CustomUserCreationForm(forms.Form):
-    unikey = forms.CharField(label='Unikey', max_length=8)
+    username = forms.CharField(label='Username', max_length=8)
     email = forms.EmailField(label='Email')
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
 
-    def clean_unikey(self):
-        unikey = self.cleaned_data['unikey'].lower()
-        user = User.objects.filter(unikey=unikey)
-        if user.count():
+    def clean_username(self):
+        username = self.cleaned_data['username'].lower()
+        user = User.objects.filter(username=username)
+        if user.exists():
             raise ValidationError("This unikey has been already registered")
-        return unikey
+        return username
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
@@ -35,8 +35,8 @@ class CustomUserCreationForm(forms.Form):
 
     def save(self):
         user = User.objects.create_user(
-            self.cleaned_data['unikey'],
+            self.cleaned_data['username'],
             self.cleaned_data['email'],
-            self.cleaned_data['password1']
+            self.cleaned_data['password1'],
         )
         return user
