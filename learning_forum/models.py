@@ -72,12 +72,22 @@ class CommentsManager(models.Manager):
         )
         return comments
 
+    def write_comment(self, pid, uid, content):
+        try:
+            self.create(post_id=pid,
+                        user_id=uid,
+                        content=content)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
 
 class Comments(models.Model):
     post = models.ForeignKey('Posts', on_delete=models.CASCADE)
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
     content = models.CharField(max_length=300, blank=True, null=True)
     likes = models.IntegerField(default=0)
     status = models.IntegerField(default=1)
