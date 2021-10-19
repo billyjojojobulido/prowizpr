@@ -65,7 +65,6 @@ def retrieve_goal(request):
 
         uid = payload.get("user_id")
         pid = payload.get("pid")
-        print("PID: {}".format(pid))
         # Retrieving Tasks data
         tasks = Tasks.objects.get_tasks_from_pid(pid)
 
@@ -148,13 +147,20 @@ def retrieve_comment(request):
 def write_comment(request):
     response = {}
     try:
-        # TODO logic after user hit 'write comment' button
-        response['status'] = "success"
-        pass
-    except Exception as e:
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        uid = payload.get("user_id")
+        pid = payload.get("pid")
+        content = payload.get("content")
 
+        ack = Comments.objects.write_comment(pid, uid, content)
+        if ack:
+            response['status'] = "success"
+        else:
+            response['status'] = "failed"
+    except Exception as e:
         response['status'] = 'failed'
-        response['msg'] = 'Failed to report'
+        response['msg'] = 'Failed to leave comment'
         print(e)
 
     return JsonResponse(response)
