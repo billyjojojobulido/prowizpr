@@ -2,6 +2,14 @@ from django.db import models
 
 
 class GoalsManager(models.Manager):
+    def get_all_goals_desc(self):
+        goals = self.all().order_by("-created_at")
+        return goals
+    def check_goals_liked(self, pid):
+        if self.filter(post_id=pid).count() > 0:
+            return 1
+        return 0
+
     def get_full_name(self, gid):
         goal = self.get(pk=gid)
         return goal.post.user.first_name, goal.post.user.last_name
