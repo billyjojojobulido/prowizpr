@@ -113,21 +113,10 @@
                       &nbsp;&nbsp;
                       {{i.content}}
                       <br>
-                      <!--       Like & Report          -->
-                      <!--                      <span  v-if="i.liked === 1">-->
-                      <!--                        <el-button-->
-                      <!--                            size="mini"-->
-                      <!--                            @click="handleCommentLike(i.cid)" type="warning" icon="el-icon-star-on"></el-button>-->
-                      <!--                      </span>-->
-                      <!--                      <span v-else>-->
-                      <!--                        <el-button-->
-                      <!--                            size="mini"-->
-                      <!--                            @click="handleLike(scope.$index, scope.row)" icon="el-icon-star-off"></el-button>-->
-                      <!--                      </span>-->
                       <hr>
                     </li>
                   </ul>
-                  <div>
+                  <div class="comment-making">
                     <h2>Say something:</h2>
                     <el-input type="textarea" v-model="comment_to_write"
                               :autosize="{ minRows: 2, maxRows: 4}"
@@ -377,5 +366,11 @@ el-main{
 
 .name{
   font-weight: bold;
+}
+
+.comment-making{
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
 }
 </style>
