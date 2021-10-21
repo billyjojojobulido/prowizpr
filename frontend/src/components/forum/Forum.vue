@@ -1,8 +1,5 @@
 <template>
   <el-container class="forum">
-    <el-header>
-      <h1>Forum</h1>
-    </el-header>
     <el-container v-loading="loading">
       <el-aside width=35%>
         <!--        <LeftProgressPanel :todo="todo" :progress="progress" :username="goal_user"></LeftProgressPanel>-->
@@ -113,21 +110,10 @@
                       &nbsp;&nbsp;
                       {{i.content}}
                       <br>
-                      <!--       Like & Report          -->
-                      <!--                      <span  v-if="i.liked === 1">-->
-                      <!--                        <el-button-->
-                      <!--                            size="mini"-->
-                      <!--                            @click="handleCommentLike(i.cid)" type="warning" icon="el-icon-star-on"></el-button>-->
-                      <!--                      </span>-->
-                      <!--                      <span v-else>-->
-                      <!--                        <el-button-->
-                      <!--                            size="mini"-->
-                      <!--                            @click="handleLike(scope.$index, scope.row)" icon="el-icon-star-off"></el-button>-->
-                      <!--                      </span>-->
                       <hr>
                     </li>
                   </ul>
-                  <div>
+                  <div class="comment-making">
                     <h2>Say something:</h2>
                     <el-input type="textarea" v-model="comment_to_write"
                               :autosize="{ minRows: 2, maxRows: 4}"
@@ -257,6 +243,22 @@ export default {
             this.comments = response.data.comments;
           });
     },
+    refreshComment: async function(){
+      let url = "http://127.0.0.1:8000/" + "forum/retrieve_comment";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      await axios
+          .post(url, JSON.stringify({
+            user_id: this.user_id,
+            pid:this.pid_to_comment
+          }), {
+            headers: headers
+          })
+          .then(response => {
+            this.comments = response.data.comments;
+          });
+    },
     handleReport: function(index) {
       let url = "http://127.0.0.1:8000/" + "forum/report_post";
       let headers = {
@@ -324,7 +326,7 @@ export default {
                 message: 'Comment created successfully',
                 type: 'success'
               });
-              location.reload()
+              this.refreshComment();
 
             } else {
               this.$notify({
@@ -361,5 +363,11 @@ el-main{
 
 .name{
   font-weight: bold;
+}
+
+.comment-making{
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
 }
 </style>
