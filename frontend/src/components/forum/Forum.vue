@@ -257,6 +257,22 @@ export default {
             this.comments = response.data.comments;
           });
     },
+    refreshComment: async function(){
+      let url = "http://127.0.0.1:8000/" + "forum/retrieve_comment";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      await axios
+          .post(url, JSON.stringify({
+            user_id: this.user_id,
+            pid:this.pid_to_comment
+          }), {
+            headers: headers
+          })
+          .then(response => {
+            this.comments = response.data.comments;
+          });
+    },
     handleReport: function(index) {
       let url = "http://127.0.0.1:8000/" + "forum/report_post";
       let headers = {
@@ -324,7 +340,7 @@ export default {
                 message: 'Comment created successfully',
                 type: 'success'
               });
-              location.reload()
+              this.refreshComment();
 
             } else {
               this.$notify({
