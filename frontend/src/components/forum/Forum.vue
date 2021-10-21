@@ -1,8 +1,5 @@
 <template>
   <el-container class="forum">
-    <el-header>
-      <h1>Forum</h1>
-    </el-header>
     <el-container v-loading="loading">
       <el-aside width=35%>
         <!--        <LeftProgressPanel :todo="todo" :progress="progress" :username="goal_user"></LeftProgressPanel>-->
