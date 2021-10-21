@@ -1,8 +1,5 @@
 <template>
   <el-container class="goal">
-    <el-header>
-      <h1>My Goal</h1>
-    </el-header>
     <el-container v-loading="loading">
       <el-aside width=45%>
         <template>

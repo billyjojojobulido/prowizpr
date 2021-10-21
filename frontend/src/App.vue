@@ -1,19 +1,34 @@
 <template>
   <div id="app">
-    <Forum />
-<!--    <Goal />-->
+    <el-tabs v-model="activeName" type="card" >
+      <el-tab-pane label="Forum" name="first">
+        <Forum></Forum>
+      </el-tab-pane>
+      <el-tab-pane label="My Goal" name="second">
+        <Goal></Goal>
+      </el-tab-pane>
+    </el-tabs>
   </div>
+<!--  <div id="app">-->
+<!--    <Forum />-->
+<!--    <Goal />-->
+<!--  </div>-->
 </template>
 
 <script>
 import Forum from "@/components/forum/Forum";
-// import Goal from "@/components/goal/Goal";
+import Goal from "@/components/goal/Goal";
 
 export default {
   name: 'App',
   components: {
-    Forum
-    // Goal
+    Forum,
+    Goal,
+  },
+  data (){
+    return{
+      activeName: 'first'
+    }
   }
 }
 </script>
