@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+ <div id="app">
     <el-tabs v-model="activeName" type="card" >
       <el-tab-pane label="Forum" name="first">
         <Forum></Forum>
@@ -23,12 +23,7 @@ export default {
   name: 'App',
   components: {
     Forum,
-    Goal,
-  },
-  data (){
-    return{
-      activeName: 'first'
-    }
+    Goal
   }
 }
 </script>
