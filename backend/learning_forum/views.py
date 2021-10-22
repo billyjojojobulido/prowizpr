@@ -97,7 +97,7 @@ def retrieve_goal(request):
 
         response['info'] = "{}/{} tasks are completed".format(completed, total)
         # TODO get full name from Post using pid
-        f_name, l_name = Goals.objects.get_full_name(pid)
+        f_name, l_name = Posts.objects.get_full_name_by_pid(pid)
         response['goal_user'] = utils.get_full_name(f_name, l_name)
 
         response['status'] = "success"
