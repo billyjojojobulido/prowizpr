@@ -6,6 +6,8 @@ app_name = 'goal'
 
 urlpatterns = [
     path('show', views.show, name='show'),
-    path('retrieve_goal', views.retrieve_goal, name='retrieve_goal'),
+    path('retrieve_task', views.retrieve_task, name='retrieve_task'),
+    path('add_goal', views.Add_Goal, name='add_goal'),
+    path('add_task', views.Add_Task, name='add_task'),
 
 ]

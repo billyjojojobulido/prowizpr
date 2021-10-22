@@ -22,11 +22,11 @@ def show(request):
         # uid = payload.get("user_id")
         # user = User.objects.get(id=uid)
 
-        pid = payload.get("post_id")
+        # pid = payload.get("post_id")
         # print(pid)
         # TODO Pagination
         # TODO User authentication
-        post = Posts.objects.get(id=pid)
+        # post = Posts.objects.get(id=pid)
         # print("aaaaaaa")
 
         # Retrieving Posts data
@@ -59,9 +59,8 @@ def show(request):
 
     return JsonResponse(response)
 
-
 @require_http_methods(["POST"])
-def retrieve_goal(request):
+def retrieve_task(request):
     first_catch = time.time()
     response = {
         "todo": [],
@@ -111,6 +110,76 @@ def retrieve_goal(request):
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to transmit'
+        print(e)
+
+    final_catch = time.time()
+    print("===========================")
+    print("Total Time Consumed: {} s".format(final_catch - first_catch))
+    print("===========================")
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def Add_Goal(request):
+    first_catch = time.time()
+    response = {}
+    try:
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        uid = payload.get("uid")
+        post_id = payload.get("pid")
+        description = payload.get("description")
+
+        print(post_id)
+        print(description)
+        ack1 = Posts.objects.create(likes=0,
+                                    status=1,
+                                    content = description,
+                                    post_type=2,
+                                    user_id = uid,
+                                    report_times=0)
+        ack = Goals.objects.create(likes=0,
+                                   publish_status=1,
+                                   description=description,
+                                   post_id=post_id)
+        if ack and ack1:
+            response['status'] = "success"
+        else:
+            response['status'] = "failed"
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to leave comment'
+        print(e)
+
+    final_catch = time.time()
+    print("===========================")
+    print("Total Time Consumed: {} s".format(final_catch - first_catch))
+    print("===========================")
+    return JsonResponse(response)
+
+@require_http_methods(["POST"])
+def Add_Task(request):
+    first_catch = time.time()
+    response = {}
+    try:
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        goal_id = payload.get("gid")
+        content = payload.get("content")
+        deadline = payload.get("deadline")
+
+        print(goal_id)
+        ack = Tasks.objects.create(content = content,
+                                   deadline = deadline,
+                                   status = 1,
+                                   goal_id = goal_id)
+        if ack and ack1:
+            response['status'] = "success"
+        else:
+            response['status'] = "failed"
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to leave comment'
         print(e)
 
     final_catch = time.time()

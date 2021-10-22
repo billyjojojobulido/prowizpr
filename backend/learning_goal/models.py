@@ -14,15 +14,24 @@ class GoalsManager(models.Manager):
         goal = self.get(pk=gid)
         return goal.post.user.first_name, goal.post.user.last_name
 
+    def add_goal(self,pid, description):
+        try:
+            self.create(post_id = pid,description=description)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+
 
 # Create your models here.
 class Goals(models.Model):
     post = models.ForeignKey('learning_forum.Posts', on_delete=models.CASCADE)
-    likes = models.IntegerField()
-    publish_status = models.IntegerField()
+    likes = models.IntegerField(default = 0)
+    publish_status = models.IntegerField(default = 1)
     description = models.CharField(max_length=255)
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now = True)
+    updated_at = models.DateTimeField(auto_now=True)
     objects = GoalsManager()
 
     def __str__(self):

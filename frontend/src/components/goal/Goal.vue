@@ -49,17 +49,18 @@
         <el-dialog title="Add Task" :visible.sync="dialogFormVisible1">
           <el-form :model="taskForm">
             <el-form-item label="Activity" :label-width="taskFormLabelWidth">
-              <el-input v-model="taskForm.name" autocomplete="off"></el-input>
+              <el-input v-model="taskForm.task_to_write" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="Due Date" :label-width="taskFormLabelWidth">
               <el-col :span="11">
-                <el-date-picker type="date" placeholder="choose date" v-model="taskForm.date1" style="width: 100%;"></el-date-picker>
+                <el-date-picker type="date" placeholder="choose date" v-model="taskForm.date1"
+                                value-format="yyyy-MM-dd 00:00:00.000000" style="width: 100%;"></el-date-picker>
               </el-col>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible1 = false">Cancel</el-button>
-            <el-button type="primary" @click="dialogFormVisible1 = false">OK</el-button>
+            <el-button type="primary" @click=" handleAddTask(); dialogFormVisible1 = false">OK</el-button>
           </div>
         </el-dialog>
       </el-aside>
@@ -107,13 +108,13 @@
               <template slot-scope="scope">
                 <!--    show likes    -->
                 <span  v-if="scope.row.liked === 0">
-                  <el-badge :value="1" class = 'item'  type = "primary">
+                  <el-badge :value="0" class = 'item'  type = "primary" size = 'mini'>
                     <i class="el-icon-star-off"></i>
                   </el-badge>
                 </span>
                 <span v-else>
-                  <el-badge :value= "scope.row.liked" class = 'item'  type = "primary">
-                    <i class="el-icon-star-off"></i>
+                  <el-badge :value= "scope.row.liked" class = 'item'  type = "primary" size = 'mini'>
+                    <i class="el-icon-star-off" ></i>
                   </el-badge>
                 </span>
                  </template>
@@ -161,22 +162,17 @@
 
           </el-table>
            <!--Add Task-->
-        <el-button type="text" @click="dialogFormVisible2 = true">Add Goal</el-button>
+        <el-button type="text" @click=" getPosts(); dialogFormVisible2 = true">Add Goal</el-button>
 
         <el-dialog title="Add Goal" :visible.sync="dialogFormVisible2">
           <el-form :model="goalForm">
             <el-form-item label="Description" :label-width="goalFormLabelWidth">
-              <el-input v-model="goalForm.name" autocomplete="off"></el-input>
+              <el-input v-model="goalForm.goal_to_write" autocomplete="off"></el-input>
             </el-form-item>
-<!--            <el-form-item label="Due Date" :label-width="formLabelWidth">-->
-<!--              <el-col :span="11">-->
-<!--                <el-date-picker type="date" placeholder="choose date" v-model="form.date1" style="width: 100%;"></el-date-picker>-->
-<!--              </el-col>-->
-<!--            </el-form-item>-->
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible2 = false">Cancel</el-button>
-            <el-button type="primary" @click="dialogFormVisible2 = false">OK</el-button>
+            <el-button type="primary" @click=" handleAddGoal(); dialogFormVisible2 = false">OK</el-button>
           </div>
         </el-dialog>
         </template>
@@ -198,62 +194,41 @@ export default {
   data() {
     return {
       goals: [],
+      posts: [],
       todo: [],
       progress: {},
       publish: {},
-      // Post Panel
-      count: 0,
-      goal_user: "Unnamed User",
       /*
       * MOCKED
       * */
-      post_id: 1,
-      options: [{
-        value: 'option1',
-        label: 'publish'
-      }, {
-        value: 'option2',
-        label: 'private'
-      }],
-      value1: 'publish',
-      value2: 'private',
-      radio1: 'To Do',
-      radio2: 'In Progress',
-      radio3: 'Done',
+      user_id: 3,
       dialogFormVisible1: false,
       dialogFormVisible2: false,
       taskForm: {
-        name: '',
-        region: '',
+        task_to_write: '',
         date1: '',
-        date2: '',
         delivery: false,
         type: [],
-        resource: '',
-        desc: ''
       },
       taskFormLabelWidth: '120px',
       goalForm: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
+        goal_to_write: '',
         type: [],
-        resource: '',
-        desc: ''
       },
-      goalFormLabelWidth: '120px'
+      goalFormLabelWidth: '120px',
+      // pid_for_add:0
+      gid_to_add:0,
+
     }
   },
 
-  mounted: function() {
-    Promise.all([this.show()]).then(()=>
+  mounted: function () {
+    Promise.all([this.show()]).then(() =>
         this.refreshGoal(this.goals[0].gid))
   },
   methods: {
 
-    show: async function(){
+    show: async function () {
       let url = "http://127.0.0.1:8000/" + "goal/show";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -265,12 +240,12 @@ export default {
           .then(response => {
             this.goals = response.data.goals;
             this.loading = false;
-            this.user = response.data.user;
+            // this.user_id = response.data.user_id;
             this.publish.info = response.data.info;
           });
     },
-    refreshGoal: async function(pid){
-      let url = "http://127.0.0.1:8000/" + "goal/retrieve_goal";
+    refreshTask: async function (pid) {
+      let url = "http://127.0.0.1:8000/" + "goal/retrieve_task";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
@@ -290,49 +265,131 @@ export default {
             // this.goal_user = response.data.goal_user;
           });
     },
-    handleGoalClick: function(row){
-      this.refreshGoal(row.gid)
+    handleGoalClick: function (row) {
+      this.refreshTask(row.gid);
+      this.handleTask(row.gid)
     },
-    handle() {
-      console.log(111111)
+    getPosts: async function () {
+      let url = "http://127.0.0.1:8000/" + "forum/show";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      await axios
+          .post(url, JSON.stringify({user_id: this.user_id}), {
+            headers: headers
+          })
+          .then(response => {
+            this.posts = response.data.posts;
+            this.loading = false;
+          });
+    },
+    handleAddGoal: async function () {
+      if (this.goalForm.goal_to_write.length === 0) {
+        this.$notify({
+          title: 'Warning',
+          message: 'Nothing to add',
+          type: 'warning'
+        });
+        return
+      }
+      let url = "http://127.0.0.1:8000/" + "goal/add_goal";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let send = {
+        uid: this.user_id,
+        pid: this.posts[0].pid + 1,
+        description: this.goalForm.goal_to_write,
+      }
+      await axios
+          .post(url, JSON.stringify(send), {
+            headers: headers
+          }).then(response => {
+            if (response.data.status === "success") {
+              this.$notify({
+                title: 'Success',
+                message: 'Goal created successfully',
+                type: 'success'
+              });
+              this.show();
+
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: 'Failed to add your goal',
+                type: 'warning'
+              });
+            }
+          })
+    },
+    handleAddTask: async function () {
+    if (this.taskForm.task_to_write.length === 0 || this.taskForm.date1.length === 0) {
+      this.$notify({
+        title: 'Warning',
+        message: 'Nothing to add',
+        type: 'warning'
+      });
+      return
     }
-  }}
+    let url = "http://127.0.0.1:8000/" + "goal/add_task";
+    let headers = {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    }
+    let send = {
+      gid: this.gid_to_add,
+      description: this.taskForm.task_to_write,
+      deadline: this.taskForm.date1
+    }
+    await axios
+        .post(url, JSON.stringify(send), {
+          headers: headers
+        }).then(response => {
+          if (response.data.status === "success") {
+            this.$notify({
+              title: 'Success',
+              message: 'Task created successfully',
+              type: 'success'
+            });
+            this.show();
+
+          } else {
+            this.$notify({
+              title: 'Warning',
+              message: 'Failed to add your tasks',
+              type: 'warning'
+            });
+          }
+        })
+      },
+    handleTask: async function(index) {
+      // this.comments_list = true;
+      this.gid_to_add = this.posts[index].pid;
+      let url = "http://127.0.0.1:8000/" + "forum/retrieve_task";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      await axios
+          .post(url, JSON.stringify({
+            user_id: this.user_id,
+            pid:this.posts[index].pid
+          }), {
+            headers: headers
+          })
+          .then(response => {
+            this.comments = response.data.comments;
+          });
+    },
+  },
+
+
+
+  }
 </script>
 
 <style scoped>
 .item {
   margin-top: 10px;
   margin-right: 40px;
-}
-.left{ float:left;
-
-  width:49%;
-
-  height:100px;}
-
-.right{float:right;
-
-  width:50%;
-
-  height:100px;}
-
-.rightButton{float:right;
-
-  width:50%;
-
-  height:500px;}
-.goalbutton {
-  float:left;
-  margin-left: 100px;
-  margin-top:300px;
- /* last-child {*/
- /*  margin-bottom: 0;*/
- /*}*/
-}
-.taskbutton {
-  float:right;
-  margin-right: 200px;
-  margin-top:300px;
 }
 el-main{
   margin-left: 100px;
