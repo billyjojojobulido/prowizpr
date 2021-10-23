@@ -1,13 +1,14 @@
 <template>
   <div id="app">
-    <el-tabs v-model="activeName" type="card" >
-      <el-tab-pane label="Forum" name="first">
-        <Forum></Forum>
-      </el-tab-pane>
-      <el-tab-pane label="My Goal" name="second">
-        <Goal></Goal>
-      </el-tab-pane>
-    </el-tabs>
+<!--    <el-tabs v-model="activeName" type="card" >-->
+<!--      <el-tab-pane label="Forum" name="first">-->
+<!--        <Forum></Forum>-->
+<!--      </el-tab-pane>-->
+<!--      <el-tab-pane label="My Goal" name="second">-->
+<!--        <Goal></Goal>-->
+<!--      </el-tab-pane>-->
+<!--    </el-tabs>-->
+    <router-view></router-view>
   </div>
 <!--  <div id="app">-->
 <!--    <Forum />-->
@@ -16,14 +17,14 @@
 </template>
 
 <script>
-import Forum from "@/components/forum/Forum";
-import Goal from "@/components/goal/Goal";
+// import Forum from "@/components/forum/Forum";
+// import Goal from "@/components/goal/Goal";
 
 export default {
   name: 'App',
   components: {
-    Forum,
-    Goal,
+    // Forum,
+    // Goal,
   },
   data (){
     return{

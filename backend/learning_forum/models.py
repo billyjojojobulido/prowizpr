@@ -30,6 +30,10 @@ class PostsManager(models.Manager):
         post.save()
         return
 
+    def get_full_name_by_pid(self, pid):
+        post = self.get(id=pid)
+        return post.user.first_name, post.user.last_name
+
 
 class Posts(models.Model):
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
