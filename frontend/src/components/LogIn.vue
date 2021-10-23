@@ -56,19 +56,9 @@ export default {
             message: "Username is required",
             trigger: "blur"
           },
-          {
-            min: 4,
-            message: "Username length should be at least 5 characters",
-            trigger: "blur"
-          }
         ],
         password: [
           { required: true, message: "Password is required", trigger: "blur" },
-          {
-            min: 5,
-            message: "Password length should be at least 5 characters",
-            trigger: "blur"
-          }
         ]
       }
     }
@@ -88,8 +78,8 @@ export default {
             headers: headers
           })
           .then(response => {
-            if (response.data.msg === "success"){
-              this.$store.commit('authenticate',this.model.username);
+            if (response.data.status === "success"){
+              this.$store.commit('authenticate',this.model.username, response.data.uid);
               this.$router.push({name: 'Forum'});
             } else {
               alert("Username and password do not match.")
