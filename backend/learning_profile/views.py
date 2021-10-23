@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.views.decorators.http import require_http_methods
 import json
 
@@ -24,4 +24,29 @@ def register(request):
         data = json.loads(error_info)
         response["status"] = "failed"
         response["msg"] = tuple(data.items())[0][1]
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def login(request):
+    response = {}
+    try:
+        payload = json.loads(request.body.decode())
+        username = payload.get("username")
+        password = payload.get("password")
+        print("Username: {}".format(username))
+        print("Password: {}".format(password))
+        user = authenticate(username=username, password=password)
+        if user is None:
+            response["status"] = "failed"
+            response["msg"] = "user doesn't exists"
+        else:
+            response["status"] = "success"
+            response["msg"] = "log in"
+            response["uid"] = user.id
+    except Exception as e:
+        response["status"] = "failed"
+        response["msg"] = "failed to log in"
+        print(e)
+    print(response)
     return JsonResponse(response)
