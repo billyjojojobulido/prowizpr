@@ -101,7 +101,7 @@ export default {
   font-family: ManropeRegular;
   background-color:  #233142;
   width: 100%;
-  height: 700px;
+  height: 1000px;
   border: 2px solid black;
 }
 
