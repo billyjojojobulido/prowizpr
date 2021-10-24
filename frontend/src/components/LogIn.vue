@@ -79,7 +79,7 @@ export default {
           })
           .then(response => {
             if (response.data.status === "success"){
-              this.$store.commit('authenticate',this.model.username, response.data.uid);
+              this.$store.commit('authenticate', response.data.uid);
               this.$router.push({name: 'Forum'});
             } else {
               alert("Username and password do not match.")

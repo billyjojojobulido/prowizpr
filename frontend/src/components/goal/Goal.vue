@@ -198,10 +198,8 @@ export default {
       todo: [],
       progress: {},
       publish: {},
-      /*
-      * MOCKED
-      * */
-      user_id: 3,
+      // Log In User ID
+      user_id: 0,
       dialogFormVisible1: false,
       dialogFormVisible2: false,
       taskForm: {
@@ -223,6 +221,7 @@ export default {
   },
 
   mounted: function () {
+    this.user_id = this.$store.state.uid;
     Promise.all([this.show()]).then(() =>
         this.refreshTask(this.goals[0].gid));
   },

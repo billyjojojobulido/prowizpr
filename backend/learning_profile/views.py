@@ -44,4 +44,5 @@ def login(request):
         response["status"] = "failed"
         response["msg"] = "failed to log in"
         print(e)
+    print(response)
     return JsonResponse(response)
