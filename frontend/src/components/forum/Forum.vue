@@ -1,141 +1,146 @@
 <template>
   <el-container class="forum">
-    <el-container v-loading="loading">
-      <el-aside width=35%>
-        <!--        <LeftProgressPanel :todo="todo" :progress="progress" :username="goal_user"></LeftProgressPanel>-->
-        <template>
-          <div class="progress_panel">
-            <h2> {{goal_user}}'s goal </h2>
-            <hr>
-            <el-progress type="dashboard" :percentage="progress.percentage" :color="progress.color"></el-progress>
-            <br>
-            <span class="progress">
+    <el-container>
+      <el-header>
+        <NavigationBar></NavigationBar>
+      </el-header>
+      <el-container v-loading="loading">
+        <el-aside width=35%>
+          <!--        <LeftProgressPanel :todo="todo" :progress="progress" :username="goal_user"></LeftProgressPanel>-->
+          <template>
+            <div class="progress_panel">
+              <h2> {{goal_user}}'s goal </h2>
+              <hr>
+              <el-progress type="dashboard" :percentage="progress.percentage" :color="progress.color"></el-progress>
+              <br>
+              <span class="progress">
               {{progress.info}}
             </span>
-            <h2>TODO List</h2>
-            <hr>
+              <h2>TODO List</h2>
+              <hr>
+              <el-table
+                  :data="todo"
+                  style="width: 100%">
+                <el-table-column
+                    prop="activity"
+                    label="Activity"
+                    width="200">
+                </el-table-column>
+                <el-table-column
+                    prop="due"
+                    label="Due Date"
+                    width="200">
+                </el-table-column>
+                <el-table-column
+                    prop="progress"
+                    label="Progress">
+                </el-table-column>
+              </el-table>
+            </div>
+          </template>
+        </el-aside>
+        <el-main>
+
+          <!--        <PostsPanel class="comments" :posts="posts"></PostsPanel>-->
+          <template>
             <el-table
-                :data="todo"
+                :data="posts"
+                heigth="250"
                 style="width: 100%">
               <el-table-column
-                  prop="activity"
-                  label="Activity"
+                  label="Student"
                   width="200">
-              </el-table-column>
-              <el-table-column
-                  prop="due"
-                  label="Due Date"
-                  width="200">
-              </el-table-column>
-              <el-table-column
-                  prop="progress"
-                  label="Progress">
-              </el-table-column>
-            </el-table>
-          </div>
-        </template>
-      </el-aside>
-      <el-main>
-
-        <!--        <PostsPanel class="comments" :posts="posts"></PostsPanel>-->
-        <template>
-          <el-table
-              :data="posts"
-              heigth="250"
-              style="width: 100%">
-            <el-table-column
-                label="Student"
-                width="200">
-              <template slot-scope="scope">
+                <template slot-scope="scope">
                 <span style="margin-left: 10px" v-if="scope.row.avatar === ''">
 <!--    Default Avatar     -->
                   <el-avatar src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'></el-avatar>
                 </span>
-                <span v-else>
+                  <span v-else>
 <!--    Avatar uploaded by user     -->
                   <el-avatar :src=scope.row.avatar></el-avatar>
                 </span>
-                <br>
-                <span class="name">
+                  <br>
+                  <span class="name">
                   {{scope.row.name}}
                 </span>
-                <el-tag size="medium" v-if="scope.row.is_admin==1">
-                  Admin
-                </el-tag>
-                <br>
-                {{scope.row.date}}
-                <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Goal</el-button>
-              </template>
-              <!--  POSTS SECTION    -->
-            </el-table-column>
-            <el-table-column
-                label="Posts"
-                width="500">
-              <template slot-scope="scope">
-                {{scope.row.content}}
-              </template>
-            </el-table-column>
-            <el-table-column label="Operation">
-              <template slot-scope="scope">
-                <!--    Like Button    -->
-                <span  v-if="scope.row.liked === 1">
+                  <el-tag size="medium" v-if="scope.row.is_admin==1">
+                    Admin
+                  </el-tag>
+                  <br>
+                  {{scope.row.date}}
+                  <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Goal</el-button>
+                </template>
+                <!--  POSTS SECTION    -->
+              </el-table-column>
+              <el-table-column
+                  label="Posts"
+                  width="500">
+                <template slot-scope="scope">
+                  {{scope.row.content}}
+                </template>
+              </el-table-column>
+              <el-table-column label="Operation">
+                <template slot-scope="scope">
+                  <!--    Like Button    -->
+                  <span  v-if="scope.row.liked === 1">
                   <el-button size="mini"
                              @click="handleLike(scope.$index, scope.row)"
                              type="warning" icon="el-icon-star-on"></el-button>
                 </span>
-                <span v-else>
+                  <span v-else>
                   <el-button size="mini"
                              @click="handleLike(scope.$index, scope.row)" icon="el-icon-star-off"></el-button>
                 </span>
-                <!--    Comment Button  -->
-                <el-button
-                    size="mini"
-                    @click="handleComment(scope.$index)" icon="el-icon-chat-dot-round"></el-button>
-                <el-drawer
-                    :visible.sync="comments_list"
-                    direction="rtl"
-                    size="30%">
-                  <h2 align="center">Comment List</h2>
-                  <p v-if="comments.length===0" align="center">
-                    --- No Comments ---
-                  </p>
-                  <!--            <template>-->
-                  <ul>
-                    <li v-for="i in comments" :key="i.cid">
-                      <span class="name">{{i.commenter}} </span>
-                      says:
+                  <!--    Comment Button  -->
+                  <el-button
+                      size="mini"
+                      @click="handleComment(scope.$index)" icon="el-icon-chat-dot-round"></el-button>
+                  <el-drawer
+                      :visible.sync="comments_list"
+                      direction="rtl"
+                      size="30%">
+                    <h2 align="center">Comment List</h2>
+                    <p v-if="comments.length===0" align="center">
+                      --- No Comments ---
+                    </p>
+                    <!--            <template>-->
+                    <ul>
+                      <li v-for="i in comments" :key="i.cid">
+                        <span class="name">{{i.commenter}} </span>
+                        says:
+                        <br>
+                        {{i.comment_time}}
+                        <hr>
+                        &nbsp;&nbsp;
+                        {{i.content}}
+                        <br>
+                        <hr>
+                      </li>
+                    </ul>
+                    <div class="comment-making">
+                      <h2>Say something:</h2>
+                      <el-input type="textarea" v-model="comment_to_write"
+                                :autosize="{ minRows: 2, maxRows: 4}"
+                                placeholder="leave your comment here">
+                      </el-input>
                       <br>
-                      {{i.comment_time}}
-                      <hr>
-                      &nbsp;&nbsp;
-                      {{i.content}}
-                      <br>
-                      <hr>
-                    </li>
-                  </ul>
-                  <div class="comment-making">
-                    <h2>Say something:</h2>
-                    <el-input type="textarea" v-model="comment_to_write"
-                              :autosize="{ minRows: 2, maxRows: 4}"
-                              placeholder="leave your comment here">
-                    </el-input>
-                    <br>
-                    <el-button size="small" type="primary" @click="handleMakeComment()">Comment</el-button>
-                  </div>
-                  <!--                  <el-input type="textarea" v-model="form.desc"></el-input>-->
-                  <!--                  &lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-                  <!--                  <el-button type="primary" @click="handleMakeComment()">立即创建</el-button>-->
-                </el-drawer>
-                <!--    Report Button    -->
-                <el-button
-                    size="mini"
-                    type="danger"
-                    @click="handleReport(scope.$index)" icon="el-icon-warning"></el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </template>
-      </el-main>
+                      <el-button size="small" type="primary" @click="handleMakeComment()">Comment</el-button>
+                    </div>
+                    <!--                  <el-input type="textarea" v-model="form.desc"></el-input>-->
+                    <!--                  &lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
+                    <!--                  <el-button type="primary" @click="handleMakeComment()">立即创建</el-button>-->
+                  </el-drawer>
+                  <!--    Report Button    -->
+                  <el-button
+                      size="mini"
+                      type="danger"
+                      @click="handleReport(scope.$index)" icon="el-icon-warning"></el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-main>
+      </el-container>
     </el-container>
   </el-container>
 </template>
@@ -143,11 +148,15 @@
 
 <script>
 import axios from "axios";
+import NavigationBar from "@/components/common/NavigationBar";
 
 export default {
   name: "Forum",
   props: {
     msg: String
+  },
+  components: {
+    NavigationBar,
   },
   data(){
     return {
