@@ -7,6 +7,8 @@ import json
 from .forms import CustomUserCreationForm
 
 User = get_user_model()
+
+
 # Create your views here.
 
 
@@ -49,3 +51,13 @@ def login(request):
         print(e)
     print(response)
     return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def logout(request):
+    response = {}
+    logout(request)
+    response["status"] = "success"
+    response["msg"] = "the user have been logged out"
+    return JsonResponse(response)
+
