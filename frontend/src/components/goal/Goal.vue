@@ -32,7 +32,7 @@
                   width="600">
                  <template slot-scope="scope">
 <!--                <span v-if="scope.row.progress === 1">-->
-                  <el-radio-group v-model="scope.row.progress" size="mini">
+                  <el-radio-group v-model="scope.row.progress" size="mini" @change="changeProgressStatus($event,scope.row.tid)">
                     <el-radio-button label="To Do">To Do</el-radio-button>
                     <el-radio-button label="In Progress">in Progress</el-radio-button>
                     <el-radio-button label="Done">Done</el-radio-button>
@@ -124,9 +124,9 @@
               <template slot-scope="scope">
 <!--                <span v-for="r in scope.row">-->
 <!--               <span v-if="scope.row.publish_status ===1">-->
-                 <el-radio-group v-model="scope.row.publish" size="mini" @change="changeStatus($event,scope.row.gid)">
+                 <el-radio-group v-model="scope.row.publish" size="mini" @change="changePublishStatus($event,scope.row.gid)">
 
-                      <el-radio-button label="Publish" ></el-radio-button>
+                      <el-radio-button label="Public" ></el-radio-button>
                       <el-radio-button label="Private" ></el-radio-button>
                   </el-radio-group>
 <!--                </span>-->
@@ -226,16 +226,16 @@ export default {
   },
 
   methods: {
-    changeStatus: async function (e,gid) {
+    changePublishStatus: async function (e,gid) {
       let url = "http://127.0.0.1:8000/" + "goal/goal_status";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
-      let status="";
-      if (e == "Publish") {
-        status="1";
-      }else if (e == "Private"){
-        status="2";
+      let status=0;
+      if (e === "Public") {
+        status=1;
+      }else if (e ==="Private"){
+        status=2;
       }
       let send = {
         status: status,
@@ -250,6 +250,40 @@ export default {
             // this.loading = false;
             // this.user_id = response.data.user_id;
             console.log(response.data.msg) ;
+          });
+
+    },
+    changeProgressStatus: async function (e,tid) {
+      let url = "http://127.0.0.1:8000/" + "goal/task_status";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let status=0;
+      if (e === "To Do") {
+        status=1;
+      }else if (e ==="In Progress"){
+        status=2;
+      }else if (e ==="Done"){
+        status=3;
+      }
+      // console.log(e)
+      // console.log(tid)
+      let send = {
+        status: status,
+        taskID: tid,
+        gid:this.gid_to_add
+      }
+      await axios
+          .post(url, JSON.stringify(send), {
+            headers: headers
+          })
+          .then(response => {
+            // this.goals = response.data.goals;
+            // this.loading = false;
+            // this.user_id = response.data.user_id;
+            console.log(response.data.msg) ;
+            this.refreshTask(this.gid_to_add);
+
           });
 
     },

@@ -60,8 +60,8 @@ class Tasks(models.Model):
     content = models.CharField(max_length=300)
     deadline = models.DateTimeField(blank=True, null=True)
     status = models.IntegerField()
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
     objects = TasksManager()
 
     def __str__(self):
