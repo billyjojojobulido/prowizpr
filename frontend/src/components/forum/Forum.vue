@@ -162,13 +162,12 @@ export default {
       goal_user: "Unnamed User",
       comment_to_write: "",
       pid_to_comment: 0,
-      /*
-      * MOCKED
-      * */
-      user_id: 3,
+      // Log In User ID
+      user_id: 0,
     }
   },
   mounted: function() {
+    this.user_id = this.$store.state.uid;
     Promise.all([this.show()]).then(()=>
         this.refreshGoal(this.posts[0].pid))
   },
@@ -345,6 +344,10 @@ export default {
 .forum{
   margin-left: 40px;
   margin-right: 40px;
+}
+
+.progress_panel{
+  position: fixed;
 }
 
 h3 {
