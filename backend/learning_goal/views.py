@@ -7,7 +7,7 @@ import learning_goal.const as const
 import json
 import learning_goal.utils as utils
 import time
-from datetime import datetime,date
+from datetime import datetime, date
 
 
 @require_http_methods(["POST"])
@@ -31,20 +31,20 @@ def show(request):
         # TODO User authentication
         # post = Posts.objects.get(id=pid)
         # Retrieving Posts data
-        goals = Goals.objects.filter(post__user_id = uid)
+        goals = Goals.objects.filter(post__user_id=uid)
         # goals = Goals.objects.get_tasks_from_pid(pid)
         for g in goals:
             ret_g = {
-                    "gid": g.id,
-                    # "avatar": g.user.profile_image,
-                    # "name": g.user.first_name + " " + g.user.last_name,
-                    "date": utils.time_format(g.created_at),
-                    "description": g.description,
-                    # "is_admin": g.user.is_superuser,
-                    "liked": g.likes,
-                    "publish":utils.get_publish_msg(g.publish_status)
-                    # "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
-                }
+                "gid": g.id,
+                # "avatar": g.user.profile_image,
+                # "name": g.user.first_name + " " + g.user.last_name,
+                "date": utils.time_format(g.created_at),
+                "description": g.description,
+                # "is_admin": g.user.is_superuser,
+                "liked": g.likes,
+                "publish": utils.get_publish_msg(g.publish_status)
+                # "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
+            }
             response["goals"].append(ret_g)
 
         response['status'] = "success"
@@ -53,13 +53,13 @@ def show(request):
         response['msg'] = 'Failed to transmit'
         print(e)
 
-
     final_catch = time.time()
     print("===========================")
     print("Total Time Consumed: {} s".format(final_catch - first_catch))
     print("===========================")
 
     return JsonResponse(response)
+
 
 @require_http_methods(["POST"])
 def retrieve_task(request):
@@ -136,9 +136,9 @@ def add_goal(request):
         print(description)
         ack1 = Posts.objects.create(likes=0,
                                     status=1,
-                                    content = description,
+                                    content=description,
                                     post_type=2,
-                                    user_id = uid,
+                                    user_id=uid,
                                     report_times=0)
         ack = Goals.objects.create(likes=0,
                                    publish_status=1,
@@ -159,6 +159,7 @@ def add_goal(request):
     print("===========================")
     return JsonResponse(response)
 
+
 @require_http_methods(["POST"])
 def add_task(request):
     first_catch = time.time()
@@ -168,13 +169,13 @@ def add_task(request):
         payload = json.loads(request.body.decode())
         goal_id = payload.get("gid")
         content = payload.get("content")
-        deadline = datetime.strptime(payload.get("deadline"),'%Y-%m-%d %H:%M:%S.%f')
+        deadline = datetime.strptime(payload.get("deadline"), '%Y-%m-%d %H:%M:%S.%f')
 
         print(deadline)
-        ack = Tasks.objects.create(content = content,
-                                   deadline = utils.date_format(deadline),
-                                   status = 1,
-                                   goal_id = goal_id)
+        ack = Tasks.objects.create(content=content,
+                                   deadline=utils.date_format(deadline),
+                                   status=1,
+                                   goal_id=goal_id)
         if ack:
             response['status'] = "success"
         else:
@@ -189,6 +190,8 @@ def add_task(request):
     print("Total Time Consumed: {} s".format(final_catch - first_catch))
     print("===========================")
     return JsonResponse(response)
+
+
 
 @require_http_methods(["POST"])
 def goal_status(request):
@@ -206,4 +209,24 @@ def goal_status(request):
         print(e)
         response['status'] = 'failed'
         response['msg'] = 'failed to change the status of goal'
+
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def task_status(request):
+    response = {}
+    try:
+        payload = json.loads(request.body.decode())
+        status = payload.get("status")
+        task_id = payload.get("taskID")
+        task = Tasks.objects.get(id=task_id)
+        task.status = status
+        task.save()
+        response['status'] = 'success'
+        response['msg'] = 'successfully update the status of the task'
+    except Exception as e:
+        print(e)
+        response['status'] = 'failed'
+        response['msg'] = 'failed to change the status of task'
     return JsonResponse(response)
