@@ -5,6 +5,7 @@ class GoalsManager(models.Manager):
     def get_all_goals_desc(self):
         goals = self.all().order_by("-created_at")
         return goals
+
     def check_goals_liked(self, pid):
         if self.filter(post_id=pid).count() > 0:
             return 1
@@ -14,23 +15,30 @@ class GoalsManager(models.Manager):
         goal = self.get(pk=gid)
         return goal.post.user.first_name, goal.post.user.last_name
 
-    def add_goal(self,pid, description):
+    def add_goal(self, pid, description):
         try:
-            self.create(post_id = pid,description=description)
+            self.create(post_id=pid, description=description)
             return True
         except Exception as e:
             print(e)
             return False
 
+    # def change_goal_status(self, gid, goal_status):
+    #     try:
+    #         goal = self.get(pk=gid)
+    #         goal.publish_status = goal_status
+    #     except Exception as e:
+    #         print(e)
+    #
 
 
 # Create your models here.
 class Goals(models.Model):
     post = models.ForeignKey('learning_forum.Posts', on_delete=models.CASCADE)
-    likes = models.IntegerField(default = 0)
-    publish_status = models.IntegerField(default = 1)
+    likes = models.IntegerField(default=0)
+    publish_status = models.IntegerField(default=1)
     description = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now = True)
+    created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = GoalsManager()
 
