@@ -82,6 +82,7 @@ def retrieve_task(request):
         for t in tasks:
             response['todo'].append(
                 {
+                    "tid":t.id,
                     "activity": t.content,
                     "due": utils.date_format(t.deadline),
                     "progress": utils.get_progress_msg(t.status),
@@ -220,6 +221,7 @@ def task_status(request):
         task = Tasks.objects.get(id=task_id)
         task.status = status
         task.save()
+
         response['status'] = 'success'
         response['msg'] = 'successfully update the status of the task'
     except Exception as e:
