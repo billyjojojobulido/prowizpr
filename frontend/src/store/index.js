@@ -8,7 +8,6 @@ const store = new Vuex.Store({
     state: {
         authenticated: false,
         uid: 0,
-        username: null,
     },
 
     // getters
@@ -22,20 +21,13 @@ const store = new Vuex.Store({
             }
             return -1;
         },
-        getUsername: (state) => {
-            if (state.authenticated) {
-                return state.username;
-            }
-            return null;
-        }
     },
 
     // mutations
     mutations: {
-        authenticate (state, username, uid) {
+        authenticate (state, uid) {
             state.authenticated = true;
             state.uid = uid;
-            state.username = username;
         },
         logout (state){
             state.authenticated = false;
