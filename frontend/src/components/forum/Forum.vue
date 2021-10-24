@@ -346,6 +346,10 @@ export default {
   margin-right: 40px;
 }
 
+.progress_panel{
+  position: fixed;
+}
+
 h3 {
   margin: 40px 0 0;
 }
