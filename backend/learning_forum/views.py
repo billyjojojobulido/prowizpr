@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
@@ -29,15 +30,15 @@ def show(request):
         posts = Posts.objects.get_all_posts_desc()
         for p in posts:
             ret_p = {
-                    "pid": p.id,
-                    "avatar": p.user.profile_image,
-                    "name": p.user.first_name + " " + p.user.last_name,
-                    "date": utils.time_format(p.created_at),
-                    "content": p.content,
-                    "is_admin": p.user.is_superuser,
-                    "liked": Like.objects.check_post_liked(p.id, uid),
-                    "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
-                }
+                "pid": p.id,
+                "avatar": p.user.profile_image,
+                "name": p.user.first_name + " " + p.user.last_name,
+                "date": utils.time_format(p.created_at),
+                "content": p.content,
+                "is_admin": p.user.is_superuser,
+                "liked": Like.objects.check_post_liked(p.id, uid),
+                "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
+            }
             response["posts"].append(ret_p)
 
         response['status'] = "success"
@@ -120,7 +121,7 @@ def retrieve_comment(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
-        pid = int(payload.get("pid"))   # post id
+        pid = int(payload.get("pid"))  # post id
 
         comments = Comments.objects.get_comments_by_pid_transmit(pid)
         ret_comment = []
@@ -173,7 +174,7 @@ def report_post(request):
     try:
         payload = json.loads(request.body.decode())
         # No need for authentication
-        pid = int(payload.get("pid"))   # post id
+        pid = int(payload.get("pid"))  # post id
 
         Posts.objects.report_post(pid)
         response['status'] = "success"
@@ -190,8 +191,8 @@ def like_post(request):
     try:
         payload = json.loads(request.body.decode())
         uid = payload.get("user_id")
-        pid = payload.get("post_id")    # post id
-        like = int(payload.get("like"))     # like or dislike
+        pid = payload.get("post_id")  # post id
+        like = int(payload.get("like"))  # like or dislike
         # Like
         if like == const.LIKE_LIKE:
             Like.objects.like_post(pid, uid)
