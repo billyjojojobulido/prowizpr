@@ -7,6 +7,7 @@ import learning_goal.const as const
 import json
 import learning_goal.utils as utils
 import time
+from datetime import datetime,date
 
 
 @require_http_methods(["POST"])
@@ -19,18 +20,19 @@ def show(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
-        # uid = payload.get("user_id")
-        # user = User.objects.get(id=uid)
-
+        # print(payload.get("user"))
+        uid = payload.get("user")
+        # user = User.objects.get(uid)
+        print(1111)
+        print(uid)
         # pid = payload.get("post_id")
         # print(pid)
         # TODO Pagination
         # TODO User authentication
         # post = Posts.objects.get(id=pid)
-        # print("aaaaaaa")
-
         # Retrieving Posts data
-        goals = Goals.objects.get_all_goals_desc()
+        goals = Goals.objects.filter(post__user_id = uid)
+        # goals = Goals.objects.get_tasks_from_pid(pid)
         for g in goals:
             ret_g = {
                     "gid": g.id,
@@ -68,12 +70,12 @@ def retrieve_task(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
-
+        # print(payload)
         uid = payload.get("user_id")
-        pid = payload.get("pid")
+        gid = payload.get("gid")
         # Retrieving Tasks data
-        tasks = Tasks.objects.get_tasks_from_pid(pid)
-
+        # goals = Goals.objects.get_all_goals_desc()
+        tasks = Tasks.objects.filter(goal_id=gid)
         completed = 0
         total = len(tasks)
 
@@ -102,7 +104,7 @@ def retrieve_task(request):
         response['percentage'] = percentage
 
         response['info'] = "{}/{} tasks are completed".format(completed, total)
-        f_name, l_name = Goals.objects.get_full_name(pid)
+        f_name, l_name = Goals.objects.get_full_name(gid)
         response['goal_user'] = utils.get_full_name(f_name, l_name)
 
         response['status'] = "success"
@@ -166,11 +168,11 @@ def add_task(request):
         payload = json.loads(request.body.decode())
         goal_id = payload.get("gid")
         content = payload.get("content")
-        deadline = payload.get("deadline")
+        deadline = datetime.strptime(payload.get("deadline"),'%Y-%m-%d %H:%M:%S.%f')
 
-        print(goal_id)
+        print(deadline)
         ack = Tasks.objects.create(content = content,
-                                   deadline = deadline,
+                                   deadline = utils.date_format(deadline),
                                    status = 1,
                                    goal_id = goal_id)
         if ack:
