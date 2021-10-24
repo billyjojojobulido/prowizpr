@@ -12,7 +12,7 @@ import time
 
 @require_http_methods(["POST"])
 def show(request):
-    first_catch = time.time()
+    first_catch = time.time()   # Timing
     response = {
         "posts": [],
         "todo": [],
@@ -20,14 +20,15 @@ def show(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
-
         uid = payload.get("user_id")
-        # TODO Pagination
-        # TODO User authentication
-        user = User.objects.get(id=uid)
+        posts = None
 
         # Retrieving Posts data
-        posts = Posts.objects.get_all_posts_desc()
+        user = User.objects.get(id=uid)
+        if user.is_superuser:  # User authorisation
+            posts = Posts.objects.get_all_posts_desc()  # admin
+        else:
+            posts = Posts.objects.get_all_posts_desc_public()   # standard user
         for p in posts:
             ret_p = {
                 "pid": p.id,
@@ -36,7 +37,7 @@ def show(request):
                 "date": utils.time_format(p.created_at),
                 "content": p.content,
                 "is_admin": p.user.is_superuser,
-                "liked": Like.objects.check_post_liked(p.id, uid),
+                "liked": Like.objects.check_post_liked(p.id, uid),  # has the current user liked the post already
                 "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
             }
             response["posts"].append(ret_p)
@@ -49,14 +50,14 @@ def show(request):
 
     final_catch = time.time()
     print("===========================")
-    print("Total Time Consumed: {} s".format(final_catch - first_catch))
+    print("Total Time Consumed: {} s".format(final_catch - first_catch))    # timing
     print("===========================")
     return JsonResponse(response)
 
 
 @require_http_methods(["POST"])
 def retrieve_goal(request):
-    first_catch = time.time()
+    first_catch = time.time()   # timing
     response = {
         "todo": [],
     }
@@ -64,7 +65,7 @@ def retrieve_goal(request):
         # LOADING PARAM
         payload = json.loads(request.body.decode())
 
-        uid = payload.get("user_id")
+        # No need for user authorisation
         pid = payload.get("pid")
         # Retrieving Tasks data
         tasks = Tasks.objects.get_tasks_from_pid(pid)
@@ -97,7 +98,7 @@ def retrieve_goal(request):
         response['percentage'] = percentage
 
         response['info'] = "{}/{} tasks are completed".format(completed, total)
-        # TODO get full name from Post using pid
+        # retrieve the full name of the user who made the post
         f_name, l_name = Posts.objects.get_full_name_by_pid(pid)
         response['goal_user'] = utils.get_full_name(f_name, l_name)
 
@@ -110,7 +111,7 @@ def retrieve_goal(request):
 
     final_catch = time.time()
     print("===========================")
-    print("Total Time Consumed: {} s".format(final_catch - first_catch))
+    print("Total Time Consumed: {} s".format(final_catch - first_catch))    # Timing
     print("===========================")
     return JsonResponse(response)
 
@@ -121,9 +122,18 @@ def retrieve_comment(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
+        print(payload)
+        uid = int(payload.get("uid"))  # user id
         pid = int(payload.get("pid"))  # post id
 
-        comments = Comments.objects.get_comments_by_pid_transmit(pid)
+        # retrieving all comments
+        comments = []
+        # User authorisation
+        user = User.objects.get(id=uid)
+        if user.is_superuser:
+            comments = Comments.objects.get_all_comments_by_pid(pid)    # admin
+        else:
+            comments = Comments.objects.get_comments_by_pid_transmit(pid)   # user
         ret_comment = []
         for c in comments:
             ret_comment.append(

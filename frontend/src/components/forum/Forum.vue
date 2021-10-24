@@ -1,21 +1,26 @@
 <template>
   <el-container class="forum">
     <el-container>
+<!--  Navigation Bar on the top   -->
       <el-header>
         <NavigationBar></NavigationBar>
       </el-header>
       <el-container v-loading="loading">
+<!--   Progress Bar on the left     -->
         <el-aside width=35%>
-          <!--        <LeftProgressPanel :todo="todo" :progress="progress" :username="goal_user"></LeftProgressPanel>-->
           <template>
             <div class="progress_panel">
+              <!--   User who owns the goal    -->
               <h2> {{goal_user}}'s goal </h2>
               <hr>
+              <!--      The dashboard diagram of the progress        -->
               <el-progress type="dashboard" :percentage="progress.percentage" :color="progress.color"></el-progress>
               <br>
+              <!--      Description of progress     -->
               <span class="progress">
-              {{progress.info}}
-            </span>
+                {{progress.info}}
+              </span>
+              <!--      To Do List       -->
               <h2>TODO List</h2>
               <hr>
               <el-table
@@ -41,7 +46,6 @@
         </el-aside>
         <el-main>
 
-          <!--        <PostsPanel class="comments" :posts="posts"></PostsPanel>-->
           <template>
             <el-table
                 :data="posts"
@@ -52,22 +56,26 @@
                   width="200">
                 <template slot-scope="scope">
                 <span style="margin-left: 10px" v-if="scope.row.avatar === ''">
-<!--    Default Avatar     -->
+                  <!--    Default Avatar     -->
+<!--       TODO to backend          -->
                   <el-avatar src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'></el-avatar>
                 </span>
                   <span v-else>
-<!--    Avatar uploaded by user     -->
+                    <!--    Avatar uploaded by user     -->
                   <el-avatar :src=scope.row.avatar></el-avatar>
                 </span>
                   <br>
                   <span class="name">
                   {{scope.row.name}}
                 </span>
+                  <!--      If user is admin, show a tag        -->
                   <el-tag size="medium" v-if="scope.row.is_admin==1">
                     Admin
                   </el-tag>
                   <br>
+                  <!--        Publish Date          -->
                   {{scope.row.date}}
+                  <!--        Goal button click to access         -->
                   <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Goal</el-button>
                 </template>
                 <!--  POSTS SECTION    -->
@@ -103,7 +111,6 @@
                     <p v-if="comments.length===0" align="center">
                       --- No Comments ---
                     </p>
-                    <!--            <template>-->
                     <ul>
                       <li v-for="i in comments" :key="i.cid">
                         <span class="name">{{i.commenter}} </span>
@@ -126,11 +133,7 @@
                       <br>
                       <el-button size="small" type="primary" @click="handleMakeComment()">Comment</el-button>
                     </div>
-                    <!--                  <el-input type="textarea" v-model="form.desc"></el-input>-->
-                    <!--                  &lt;!&ndash;                    </el-form-item>&ndash;&gt;-->
-                    <!--                  <el-button type="primary" @click="handleMakeComment()">立即创建</el-button>-->
                   </el-drawer>
-                  <!--    Report Button    -->
                   <el-button
                       size="mini"
                       type="danger"
@@ -176,11 +179,14 @@ export default {
     }
   },
   mounted: function() {
+    // retrieve id of the user who currently logged in
     this.user_id = this.$store.state.uid;
+    // load all data, then load the progress panel of the first goal
     Promise.all([this.show()]).then(()=>
         this.refreshGoal(this.posts[0].pid))
   },
   methods: {
+    // retrieve all posts data
     show: async function(){
       let url = "http://127.0.0.1:8000/" + "forum/show";
       let headers = {
@@ -195,13 +201,14 @@ export default {
             this.loading = false;
           });
     },
+    // access another goal by the post id
     refreshGoal: async function(pid){
       let url = "http://127.0.0.1:8000/" + "forum/retrieve_goal";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
       let send = {
-        user_id: this.user_id,
+        uid: this.user_id,
         pid: pid,
       }
       await axios
@@ -216,6 +223,7 @@ export default {
             this.goal_user = response.data.goal_user;
           });
     },
+    // like a post
     handleLike: async function(index, row) {
       row.liked = 1 - (1 * row.liked)
 
@@ -233,6 +241,7 @@ export default {
             headers: headers
           })
     },
+    // checkout the comments of a post
     handleComment: async function(index) {
       this.comments_list = true;
       this.pid_to_comment = this.posts[index].pid;
@@ -242,7 +251,7 @@ export default {
       }
       await axios
           .post(url, JSON.stringify({
-            user_id: this.user_id,
+            uid: this.user_id,
             pid:this.posts[index].pid
           }), {
             headers: headers
@@ -251,6 +260,7 @@ export default {
             this.comments = response.data.comments;
           });
     },
+    // after a new comment is made, automatically refresh the comment list to display the new one
     refreshComment: async function(){
       let url = "http://127.0.0.1:8000/" + "forum/retrieve_comment";
       let headers = {
@@ -258,7 +268,7 @@ export default {
       }
       await axios
           .post(url, JSON.stringify({
-            user_id: this.user_id,
+            uid: this.user_id,
             pid:this.pid_to_comment
           }), {
             headers: headers
@@ -267,6 +277,7 @@ export default {
             this.comments = response.data.comments;
           });
     },
+    // report a post
     handleReport: function(index) {
       let url = "http://127.0.0.1:8000/" + "forum/report_post";
       let headers = {
@@ -286,6 +297,7 @@ export default {
             });
           });
     },
+    // transmitting between the states: liked <-> not liked
     handleCommentLike: async function(row) {
       row.liked = 1 - (1 * row.liked)
 
@@ -303,9 +315,11 @@ export default {
             headers: headers
           })
     },
+    // click event on the [Goal] button
     handleGoalClick: function(row){
       this.refreshGoal(row.pid)
     },
+    // making a new comment, and then refresh the comment list
     handleMakeComment: async function(){
       if (this.comment_to_write.length === 0){
         this.$notify({
