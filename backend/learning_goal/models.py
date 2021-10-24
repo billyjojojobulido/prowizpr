@@ -23,14 +23,6 @@ class GoalsManager(models.Manager):
             print(e)
             return False
 
-    # def change_goal_status(self, gid, goal_status):
-    #     try:
-    #         goal = self.get(pk=gid)
-    #         goal.publish_status = goal_status
-    #     except Exception as e:
-    #         print(e)
-    #
-
 
 # Create your models here.
 class Goals(models.Model):
