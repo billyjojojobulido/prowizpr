@@ -124,7 +124,7 @@
               <template slot-scope="scope">
 <!--                <span v-for="r in scope.row">-->
 <!--               <span v-if="scope.row.publish_status ===1">-->
-                 <el-radio-group v-model="scope.row.publish" size="mini">
+                 <el-radio-group v-model="scope.row.publish" size="mini" @click="changeStatus()">
 
                      <el-radio-button label="Publish"></el-radio-button>
                       <el-radio-button label="Private"></el-radio-button>
@@ -224,17 +224,24 @@ export default {
 
   mounted: function () {
     Promise.all([this.show()]).then(() =>
-        this.refreshTask(this.goals[0].gid))
+        this.refreshTask(this.goals[0].gid));
   },
+
   methods: {
 
     show: async function () {
       let url = "http://127.0.0.1:8000/" + "goal/show";
+      // console.log(this.user_id)
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
+      let send = {
+        user: this.user_id,
+        post_id: this.post_id
+      }
+      console.log(send)
       await axios
-          .post(url, JSON.stringify({post_id: this.post_id}), {
+          .post(url, JSON.stringify(send), {
             headers: headers
           })
           .then(response => {
@@ -244,14 +251,19 @@ export default {
             this.publish.info = response.data.info;
           });
     },
-    refreshTask: async function (pid) {
+    handleGoalClick: function (row) {
+      this.refreshTask(row.gid);
+      this.handleTask(row.gid);
+    },
+    refreshTask: async function (gid) {
+      // console.log(gid)
       let url = "http://127.0.0.1:8000/" + "goal/retrieve_task";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
       let send = {
         user_id: this.user_id,
-        pid: pid,
+        gid: gid,
       }
       await axios
           .post(url, JSON.stringify(send), {
@@ -265,10 +277,7 @@ export default {
             // this.goal_user = response.data.goal_user;
           });
     },
-    handleGoalClick: function (row) {
-      this.refreshTask(row.gid);
-      this.handleTask(row.gid)
-    },
+
     getPosts: async function () {
       let url = "http://127.0.0.1:8000/" + "forum/show";
       let headers = {
@@ -322,62 +331,67 @@ export default {
             }
           })
     },
-    handleAddTask: async function () {
-    if (this.taskForm.task_to_write.length === 0 || this.taskForm.date1.length === 0) {
-      this.$notify({
-        title: 'Warning',
-        message: 'Nothing to add',
-        type: 'warning'
-      });
-      return
-    }
-    let url = "http://127.0.0.1:8000/" + "goal/add_task";
-    let headers = {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    }
-    let send = {
-      gid: this.gid_to_add,
-      description: this.taskForm.task_to_write,
-      deadline: this.taskForm.date1
-    }
-    await axios
-        .post(url, JSON.stringify(send), {
-          headers: headers
-        }).then(response => {
-          if (response.data.status === "success") {
-            this.$notify({
-              title: 'Success',
-              message: 'Task created successfully',
-              type: 'success'
-            });
-            this.show();
 
-          } else {
-            this.$notify({
-              title: 'Warning',
-              message: 'Failed to add your tasks',
-              type: 'warning'
-            });
-          }
-        })
-      },
     handleTask: async function(index) {
       // this.comments_list = true;
-      this.gid_to_add = this.posts[index].pid;
-      let url = "http://127.0.0.1:8000/" + "forum/retrieve_task";
+      this.gid_to_add = index;
+
+      let url = "http://127.0.0.1:8000/" + "goal/retrieve_task";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
       await axios
           .post(url, JSON.stringify({
             user_id: this.user_id,
-            pid:this.posts[index].pid
+            pid:index
           }), {
             headers: headers
           })
           .then(response => {
             this.comments = response.data.comments;
           });
+    },
+
+    handleAddTask: async function () {
+      if (this.taskForm.task_to_write.length === 0 || this.taskForm.date1.length === 0) {
+        this.$notify({
+          title: 'Warning',
+          message: 'Nothing to add',
+          type: 'warning'
+        });
+        return
+      }
+      let url = "http://127.0.0.1:8000/" + "goal/add_task";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let send = {
+        gid: this.gid_to_add,
+        content: this.taskForm.task_to_write,
+        deadline: this.taskForm.date1
+      }
+
+      await axios
+          .post(url, JSON.stringify(send), {
+            headers: headers
+          }).then(response => {
+            if (response.data.status === "success") {
+              this.$notify({
+                title: 'Success',
+                message: 'Task created successfully',
+                type: 'success'
+              });
+              this.show();
+              this.refreshTask(this.gid_to_add);
+
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: 'Failed to add your tasks',
+                type: 'warning'
+              });
+            }
+          })
     },
   },
 
