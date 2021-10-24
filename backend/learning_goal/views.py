@@ -120,7 +120,7 @@ def retrieve_task(request):
 
 
 @require_http_methods(["POST"])
-def Add_Goal(request):
+def add_goal(request):
     first_catch = time.time()
     response = {}
     try:
@@ -158,7 +158,7 @@ def Add_Goal(request):
     return JsonResponse(response)
 
 @require_http_methods(["POST"])
-def Add_Task(request):
+def add_task(request):
     first_catch = time.time()
     response = {}
     try:
@@ -173,7 +173,7 @@ def Add_Task(request):
                                    deadline = deadline,
                                    status = 1,
                                    goal_id = goal_id)
-        if ack and ack1:
+        if ack:
             response['status'] = "success"
         else:
             response['status'] = "failed"

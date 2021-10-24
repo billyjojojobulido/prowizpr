@@ -224,7 +224,7 @@ export default {
 
   mounted: function () {
     Promise.all([this.show()]).then(() =>
-        this.refreshGoal(this.goals[0].gid))
+        this.refreshTask(this.goals[0].gid))
   },
   methods: {
 
