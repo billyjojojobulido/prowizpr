@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: "Banner"
+  name: "NavigationBar"
 }
 </script>
 
