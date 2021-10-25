@@ -20,30 +20,16 @@ def show(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
-        # print(payload.get("user"))
         uid = payload.get("user")
-        # user = User.objects.get(uid)
-        print(1111)
-        print(uid)
-        # pid = payload.get("post_id")
-        # print(pid)
-        # TODO Pagination
-        # TODO User authentication
-        # post = Posts.objects.get(id=pid)
-        # Retrieving Posts data
+        # Retrieving Goals data for specific user
         goals = Goals.objects.filter(post__user_id=uid)
-        # goals = Goals.objects.get_tasks_from_pid(pid)
         for g in goals:
             ret_g = {
                 "gid": g.id,
-                # "avatar": g.user.profile_image,
-                # "name": g.user.first_name + " " + g.user.last_name,
                 "date": utils.time_format(g.created_at),
                 "description": g.description,
-                # "is_admin": g.user.is_superuser,
                 "liked": g.likes,
-                "publish": utils.get_publish_msg(g.publish_status)
-                # "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
+                "publish": utils.get_publish_msg(g.publish_status)  # publish_status: 1 -> public, 2 -> private
             }
             response["goals"].append(ret_g)
 
@@ -70,11 +56,9 @@ def retrieve_task(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
-        # print(payload)
         uid = payload.get("user_id")
         gid = payload.get("gid")
         # Retrieving Tasks data
-        # goals = Goals.objects.get_all_goals_desc()
         tasks = Tasks.objects.filter(goal_id=gid)
         completed = 0
         total = len(tasks)
@@ -85,7 +69,7 @@ def retrieve_task(request):
                     "tid":t.id,
                     "activity": t.content,
                     "due": utils.date_format(t.deadline),
-                    "progress": utils.get_progress_msg(t.status),
+                    "progress": utils.get_progress_msg(t.status),# 1->To Do, 2->In Progress, 3->Done
                     "created_at": t.created_at,
                 }
             )
@@ -132,9 +116,7 @@ def add_goal(request):
         uid = payload.get("uid")
         post_id = payload.get("pid")
         description = payload.get("description")
-
-        print(post_id)
-        print(description)
+        #create data into database
         ack1 = Posts.objects.create(likes=0,
                                     status=1,
                                     content=description,
@@ -171,8 +153,7 @@ def add_task(request):
         goal_id = payload.get("gid")
         content = payload.get("content")
         deadline = datetime.strptime(payload.get("deadline"), '%Y-%m-%d %H:%M:%S.%f')
-
-        print(deadline)
+        #create data into tasks table
         ack = Tasks.objects.create(content=content,
                                    deadline=utils.date_format(deadline),
                                    status=1,

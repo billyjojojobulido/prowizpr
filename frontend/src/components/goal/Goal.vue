@@ -8,8 +8,6 @@
         <el-aside width=45%>
           <template>
             <div class="progress_panel">
-              <!--            <h2> {{goal_user}}'s goal </h2>-->
-              <!--            <hr>-->
               <el-progress type="dashboard" :percentage="progress.percentage" :color="progress.color"></el-progress>
               <br>
               <span class="progress">
@@ -35,7 +33,6 @@
                     label="Progress"
                     width="600">
                   <template slot-scope="scope">
-                    <!--                <span v-if="scope.row.progress === 1">-->
                     <el-radio-group v-model="scope.row.progress" size="mini" @change="changeProgressStatus($event,scope.row.tid)">
                       <el-radio-button label="To Do">To Do</el-radio-button>
                       <el-radio-button label="In Progress">in Progress</el-radio-button>
@@ -79,22 +76,6 @@
                   label="Update time"
                   width="150">
                 <template slot-scope="scope">
-                  <!--                <span style="margin-left: 10px" v-if="scope.row.avatar === ''">-->
-                  <!--&lt;!&ndash;    Default Avatar     &ndash;&gt;-->
-                  <!--                  <el-avatar src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'></el-avatar>-->
-                  <!--                </span>-->
-                  <!--                <span v-else>-->
-                  <!--&lt;!&ndash;    Avatar uploaded by user     &ndash;&gt;-->
-                  <!--                  <el-avatar :src=scope.row.avatar></el-avatar>-->
-                  <!--                </span>-->
-                  <!--                <br>-->
-                  <!--                <span class="name">-->
-                  <!--                  {{scope.row.name}}-->
-                  <!--                </span>-->
-                  <!--                <el-tag size="medium" v-if="scope.row.is_admin==1">-->
-                  <!--                  Admin-->
-                  <!--                </el-tag>-->
-                  <!--                <br>-->
                   {{scope.row.date}}
                   <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Check Goal</el-button>
                 </template>
@@ -105,7 +86,6 @@
                   width="150">
                 <template slot-scope="scope">
                   {{scope.row.description}}
-                  <!--                <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Check Goal</el-button>-->
                 </template>
               </el-table-column>
               <el-table-column label="Likes" width="100">
@@ -126,46 +106,15 @@
               <!--  publish status-->
               <el-table-column label="Publish status">
                 <template slot-scope="scope">
-                  <!--                <span v-for="r in scope.row">-->
-                  <!--               <span v-if="scope.row.publish_status ===1">-->
                   <el-radio-group v-model="scope.row.publish" size="mini" @change="changePublishStatus($event,scope.row.gid)">
 
                     <el-radio-button label="Public" ></el-radio-button>
                     <el-radio-button label="Private" ></el-radio-button>
                   </el-radio-group>
-                  <!--                </span>-->
                 </template>
               </el-table-column>
-              <!--    choose publish  -->
-              <!--                <el-button-->
-              <!--                    size="mini"-->
-              <!--                    @click="handleComment(scope.$index)" icon="el-icon-chat-dot-round"></el-button>-->
-              <!--                <el-drawer-->
-              <!--                    :visible.sync="comments_list"-->
-              <!--                    direction="rtl"-->
-              <!--                    size="30%">-->
-              <!--                  <h2 align="center">Comment List</h2>-->
-              <!--                  <p v-if="comments.length===0" align="center">-->
-              <!--                    -&#45;&#45; No Comments -&#45;&#45;-->
-              <!--                  </p>-->
-              <!--                  &lt;!&ndash;            <template>&ndash;&gt;-->
-              <!--                  <ul>-->
-              <!--                    <li v-for="i in comments" :key="i.cid">-->
-              <!--                      <span class="name">{{i.commenter}} </span>-->
-              <!--                      says:-->
-              <!--                      <br>-->
-              <!--                      {{i.comment_time}}-->
-              <!--                      <hr>-->
-              <!--                      &nbsp;&nbsp;-->
-              <!--                      {{i.content}}-->
-              <!--                      <br>-->
-              <!--                    </li>-->
-              <!--                    <br>-->
-              <!--                  </ul>-->
-              <!--                </el-drawer>-->
-
             </el-table>
-            <!--Add Task-->
+            <!--Add Goal-->
             <el-button type="text" @click=" getPosts(); dialogFormVisible2 = true">Add Goal</el-button>
 
             <el-dialog title="Add Goal" :visible.sync="dialogFormVisible2">
@@ -214,7 +163,6 @@ export default {
       taskForm: {
         task_to_write: '',
         date1: '',
-        delivery: false,
         type: [],
       },
       taskFormLabelWidth: '120px',
@@ -223,7 +171,6 @@ export default {
         type: [],
       },
       goalFormLabelWidth: '120px',
-      // pid_for_add:0
       gid_to_add:0,
     }
   },
@@ -235,6 +182,7 @@ export default {
   },
 
   methods: {
+    //change publish status for goal item
     changePublishStatus: async function (e,gid) {
       let url = "http://127.0.0.1:8000/" + "goal/goal_status";
       let headers = {
@@ -255,13 +203,11 @@ export default {
             headers: headers
           })
           .then(response => {
-            // this.goals = response.data.goals;
-            // this.loading = false;
-            // this.user_id = response.data.user_id;
             console.log(response.data.msg) ;
           });
 
     },
+    //change progress status for task item
     changeProgressStatus: async function (e,tid) {
       let url = "http://127.0.0.1:8000/" + "goal/task_status";
       let headers = {
@@ -275,8 +221,6 @@ export default {
       }else if (e ==="Done"){
         status=3;
       }
-      // console.log(e)
-      // console.log(tid)
       let send = {
         status: status,
         taskID: tid,
@@ -287,18 +231,15 @@ export default {
             headers: headers
           })
           .then(response => {
-            // this.goals = response.data.goals;
-            // this.loading = false;
-            // this.user_id = response.data.user_id;
             console.log(response.data.msg) ;
             this.refreshTask(this.gid_to_add);
 
           });
 
     },
+    //show the goals on screen
     show: async function () {
       let url = "http://127.0.0.1:8000/" + "goal/show";
-      // console.log(this.user_id)
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
@@ -313,20 +254,21 @@ export default {
           .then(response => {
             this.goals = response.data.goals;
             this.loading = false;
-            // this.user_id = response.data.user_id;
             this.publish.info = response.data.info;
           });
     },
+    // click the check goal button
     handleGoalClick: function (row) {
       this.refreshTask(row.gid);
       this.handleTask(row.gid);
     },
+    //refresh the task
     refreshTask: async function (gid) {
-      // console.log(gid)
       let url = "http://127.0.0.1:8000/" + "goal/retrieve_task";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
+      this.gid_to_add = gid;
       let send = {
         user_id: this.user_id,
         gid: gid,
@@ -340,10 +282,9 @@ export default {
             this.progress.info = response.data.info;
             this.progress.color = response.data.color;
             this.progress.percentage = response.data.percentage;
-            // this.goal_user = response.data.goal_user;
           });
     },
-
+    //get posts list to check post id
     getPosts: async function () {
       let url = "http://127.0.0.1:8000/" + "forum/show";
       let headers = {
@@ -358,6 +299,7 @@ export default {
             this.loading = false;
           });
     },
+    //click add goal button
     handleAddGoal: async function () {
       if (this.goalForm.goal_to_write.length === 0) {
         this.$notify({
@@ -397,9 +339,8 @@ export default {
             }
           })
     },
-
+    //access goal id for adding tasks
     handleTask: async function(index) {
-      // this.comments_list = true;
       this.gid_to_add = index;
 
       let url = "http://127.0.0.1:8000/" + "goal/retrieve_task";
@@ -417,7 +358,7 @@ export default {
             this.comments = response.data.comments;
           });
     },
-
+    //click add task button
     handleAddTask: async function () {
       if (this.taskForm.task_to_write.length === 0 || this.taskForm.date1.length === 0) {
         this.$notify({
@@ -460,9 +401,6 @@ export default {
           })
     },
   },
-
-
-
   }
 </script>
 
