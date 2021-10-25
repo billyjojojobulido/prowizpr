@@ -2,16 +2,18 @@
   <div class="login-container">
     <el-card>
       <h2>Login</h2>
+<!--   Log In Form   -->
       <el-form
           class="login-form"
           :model="model"
           :rules="rules"
           ref="form"
-          @submit.native.prevent="login"
-      >
+          @submit.native.prevent="login">
+<!--    Username Input    -->
         <el-form-item prop="username">
           <el-input v-model="model.username" placeholder="Username"></el-input>
         </el-form-item>
+<!--    Password Input    -->
         <el-form-item prop="password">
           <el-input
               v-model="model.password"
@@ -19,17 +21,19 @@
               type="password"
           ></el-input>
         </el-form-item>
+<!--    Log In Button    -->
         <el-form-item>
           <el-button
               :loading="loading"
-              class="login-button"
               type="primary"
               native-type="submit"
               block
           >Login</el-button>
         </el-form-item>
-        <a class="forgot-password" href="https://oxfordinformatics.com/">Forgot password</a>
+<!--    Forget Password     -->
+        <a class="forgot-password" @click="forgetPassword">Forgot password</a>
         <br>
+<!--    Register    -->
         <a class="forgot-password" href="https://oxfordinformatics.com/">Register</a>
       </el-form>
     </el-card>
@@ -37,7 +41,6 @@
 </template>
 
 <script>
-// import axios from "axios";
 import axios from "axios";
 
 export default {
@@ -64,6 +67,7 @@ export default {
     }
   },
   methods: {
+    // authenticate
     login: async function() {
       let url = "http://127.0.0.1:8000/" + "profile/login";
       let headers = {
@@ -86,6 +90,10 @@ export default {
             }
           });
     },
+    // go to the forget password page
+    forgetPassword: async function(){
+      await this.$router.push({name: "ForgetPassword"});
+    }
   },
 }
 </script>
