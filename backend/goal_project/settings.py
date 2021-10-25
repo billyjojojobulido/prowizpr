@@ -140,8 +140,8 @@ AUTH_USER_MODEL = 'learning_profile.User'
 CORS_ORIGIN_ALLOW_ALL = True
 
 EMAIL_USE_SSL = True
-EMAIL_HOST = 'smtp.qq.com'
+EMAIL_HOST = 'smtp.exmail.qq.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'kjalan@qq.com'
-EMAIL_HOST_PASSWORD = 'jgxnxfugomcpjcdc'
+EMAIL_HOST_USER = 'kangjian@lightchaser.info'
+EMAIL_HOST_PASSWORD = 'Wbc990121'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
