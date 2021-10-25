@@ -30,16 +30,14 @@
           <el-button
               :loading="loading"
               type="primary"
-              native-type="submit"
               block
               @click="change"
-          >Login</el-button>
+          >Submit</el-button>
         </el-form-item>
         <el-form-item v-else>
           <el-button
               :loading="loading"
               type="primary"
-              native-type="submit"
               block
               disabled
               @click="change"
