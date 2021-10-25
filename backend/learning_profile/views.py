@@ -70,7 +70,6 @@ def logout(request):
 def random_code(length=6):
     rand_str = ''
     chars = '0123456789'
-    length = len(chars) - 1
     random = Random()
     for i in range(length):
         rand_str += chars[random.randint(0, length)]

@@ -7,6 +7,7 @@ import Forum from "@/components/forum/Forum";
 import Goal from "@/components/goal/Goal";
 import ForgetPassword from "@/components/profile/ForgetPassword";
 import LogIn from "@/components/LogIn";
+import Register from "@/components/profile/Register";
 const router = new Router({
     routes: [
         {
@@ -28,12 +29,21 @@ const router = new Router({
             path: '/forget_password',
             name: 'ForgetPassword',
             component: ForgetPassword,
+        },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register,
         }
     ]
 })
 
 router.beforeEach((to, from, next) => {
-    if (!store.state.authenticated && to.name !== 'Login' && to.name !== 'ForgetPassword') {
+    if (!store.state.authenticated
+        && to.name !== 'Login'
+        && to.name !== 'ForgetPassword'
+        && to.name !== 'Register'
+    ) {
         next('/')
     } else {
         next()

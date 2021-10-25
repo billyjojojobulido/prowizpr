@@ -7,22 +7,22 @@
           :rules="rules"
           class="forget-password-form"
           ref="form">
-<!--    Username Input     -->
+        <!--    Username Input     -->
         <el-form-item label="Username">
           <el-input v-model="model.username" placeholder="Username"></el-input>
         </el-form-item>
-<!--    New Password Specify    -->
+        <!--    New Password Specify    -->
         <el-form-item label="New Password">
           <el-input v-model="model.new_password" placeholder="New Password" type="password"></el-input>
         </el-form-item>
-<!--    Input Password Again to Confirm    -->
+        <!--    Input Password Again to Confirm    -->
         <el-form-item label="Confirm Password">
           <el-input v-model="model.new_password_verify" placeholder="Confirm Password" type="password"></el-input>
         </el-form-item>
-<!--    Enter Verification Code after received   -->
+        <!--    Enter Verification Code after received   -->
         <el-form-item label="Verification Code" class="verification">
           <el-input v-model="model.code" type="text" placeholder="Verification Code"></el-input>
-<!--    Click to send verification code via email      -->
+          <!--    Click to send verification code via email      -->
           <el-button @click.prevent="sendCode">Send</el-button>
         </el-form-item>
         <!--    Submit Button    -->
@@ -43,7 +43,7 @@
               block
               disabled
               @click="change"
-          >Submit</el-button>
+          >Login</el-button>
         </el-form-item>
 
       </el-form>
@@ -90,7 +90,8 @@ export default {
   },
   methods: {
     sendCode: async function(){
-      let url = "http://127.0.0.1:8000/" + "profile/password";
+      // todo
+      let url = "http://127.0.0.1:8000/" + "profile/login";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
