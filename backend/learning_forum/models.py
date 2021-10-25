@@ -53,7 +53,7 @@ class Posts(models.Model):
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
     likes = models.IntegerField()
     status = models.IntegerField()
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     content = models.CharField(max_length=255)
     post_type = models.IntegerField()
@@ -118,7 +118,7 @@ class CommentsManager(models.Manager):
 class Comments(models.Model):
     post = models.ForeignKey('Posts', on_delete=models.CASCADE)
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     content = models.CharField(max_length=300, blank=True, null=True)
     likes = models.IntegerField(default=0)
