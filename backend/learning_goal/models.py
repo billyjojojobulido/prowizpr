@@ -30,7 +30,7 @@ class Goals(models.Model):
     likes = models.IntegerField(default=0)
     publish_status = models.IntegerField(default=1)
     description = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = GoalsManager()
 
@@ -52,7 +52,7 @@ class Tasks(models.Model):
     content = models.CharField(max_length=300)
     deadline = models.DateTimeField(blank=True, null=True)
     status = models.IntegerField()
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = TasksManager()
 
