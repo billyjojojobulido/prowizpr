@@ -6,5 +6,6 @@ app_name = 'profile'
 urlpatterns = [
     # path('', include('django.contrib.auth.urls')),
     path('login', views.login, name='login'),
-    path('password', views.find_password, name='password')
+    path('password', views.find_password, name='password'),
+    path('resetpwd', views.verify_password, name='resetpwd')
 ]
