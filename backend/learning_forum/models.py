@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import F
 import learning_forum.const as const
-from django.core import serializers
+from learning_goal.models import Goals
 
 
 # Create your models here.
@@ -144,6 +144,7 @@ class LikeManager(models.Manager):
                 user_id=uid,
             )
         Posts.objects.like_post(pid)
+        Goals.objects.like_goal(pid)
         return
 
     # retract a like [admin & user]

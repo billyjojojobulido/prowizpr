@@ -23,6 +23,24 @@ class GoalsManager(models.Manager):
             print(e)
             return False
 
+    # like a goal
+    def like_goal(self, pid):
+        # like the post
+        goal = self.get(post_id=pid)
+        goal.likes += 1
+        goal.save()
+        return
+
+    # retract the like to the goal
+    def dislike_goal(self, pid):
+        # retract the like sent before
+        goal = self.get(post_id=pid)
+        goal.likes -= 1
+        if goal.likes < 0:
+            goal.likes = 0
+        goal.save()
+        return
+
 
 # Create your models here.
 class Goals(models.Model):
