@@ -129,7 +129,7 @@ export default {
         return
       }
       // Send the NEW Password info to the backend
-      let url = "http://127.0.0.1:8000/" + "profile/login";
+      let url = "http://127.0.0.1:8000/" + "profile/resetpwd";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
