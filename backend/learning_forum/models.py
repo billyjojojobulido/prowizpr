@@ -153,6 +153,7 @@ class LikeManager(models.Manager):
             like = self.get(post_id=pid, user_id=uid)
             like.delete()
             Posts.objects.dislike_post(pid)
+            Goals.objects.dislike_goal(pid)
             return
         except Exception as e:
             print(e)
