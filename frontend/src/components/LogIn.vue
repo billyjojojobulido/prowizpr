@@ -34,7 +34,7 @@
         <a class="forgot-password" @click="forgetPassword">Forgot password</a>
         <br>
 <!--    Register    -->
-        <a class="forgot-password" href="https://oxfordinformatics.com/">Register</a>
+        <a class="forgot-password" @click="register">Register</a>
       </el-form>
     </el-card>
   </div>
@@ -93,6 +93,10 @@ export default {
     // go to the forget password page
     forgetPassword: async function(){
       await this.$router.push({name: "ForgetPassword"});
+    },
+    // go to the register page
+    register: async function(){
+      await this.$router.push({name: "Register"});
     }
   },
 }
