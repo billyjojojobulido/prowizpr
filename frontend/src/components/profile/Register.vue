@@ -83,21 +83,21 @@ export default {
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
-      let send = {
-        username: this.model.username,
-        email: this.model.username + "@uni.sydney.edu.au",
-        password1: this.model.password,
-        password2: this.model.password_verify,
-      }
+      let form = new FormData()
+      form.append("username", this.model.username)
+      form.append("email", this.model.username + "@uni.sydney.edu.au")
+      form.append("password1", this.model.password)
+      form.append("password2", this.model.password_verify)
+
       await axios
-          .post(url, JSON.stringify(send), {
+          .post(url, form, {
             headers: headers
           })
           .then(response => {
             if (response.data.status === "success"){
               this.$notify({
                 title: 'Success',
-                message: 'Password has been changed successfully',
+                message: 'Registered Successfully',
                 type: 'success'
               });
               this.$router.push({name:"Login"})
