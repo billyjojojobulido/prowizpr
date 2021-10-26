@@ -16,6 +16,7 @@ User = get_user_model()
 def register(request):
     response = {}
     form = CustomUserCreationForm(data=request.POST)
+    print(request.POST)
     if form.is_valid():
         new_user = form.save()
         response["status"] = "success"
@@ -25,6 +26,7 @@ def register(request):
         data = json.loads(error_info)
         response["status"] = "failed"
         response["msg"] = tuple(data.items())[0][1]
+        print(data)
     return JsonResponse(response)
 
 
@@ -141,3 +143,33 @@ def verify_password(request):
         response["status"] = "failed"
         response["msg"] = "there is no such username"
     return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def change_password(request):
+    response = {}
+    payload = json.loads(request.body.decode())
+    username = payload.get("username")
+    old_password = payload.get("oldpwd")
+    new_password = payload.get("newpwd")
+    user = User.objects.get(username=username)
+    if user is not None:
+        validation = user.check_password(old_password)
+        new_validation = user.check_password(new_password)
+        if validation is False:
+            response["status"] = "failed"
+            response["msg"] = "the password does not match"
+        elif new_validation is True:
+            response["status"] = "failed"
+            response["msg"] = "the password is same as the previous one"
+        else:
+            user.set_password(new_password)
+            user.save()
+            response["status"] = "success"
+            response["msg"] = "the password has been reset"
+    else:
+        response["status"] = "failed"
+        response["msg"] = "no such user"
+    return JsonResponse(response)
+
+
