@@ -8,6 +8,7 @@ import Goal from "@/components/goal/Goal";
 import ForgetPassword from "@/components/profile/ForgetPassword";
 import LogIn from "@/components/LogIn";
 import Register from "@/components/profile/Register";
+import Profile from "@/components/profile/Profile";
 const router = new Router({
     routes: [
         {
@@ -34,6 +35,11 @@ const router = new Router({
             path: '/register',
             name: 'Register',
             component: Register,
+        },
+        {
+            path: '/profile',
+            name: 'Profile',
+            component: Profile,
         }
     ]
 })
