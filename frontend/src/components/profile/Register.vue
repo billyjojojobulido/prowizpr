@@ -23,7 +23,6 @@
         <el-button
             :loading="loading"
             type="primary"
-            native-type="submit"
             block
             @click="register"
         >Sign Up</el-button>
