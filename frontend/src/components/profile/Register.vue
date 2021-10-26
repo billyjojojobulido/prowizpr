@@ -1,50 +1,31 @@
 <template>
-  <div class="forget-password-panel">
+  <div class="register-panel">
     <el-card>
-      <h2>Forget Password</h2>
+      <h2>Register</h2>
       <el-form
           :model="model"
           :rules="rules"
-          class="forget-password-form"
+          class="register-form"
           ref="form">
         <!--    Username Input     -->
         <el-form-item label="Username">
           <el-input v-model="model.username" placeholder="Username"></el-input>
         </el-form-item>
-        <!--    New Password Specify    -->
-        <el-form-item label="New Password">
-          <el-input v-model="model.new_password" placeholder="New Password" type="password"></el-input>
+        <!--    Password Input    -->
+        <el-form-item label="Password">
+          <el-input v-model="model.password" placeholder="Password" type="password"></el-input>
         </el-form-item>
         <!--    Input Password Again to Confirm    -->
         <el-form-item label="Confirm Password">
-          <el-input v-model="model.new_password_verify" placeholder="Confirm Password" type="password"></el-input>
-        </el-form-item>
-        <!--    Enter Verification Code after received   -->
-        <el-form-item label="Verification Code" class="verification">
-          <el-input v-model="model.code" type="text" placeholder="Verification Code"></el-input>
-          <!--    Click to send verification code via email      -->
-          <el-button @click.prevent="sendCode">Send</el-button>
+          <el-input v-model="model.password_verify" placeholder="Confirm Password" type="password"></el-input>
         </el-form-item>
         <!--    Submit Button    -->
-        <el-form-item v-if="code_sent===true">
-          <el-button
-              :loading="loading"
-              type="primary"
-              native-type="submit"
-              block
-              @click="change"
-          >Login</el-button>
-        </el-form-item>
-        <el-form-item v-else>
-          <el-button
-              :loading="loading"
-              type="primary"
-              native-type="submit"
-              block
-              disabled
-              @click="change"
-          >Login</el-button>
-        </el-form-item>
+        <el-button
+            :loading="loading"
+            type="primary"
+            block
+            @click="register"
+        >Sign Up</el-button>
 
       </el-form>
     </el-card>
@@ -56,14 +37,13 @@
 import axios from "axios";
 
 export default {
-  name: "ForgetPassword",
+  name: "Register",
   data() {
     return {
       model:{
         username: "",
-        new_password: "",
-        new_password_verify: "",
-        code: "",
+        password: "",
+        password_verify: "",
       },
       rules:{
         username: [
@@ -73,55 +53,24 @@ export default {
             trigger: "blur"
           },
         ],
-        new_password: [
+        password: [
           { required: true,
             message: "Password is required",
             trigger: "blur" },
         ],
-        new_password_verify: [
+        password_verify: [
           { required: true,
             message: "You have to type in the password again to verify it",
             trigger: "blur" },
         ],
 
       },
-      code_sent: false,
     };
   },
   methods: {
-    sendCode: async function(){
-      // todo
-      let url = "http://127.0.0.1:8000/" + "profile/login";
-      let headers = {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      }
-      let send = {
-        username: this.model.username,
-      }
-      await axios
-          .post(url, JSON.stringify(send), {
-            headers: headers
-          })
-          .then(response => {
-            if (response.data.status === "success"){
-              this.$notify({
-                title: 'Success',
-                message: 'Verification Code has been sent! Check your uni email!',
-                type: 'success'
-              });
-              this.code_sent = true;
-            } else {
-              this.$notify({
-                title: 'Warning',
-                message: 'Failed to send Verification Code!',
-                type: 'warning'
-              });
-            }
-          });
-    },
-    change: async function (){
+    register: async function (){
       // Verify the two passwords
-      if (this.model.new_password !== this.model.new_password_verify){
+      if (this.model.password !== this.model.password_verify){
         this.$notify({
           title: 'Warning',
           message: 'Two passwords do not match!',
@@ -129,15 +78,16 @@ export default {
         });
         return
       }
-      // Send the NEW Password info to the backend
-      let url = "http://127.0.0.1:8000/" + "profile/login";
+      // Send the Sign Up request to the backend
+      let url = "http://127.0.0.1:8000/" + "profile/register";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
       let send = {
         username: this.model.username,
-        password: this.model.new_password,
-        code: this.model.code,
+        email: this.model.username + "@uni.sydney.edu.au",
+        password1: this.model.password,
+        password2: this.model.password_verify,
       }
       await axios
           .post(url, JSON.stringify(send), {
@@ -166,7 +116,7 @@ export default {
 </script>
 
 <style scoped>
-.forget-password-panel{
+.register-panel{
   flex: 1;
   display: flex;
   justify-content: center;
@@ -178,7 +128,7 @@ export default {
   border: 2px solid black;
 }
 
-.forget-password-form{
+.register-form{
   margin: 10px 100px;
 }
 
