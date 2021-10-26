@@ -17,6 +17,7 @@ User = get_user_model()
 def register(request):
     response = {}
     form = CustomUserCreationForm(data=request.POST)
+    print(request.POST)
     if form.is_valid():
         new_user = form.save()
         response["status"] = "success"
@@ -26,6 +27,7 @@ def register(request):
         data = json.loads(error_info)
         response["status"] = "failed"
         response["msg"] = tuple(data.items())[0][1]
+        print(data)
     return JsonResponse(response)
 
 
