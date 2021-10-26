@@ -1,11 +1,12 @@
 import time
 import json
+import re
 from random import Random
 from threading import Thread
 from django.core.mail import send_mail
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import authenticate, get_user_model
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from goal_project import settings
 from .forms import CustomUserCreationForm
@@ -175,4 +176,38 @@ def change_password(request):
         response["msg"] = "no such user"
     return JsonResponse(response)
 
+
+def check(address):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    if re.fullmatch(regex, address):
+        return True
+    else:
+        return False
+
+
+@require_http_methods(["POST"])
+def modify_basic_information(request):
+    response = {}
+    payload = json.loads(request.body.decode())
+    department = payload.get("department")
+    gender = payload.get("gender")
+    username = payload.get("username")
+    email = payload.get("email")
+    user = User.objects.get(username=username)
+    if user is not None:
+        if check(email) is False:
+            response["status"] = "failed"
+            response["msg"] = "invalid email address"
+        else:
+            user.department = department
+            user.gender = gender
+            user.email = email
+            user.updated_at = timezone.now()
+            user.save()
+            response["status"] = "success"
+            response["msg"] = "the profile information has been reset"
+    else:
+        response["status"] = "failed"
+        response["msg"] = "no such user"
+    return JsonResponse(response)
 
