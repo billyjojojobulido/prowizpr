@@ -30,7 +30,7 @@ export default {
       }
       else if (key === "3"){
         // TODO Profile site
-        this.$router.push("/");
+        this.$router.push({name:"Profile"});
       }
       else {
         this.$router.push("/")
