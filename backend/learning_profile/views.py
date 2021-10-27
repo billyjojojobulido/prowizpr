@@ -209,10 +209,10 @@ def modify_basic_information(request):
 def view_profile(request):
     response = {}
     payload = json.loads(request.body.decode())
-    username = payload.get("username")
+    userid = payload.get("user_id")
     try:
-        user = User.objects.get(username=username)
-        info = {"email": user.email, "username": username, "gender": user.gender, "department": user.department}
+        user = User.objects.get(id=userid)
+        info = {"email": user.email, "username": user.username, "gender": user.gender, "department": user.department}
         response["info"] = info
         response["status"] = "success"
         response["msg"] = "get information successfully"
