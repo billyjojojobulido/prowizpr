@@ -4,8 +4,9 @@
       <NavigationBar></NavigationBar>
     </el-header>
     <el-tabs :tab-position="tabPosition">
-      <h1>My Profile</h1>
+
       <el-tab-pane label="My Profile">
+        <h1>My Profile</h1>
             <el-avatar :size="80" :src=image></el-avatar>
 
             <el-main>
@@ -35,7 +36,14 @@
 
 
           </el-tab-pane>
+          <el-tab-pane label="Profile Setting">
+            <h1>Profile Setting</h1>
+          </el-tab-pane>
+          <el-tab-pane label="Account Security">
+            <h1>Account Security</h1>
+          </el-tab-pane>
     </el-tabs>
+
   </el-container>
 </template>
 
