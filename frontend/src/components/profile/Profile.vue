@@ -1,36 +1,38 @@
 <template>
-  <el-container class="profile">
+  <el-container class="profile-container">
     <el-header>
       <NavigationBar></NavigationBar>
     </el-header>
-    <h></h>
     <el-tabs :tab-position="tabPosition">
       <h1>My Profile</h1>
-<!--      <template slot-scope="scope">-->
       <el-tab-pane label="My Profile">
+            <el-avatar :size="80" :src=image></el-avatar>
 
             <el-main>
-                  <div class="demo-basic--circle" style="margin-left: 5px">
-                    <div class="block"><el-avatar :size="100" :src="circleUrl"></el-avatar></div>
-
-                  </div>
-
-                <el-descriptions  column="1">
-                  <el-descriptions-item label="username">{{username}}</el-descriptions-item>
-                  <el-descriptions-item label="gender">
+              <div class="profile-info">
+                <el-descriptions column="1" border size="medium">
+                  <el-descriptions-item label="Username">{{username}}</el-descriptions-item>
+                  <el-descriptions-item label="Gender">
                     <span v-if="gender===1">Male</span>
                     <span v-else>Female</span>
                   </el-descriptions-item>
-                  <el-descriptions-item label="department">{{ department }}</el-descriptions-item>
+                  <el-descriptions-item label="Department">{{ department }}</el-descriptions-item>
 
                   <el-descriptions-item label="E-mail">{{ email }}</el-descriptions-item>
                 </el-descriptions>
-
+              </div>
+              <!--    Submit Button    -->
+              <br><br><br><br>
+              <el-button
+                  :loading="loading"
+                  type="primary"
+                  block
+                  @click="logout"
+              >Log Out</el-button>
             </el-main>
 
 
           </el-tab-pane>
-<!--      </template>-->
     </el-tabs>
   </el-container>
 </template>
@@ -53,7 +55,7 @@ export default {
       department:'',
       email:'',
       tabPosition: 'left',
-      circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+      image: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
     };
 
   },
@@ -85,11 +87,23 @@ export default {
             this.department = response.data.info.department;
             this.email = response.data.info.email;
           });
+    },
+    logout: async function(){
+      await this.$router.push({name:"Login"})
     }
   }
 }
 </script>
 
 <style scoped>
-
+.profile-container{
+  width: 100%;
+  height: 1000px;
+}
+.profile-info{
+  margin-left: 30%;
+  margin-right: 30%;
+  align-items: center;
+  justify-content: center;
+}
 </style>
