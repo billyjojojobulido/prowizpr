@@ -70,45 +70,23 @@ export default {
   methods: {
     // retrieve all posts data
     show: async function () {
-      let url = "http://127.0.0.1:8000/" + "profile/modify_profile";
+      let url = "http://127.0.0.1:8000/" + "profile/information";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       }
       let sent={
         user_id: this.user_id,
-        username: this.user.username
+        // username: this.user.username
       }
-      console.log(this.user.user_id);
+      console.log(this.user_id);
       await axios
           .post(url, JSON.stringify(sent), {
             headers: headers
           })
           .then(response => {
-            /*this.posts = response.data.posts;
-            this.loading = false;*/
-            // console.log(response.data.msg);
-            this.username = response.data.username;
-          });
-    },
-    changePwd: async function () {
-      let url = "http://127.0.0.1:8000/" + "profile/changepwd";
-      let headers = {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      }
-      let sent={
-        user_id: this.user_id,
-        username: this.user.username
-      }
-      console.log(this.user.user_id);
-      await axios
-          .post(url, JSON.stringify(sent), {
-            headers: headers
-          })
-          .then(response => {
-            /*this.posts = response.data.posts;
-            this.loading = false;*/
-            // console.log(response.data.msg);
-            this.username = response.data.username;
+
+            console.log(response.data);
+            this.user = response.data.info;
           });
     }
   }
