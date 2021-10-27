@@ -11,6 +11,8 @@
             <el-main>
               <div class="profile-info">
                 <el-descriptions column="1" border size="medium">
+                  <el-descriptions-item label="First Name">{{first_name}}</el-descriptions-item>
+                  <el-descriptions-item label="Last Name">{{last_name}}</el-descriptions-item>
                   <el-descriptions-item label="Username">{{username}}</el-descriptions-item>
                   <el-descriptions-item label="Gender">
                     <span v-if="gender===1">Male</span>
@@ -51,11 +53,13 @@ export default {
       // Log In User ID
       user_id: 0,
       username:"unnamed user",
+      firstname:"",
+      lastname:"",
       gender:'',
       department:'',
       email:'',
       tabPosition: 'left',
-      image: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+      image: "",
     };
 
   },
@@ -82,10 +86,13 @@ export default {
             headers: headers
           })
           .then(response => {
+            this.first_name = response.data.info.first_name;
+            this.last_name = response.data.info.last_name;
             this.username = response.data.info.username;
             this.gender = response.data.info.gender;
             this.department = response.data.info.department;
             this.email = response.data.info.email;
+            this.image = response.data.info.image;
           });
     },
     logout: async function(){

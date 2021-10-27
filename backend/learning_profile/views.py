@@ -12,6 +12,7 @@ from goal_project import settings
 from .forms import CustomUserCreationForm
 
 User = get_user_model()
+DEFAULT_IMAGE_URL = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 
 
 @require_http_methods(["POST"])
@@ -218,7 +219,21 @@ def view_profile(request):
     userid = payload.get("user_id")
     try:
         user = User.objects.get(id=userid)
-        info = {"email": user.email, "username": user.username, "gender": user.gender, "department": user.department}
+        info = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "username": user.username,
+            "image": user.profile_image is None ,
+            "gender": user.gender,
+            "department": user.department
+        }
+        # If user has not uploaded any profile image, use Default one
+        if user.profile_image is None:
+            info["image"] = DEFAULT_IMAGE_URL
+        else:
+            info["image"] = user.profile_image
+
         response["info"] = info
         response["status"] = "success"
         response["msg"] = "get information successfully"
