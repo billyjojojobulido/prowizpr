@@ -189,7 +189,7 @@ def modify_basic_information(request):
     payload = json.loads(request.body.decode())
     department = payload.get("department")
     gender = payload.get("gender")
-    username = payload.get("username")
+    username= payload.get("username")
     email = payload.get("email")
     user = User.objects.get(username=username)
     if user is not None:
