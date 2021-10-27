@@ -78,41 +78,37 @@ def find_password(request):
     response = {}
     payload = json.loads(request.body.decode())
     username = payload.get("username")
-    user = User.objects.get(username=username)
     verification_code = random_code()
-    if user is not None:
-        try:
-            last_email_time = user.email_code_time
-            current_time = time.time()
-            seconds = int(current_time) - last_email_time
-            if seconds < 60:
-                response["status"] = "failed"
-                response["msg"] = "send the email again in {} seconds".format(seconds)
-                response["time"] = seconds
-                return JsonResponse(response)
-
-            email_thread = Thread(target=send_mail, args=(
-                "reset your password",
-                "the verification code for the study forum is %s" % verification_code,
-                settings.EMAIL_HOST_USER,
-                [user.email, ]
-            ))
-            email_thread.start()
-            user.email_code = verification_code
-            user.email_code_time = time.time()
-            user.save()
-            response["status"] = "success"
-            response["msg"] = "the verification code is sent"
-            # TODO will delete
-            response["code"] = verification_code
-        except Exception as e:
-            print(e)
+    try:
+        user = User.objects.get(username=username)
+        last_email_time = user.email_code_time
+        current_time = time.time()
+        seconds = int(current_time) - last_email_time
+        if seconds < 60:
             response["status"] = "failed"
-            response["msg"] = e
-    else:
-        response["msg"] = "failed"
-        response["status"] = "there is no such user"
+            response["msg"] = "send the email again in {} seconds".format(seconds)
+            response["time"] = seconds
+            return JsonResponse(response)
+
+        email_thread = Thread(target=send_mail, args=(
+            "reset your password",
+            "the verification code for the study forum is %s" % verification_code,
+            settings.EMAIL_HOST_USER,
+            [user.email, ]
+        ))
+        email_thread.start()
+        user.email_code = verification_code
+        user.email_code_time = time.time()
+        user.save()
+        response["status"] = "success"
+        response["msg"] = "the verification code is sent"
+        # TODO will delete
         response["code"] = verification_code
+
+    except Exception as e:
+        print(e)
+        response["status"] = "failed"
+        response["msg"] = "no such user"
     return JsonResponse(response)
 
 
@@ -123,25 +119,22 @@ def verify_password(request):
     username = payload.get("username")
     code = payload.get("code")
     password = payload.get("password")
-    user = User.objects.get(username=username)
-    if user is not None:
+    try:
+        user = User.objects.get(username=username)
         user_code = user.email_code
-        try:
-            if code != user_code:
-                response["status"] = "failed"
-                response["msg"] = "verification code does not match"
-            elif user.check_password(password) is True:
-                response["status"] = "failed"
-                response["msg"] = "the password is same as the previous one"
-            else:
-                user.set_password(password)
-                user.save()
-                response["status"] = "success"
-                response["msg"] = "successfully changed the password"
-        except Exception as e:
+        if code != user_code:
             response["status"] = "failed"
-            response["msg"] = "internal error: {}".format(e)
-    else:
+            response["msg"] = "verification code does not match"
+        elif user.check_password(password) is True:
+            response["status"] = "failed"
+            response["msg"] = "the password is same as the previous one"
+        else:
+            user.set_password(password)
+            user.save()
+            response["status"] = "success"
+            response["msg"] = "successfully changed the password"
+
+    except Exception as e:
         response["status"] = "failed"
         response["msg"] = "there is no such username"
     return JsonResponse(response)
@@ -154,8 +147,8 @@ def change_password(request):
     username = payload.get("username")
     old_password = payload.get("oldpwd")
     new_password = payload.get("newpwd")
-    user = User.objects.get(username=username)
-    if user is not None:
+    try:
+        user = User.objects.get(username=username)
         validation = user.check_password(old_password)
         new_validation = user.check_password(new_password)
         if validation is False:
@@ -169,7 +162,8 @@ def change_password(request):
             user.save()
             response["status"] = "success"
             response["msg"] = "the password has been reset"
-    else:
+
+    except Exception as e:
         response["status"] = "failed"
         response["msg"] = "no such user"
     return JsonResponse(response)
@@ -191,8 +185,8 @@ def modify_basic_information(request):
     gender = payload.get("gender")
     username = payload.get("username")
     email = payload.get("email")
-    user = User.objects.get(username=username)
-    if user is not None:
+    try:
+        user = User.objects.get(username=username)
         if check(email) is False:
             response["status"] = "failed"
             response["msg"] = "invalid email address"
@@ -204,8 +198,25 @@ def modify_basic_information(request):
             user.save()
             response["status"] = "success"
             response["msg"] = "the profile information has been reset"
-    else:
+    except Exception as e:
+        print(e)
         response["status"] = "failed"
         response["msg"] = "no such user"
     return JsonResponse(response)
 
+
+@require_http_methods(["POST"])
+def view_profile(request):
+    response = {}
+    payload = json.loads(request.body.decode())
+    username = payload.get("username")
+    try:
+        user = User.objects.get(username=username)
+        info = {"email": user.email, "username": username, "gender": user.gender, "department": user.department}
+        response["info"] = info
+        response["status"] = "success"
+        response["msg"] = "get information successfully"
+    except Exception as e:
+        response["status"] = "failed"
+        response["msg"] = "no such user"
+    return JsonResponse(response)
