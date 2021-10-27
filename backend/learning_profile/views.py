@@ -218,9 +218,7 @@ def view_profile(request):
     userid = payload.get("user_id")
     try:
         user = User.objects.get(id=userid)
-        print(user)
-        info = {"email": user.email, "username": username, "gender": user.gender, "department": user.department}
-        print(11111)
+        info = {"email": user.email, "username": user.username, "gender": user.gender, "department": user.department}
         response["info"] = info
         response["status"] = "success"
         response["msg"] = "get information successfully"

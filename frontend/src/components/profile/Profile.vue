@@ -6,6 +6,7 @@
     <h></h>
     <el-tabs :tab-position="tabPosition">
       <h1>My Profile</h1>
+<!--      <template slot-scope="scope">-->
       <el-tab-pane label="My Profile">
 
             <el-main>
@@ -16,17 +17,20 @@
 
                 <el-descriptions  column="1">
                   <el-descriptions-item label="username">{{username}}</el-descriptions-item>
-                  <el-descriptions-item label="gender">male</el-descriptions-item>
-                  <el-descriptions-item label="department">FEIT</el-descriptions-item>
+                  <el-descriptions-item label="gender">
+                    <span v-if="gender===1">Male</span>
+                    <span v-else>Female</span>
+                  </el-descriptions-item>
+                  <el-descriptions-item label="department">{{ department }}</el-descriptions-item>
 
-                  <el-descriptions-item label="E-mail">xxx@uni.sydney.edu.au</el-descriptions-item>
+                  <el-descriptions-item label="E-mail">{{ email }}</el-descriptions-item>
                 </el-descriptions>
 
             </el-main>
 
 
           </el-tab-pane>
-
+<!--      </template>-->
     </el-tabs>
   </el-container>
 </template>
@@ -45,19 +49,11 @@ export default {
       // Log In User ID
       user_id: 0,
       username:"unnamed user",
-      user:{},
+      gender:'',
+      department:'',
+      email:'',
       tabPosition: 'left',
       circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
-      form: {
-        name: '',
-        gender: '',
-        department: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      }
     };
 
   },
@@ -84,9 +80,10 @@ export default {
             headers: headers
           })
           .then(response => {
-
-            console.log(response.data);
-            this.user = response.data.info;
+            this.username = response.data.info.username;
+            this.gender = response.data.info.gender;
+            this.department = response.data.info.department;
+            this.email = response.data.info.email;
           });
     }
   }
