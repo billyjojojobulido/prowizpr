@@ -36,6 +36,27 @@
 
 
           </el-tab-pane>
+          <el-tab-pane label="Photo Upload">
+            <h1>Photo Upload</h1>
+            <el-upload
+                class="avatar-uploader"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                list-type="picture-card"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+              <img v-if="uploadUrl" :src="uploadUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <br><br><br>
+            <div class="upload-caution">
+              <span style="font-weight: bold">Caution:</span>
+              Only .jpg or .jpeg files are expected, and the file should not be larger than 2 MB.
+            </div>
+            <el-button type="primary" icon="el-icon-upload2" @click="upload">Upload</el-button>
+
+
+          </el-tab-pane>
           <el-tab-pane label="Profile Setting">
             <h1>Profile Setting</h1>
           </el-tab-pane>
@@ -68,6 +89,7 @@ export default {
       email:'',
       tabPosition: 'left',
       image: "",
+      uploadUrl: "",
     };
 
   },
@@ -88,7 +110,6 @@ export default {
         user_id: this.user_id,
         // username: this.user.username
       }
-      console.log(this.user_id);
       await axios
           .post(url, JSON.stringify(sent), {
             headers: headers
@@ -105,6 +126,50 @@ export default {
     },
     logout: async function(){
       await this.$router.push({name:"Login"})
+    },
+    handleAvatarSuccess(res, file) {
+      this.uploadUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error('Only JPG image is allowed');
+      }
+      if (!isLt2M) {
+        this.$message.error('The image should not exceed 2MB!');
+      }
+      return isJPG && isLt2M;
+    },
+    upload: async function(){
+      let url = "http://127.0.0.1:8000/" + "profile/upload_image";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let sent={
+        user_id: this.user_id,
+        url: this.uploadUrl,
+      }
+      await axios
+          .post(url, JSON.stringify(sent), {
+            headers: headers
+          })
+          .then(response => {
+            if (response.data.msg === "success"){
+              this.$notify({
+                title: 'Success',
+                message: 'Successfully upload',
+                type: 'success'
+              });
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: 'Failed to upload',
+                type: 'warning'
+              });
+            }
+          });
     }
   }
 }
@@ -120,5 +185,26 @@ export default {
   margin-right: 30%;
   align-items: center;
   justify-content: center;
+}
+.avatar-uploader .el-upload {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  justify-content: center;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  color: #8c939d;
+  width: 148px;
+  height: 148px;
+  line-height: 148px;
+  text-align: center;
+}
+.avatar {
+  width: 148px;
+  height: 148px;
+  display: block;
 }
 </style>
