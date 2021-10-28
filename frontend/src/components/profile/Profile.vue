@@ -51,7 +51,12 @@
           <img v-if="uploadUrl" :src="uploadUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
-        <br><br><br>
+        <br>
+        <br>
+        <div class="avatar-uploader">
+          <el-input v-model="uploadUrl"></el-input>
+        </div>
+        <br>
         <div class="upload-caution">
           <span style="font-weight: bold">Caution:</span>
           Only .jpg or .jpeg files are expected, and the file should not be larger than 2 MB.
