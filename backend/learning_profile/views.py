@@ -78,10 +78,10 @@ def random_code(length=6):
 def find_password(request):
     response = {}
     payload = json.loads(request.body.decode())
-    username = payload.get("username")
+    userid = payload.get("user_id")
     verification_code = random_code()
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(id=userid)
         last_email_time = user.email_code_time
         current_time = time.time()
         seconds = int(current_time) - last_email_time
@@ -117,11 +117,11 @@ def find_password(request):
 def verify_password(request):
     response = {}
     payload = json.loads(request.body.decode())
-    username = payload.get("username")
+    userid = payload.get("user_id")
     code = payload.get("code")
     password = payload.get("password")
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(id=userid)
         user_code = user.email_code
         if code != user_code:
             response["status"] = "failed"
@@ -145,13 +145,13 @@ def verify_password(request):
 def change_password(request):
     response = {}
     payload = json.loads(request.body.decode())
-    user_id = payload.get("user_id")
+    userid = payload.get("user_id")
     old_password = payload.get("oldpwd")
     new_password = payload.get("newpwd")
     print(old_password)
     print(new_password)
     try:
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(id=userid)
         validation = user.check_password(old_password)
         new_validation = user.check_password(new_password)
         if validation is False:
@@ -186,10 +186,12 @@ def modify_basic_information(request):
     payload = json.loads(request.body.decode())
     department = payload.get("department")
     gender = payload.get("gender")
-    username= payload.get("username")
+    userid = payload.get("user_id")
     email = payload.get("email")
+    first_name = payload.get("first_name")
+    last_name = payload.get("last_name")
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(id=userid)
         if check(email) is False:
             response["status"] = "failed"
             response["msg"] = "invalid email address"
@@ -198,6 +200,8 @@ def modify_basic_information(request):
             user.gender = gender
             user.email = email
             user.updated_at = timezone.now()
+            user.first_name = first_name
+            user.last_name = last_name
             user.save()
             response["status"] = "success"
             response["msg"] = "the profile information has been reset"
@@ -216,20 +220,19 @@ def view_profile(request):
     try:
         user = User.objects.get(id=userid)
         info = {
-            "first_name": user.first_name,
-            "last_name": user.last_name,
             "email": user.email,
             "username": user.username,
-            "image": user.profile_image is None ,
+            "image": user.profile_image is None,
             "gender": user.gender,
-            "department": user.department
+            "department": user.department,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
         }
         # If user has not uploaded any profile image, use Default one
         if user.profile_image is None:
             info["image"] = DEFAULT_IMAGE_URL
         else:
             info["image"] = user.profile_image
-
         response["info"] = info
         response["status"] = "success"
         response["msg"] = "get information successfully"
