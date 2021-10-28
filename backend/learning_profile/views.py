@@ -12,6 +12,7 @@ from goal_project import settings
 from .forms import CustomUserCreationForm
 
 User = get_user_model()
+DEFAULT_IMAGE_URL = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 
 
 @require_http_methods(["POST"])
@@ -147,6 +148,8 @@ def change_password(request):
     userid = payload.get("user_id")
     old_password = payload.get("oldpwd")
     new_password = payload.get("newpwd")
+    print(old_password)
+    print(new_password)
     try:
         user = User.objects.get(id=userid)
         validation = user.check_password(old_password)
@@ -161,7 +164,7 @@ def change_password(request):
             user.set_password(new_password)
             user.save()
             response["status"] = "success"
-            response["msg"] = "the password has been reset"
+            response["msg"] = "success"
 
     except Exception as e:
         response["status"] = "failed"
@@ -216,15 +219,41 @@ def view_profile(request):
     userid = payload.get("user_id")
     try:
         user = User.objects.get(id=userid)
-        info = {"email": user.email,
-                "username": user.username,
-                "gender": user.gender,
-                "department": user.department,
-                "first_name": user.first_name,
-                "last_name": user.last_name}
+        info = {
+            "email": user.email,
+            "username": user.username,
+            "image": user.profile_image is None,
+            "gender": user.gender,
+            "department": user.department,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+        }
+        # If user has not uploaded any profile image, use Default one
+        if user.profile_image is None:
+            info["image"] = DEFAULT_IMAGE_URL
+        else:
+            info["image"] = user.profile_image
         response["info"] = info
         response["status"] = "success"
         response["msg"] = "get information successfully"
+    except Exception as e:
+        response["status"] = "failed"
+        response["msg"] = "no such user"
+    return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def upload_image(request):
+    response = {}
+    payload = json.loads(request.body.decode())
+    userid = payload.get("user_id")
+    url = payload.get("url")
+    try:
+        user = User.objects.get(id=userid)
+        user.profile_image = url
+        user.save()
+        response["status"] = "success"
+        response["msg"] = "success"
     except Exception as e:
         response["status"] = "failed"
         response["msg"] = "no such user"
