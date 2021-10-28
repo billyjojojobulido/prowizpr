@@ -162,6 +162,7 @@ export default {
                 message: 'Successfully upload',
                 type: 'success'
               });
+              this.image = this.uploadUrl
             } else {
               this.$notify({
                 title: 'Warning',
