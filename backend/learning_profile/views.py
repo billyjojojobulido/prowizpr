@@ -235,3 +235,20 @@ def view_profile(request):
         response["status"] = "failed"
         response["msg"] = "no such user"
     return JsonResponse(response)
+
+@require_http_methods(["POST"])
+def upload_image(request):
+    response = {}
+    payload = json.loads(request.body.decode())
+    userid = payload.get("user_id")
+    url = payload.get("url")
+    try:
+        user = User.objects.get(id=userid)
+        user.profile_image = url
+        user.save()
+        response["status"] = "success"
+        response["msg"] = "success"
+    except Exception as e:
+        response["status"] = "failed"
+        response["msg"] = "no such user"
+    return JsonResponse(response)
