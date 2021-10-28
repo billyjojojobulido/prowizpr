@@ -60,8 +60,35 @@
           <el-tab-pane label="Profile Setting">
             <h1>Profile Setting</h1>
           </el-tab-pane>
-          <el-tab-pane label="Account Security">
-            <h1>Account Security</h1>
+          <el-tab-pane label="Change Password">
+            <h1>Change Password</h1>
+            <div class="change-password-form">
+              <el-form
+                  :model="password_model"
+                  :rules="password_rules"
+                  ref="form">
+
+                <!--    Old Password Specify    -->
+                <el-form-item label="Old Password">
+                  <el-input v-model="password_model.old_password" placeholder="Old Password" type="password"></el-input>
+                </el-form-item>
+                <!--    New Password Specify    -->
+                <el-form-item label="New Password">
+                  <el-input v-model="password_model.new_password" placeholder="New Password" type="password"></el-input>
+                </el-form-item>
+                <!--    Input Password Again to Confirm    -->
+                <el-form-item label="Confirm Password">
+                  <el-input v-model="password_model.new_password_verify" placeholder="Confirm Password" type="password"></el-input>
+                </el-form-item>
+                <el-button
+                    :loading="loading"
+                    type="primary"
+                    block
+                    @click="changePassword"
+                >Submit</el-button>
+              </el-form>
+
+            </div>
           </el-tab-pane>
     </el-tabs>
 
@@ -90,6 +117,31 @@ export default {
       tabPosition: 'left',
       image: "",
       uploadUrl: "",
+      password_model: {
+        old_password: "",
+        new_password: "",
+        new_password_verify: "",
+      },
+      password_rules:{
+        old_password: [
+          {
+            required: true,
+            message: "You have to enter the old password to authenticate!",
+            trigger: "blur"
+          },
+        ],
+        new_password: [
+          { required: true,
+            message: "New password is required",
+            trigger: "blur" },
+        ],
+        new_password_verify: [
+          { required: true,
+            message: "You have to type in the password again to verify it",
+            trigger: "blur" },
+        ],
+
+      },
     };
 
   },
@@ -162,10 +214,42 @@ export default {
                 message: 'Successfully upload',
                 type: 'success'
               });
+              this.image = this.uploadUrl
             } else {
               this.$notify({
                 title: 'Warning',
                 message: 'Failed to upload',
+                type: 'warning'
+              });
+            }
+          });
+    },
+    changePassword: async function(){
+      let url = "http://127.0.0.1:8000/" + "profile/changepwd";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let sent={
+        user_id: this.user_id,
+        oldpwd: this.password_model.old_password,
+        newpwd: this.password_model.new_password,
+      }
+      await axios
+          .post(url, JSON.stringify(sent), {
+            headers: headers
+          })
+          .then(response => {
+            if (response.data.msg === "success"){
+              this.$notify({
+                title: 'Success',
+                message: 'The password has been reset',
+                type: 'success'
+              });
+              this.image = this.uploadUrl
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: response.data.msg,
                 type: 'warning'
               });
             }
@@ -206,5 +290,12 @@ export default {
   width: 148px;
   height: 148px;
   display: block;
+}
+.change-password-form{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 </style>
