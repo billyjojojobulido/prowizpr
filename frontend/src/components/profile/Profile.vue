@@ -34,7 +34,7 @@
               >Log Out</el-button>
             </el-main>
 
-
+<!--    Upload Profile Image Tab pane      -->
           </el-tab-pane>
           <el-tab-pane label="Photo Upload">
             <h1>Photo Upload</h1>
@@ -55,11 +55,13 @@
             </div>
             <el-button type="primary" icon="el-icon-upload2" @click="upload">Upload</el-button>
 
-
+<!--     Change Profile Info Tab pane       -->
           </el-tab-pane>
           <el-tab-pane label="Profile Setting">
             <h1>Profile Setting</h1>
           </el-tab-pane>
+
+<!--     Change Password Tab pane           -->
           <el-tab-pane label="Change Password">
             <h1>Change Password</h1>
             <div class="change-password-form">
@@ -80,6 +82,8 @@
                 <el-form-item label="Confirm Password">
                   <el-input v-model="password_model.new_password_verify" placeholder="Confirm Password" type="password"></el-input>
                 </el-form-item>
+
+                <!--    Submit Button    -->
                 <el-button
                     :loading="loading"
                     type="primary"
