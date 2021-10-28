@@ -372,6 +372,7 @@ export default {
 
 <style scoped>
 .profile-container{
+  background-color: aliceblue;
   width: 100%;
   height: 1000px;
 }
