@@ -206,7 +206,7 @@ def modify_basic_information(request):
             user.last_name = last_name
             user.save()
             response["status"] = "success"
-            response["msg"] = "the profile information has been reset"
+            response["msg"] = "success"
     except Exception as e:
         print(e)
         response["status"] = "failed"
