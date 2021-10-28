@@ -145,11 +145,13 @@ def verify_password(request):
 def change_password(request):
     response = {}
     payload = json.loads(request.body.decode())
-    username = payload.get("username")
+    user_id = payload.get("user_id")
     old_password = payload.get("oldpwd")
     new_password = payload.get("newpwd")
+    print(old_password)
+    print(new_password)
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(id=user_id)
         validation = user.check_password(old_password)
         new_validation = user.check_password(new_password)
         if validation is False:
@@ -162,7 +164,7 @@ def change_password(request):
             user.set_password(new_password)
             user.save()
             response["status"] = "success"
-            response["msg"] = "the password has been reset"
+            response["msg"] = "success"
 
     except Exception as e:
         response["status"] = "failed"
