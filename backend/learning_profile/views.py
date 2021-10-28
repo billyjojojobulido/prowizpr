@@ -242,6 +242,7 @@ def view_profile(request):
         response["msg"] = "no such user"
     return JsonResponse(response)
 
+
 @require_http_methods(["POST"])
 def upload_image(request):
     response = {}
