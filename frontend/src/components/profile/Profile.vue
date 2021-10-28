@@ -1,30 +1,32 @@
 <template>
   <el-container class="profile-container">
+<!--  Navigation Bar  -->
     <el-header>
       <NavigationBar></NavigationBar>
     </el-header>
+<!--  Make the Tabs on the left side of the page  -->
     <el-tabs :tab-position="tabPosition">
-
+<!--  Display Profile Information Page  -->
       <el-tab-pane label="My Profile">
         <h1>My Profile</h1>
+        <!--    Display Profile Image    -->
         <el-avatar :size="80" :src=image></el-avatar>
-
         <el-main>
           <div class="profile-info">
+            <!--     Display Personal Information As Form       -->
             <el-descriptions column="1" border size="medium">
               <el-descriptions-item label="First Name">{{profile_form.first_name}}</el-descriptions-item>
               <el-descriptions-item label="Last Name">{{profile_form.last_name}}</el-descriptions-item>
               <el-descriptions-item label="Username">{{profile_form.username}}</el-descriptions-item>
               <el-descriptions-item label="Gender">
-                <span v-if="profile_form.gender===1">Male</span>
-                <span v-else>Female</span>
+                {{genderMap[profile_form.gender]}}
               </el-descriptions-item>
               <el-descriptions-item label="Department">{{ profile_form.department }}</el-descriptions-item>
-
               <el-descriptions-item label="E-mail">{{ profile_form.email }}</el-descriptions-item>
             </el-descriptions>
           </div>
-          <!--    Submit Button    -->
+
+          <!--    Log Out Button    -->
           <br><br><br><br>
           <el-button
               :loading="loading"
@@ -38,6 +40,7 @@
       <!--    Upload Profile Image Tab pane      -->
       <el-tab-pane label="Photo Upload">
         <h1>Photo Upload</h1>
+        <!--    Uploader    -->
         <el-upload
             class="avatar-uploader"
             action="https://jsonplaceholder.typicode.com/posts/"
@@ -57,6 +60,8 @@
 
 <!--     Change Profile Info Tab pane       -->
       </el-tab-pane>
+
+      <!--    Change Profile Information Tab pane      -->
       <el-tab-pane label="Profile Setting">
         <h1>Profile Setting</h1>
 
@@ -66,20 +71,29 @@
             <el-descriptions-item label="First Name">
               <el-input :placeholder="profile_form.first_name" v-model="profile_form.first_name"></el-input>
             </el-descriptions-item>
+            <!--      Last Name Input      -->
             <el-descriptions-item label="Last Name">
               <el-input :placeholder="profile_form.last_name" v-model="profile_form.last_name"></el-input>
             </el-descriptions-item>
+            <!--      Username Section [Not Allowed To Modify]      -->
             <el-descriptions-item label="Username">
               <el-input :placeholder="profile_form.username" v-model="profile_form.username" disabled></el-input>
             </el-descriptions-item>
+            <!--      Gender Selection      -->
             <el-descriptions-item label="Gender">
-              <span v-if="profile_form.gender===1">Male</span>
-              <span v-else>Female</span>
+              <el-select v-model="gender">
+                <el-option v-for="item in genderOptions"
+                           :key="item.value"
+                           :label="item.label"
+                           :value="item.value">
+                </el-option>
+              </el-select>
+              <!--      Department Input      -->
             </el-descriptions-item>
             <el-descriptions-item label="Department">
               <el-input :placeholder="profile_form.department" v-model="profile_form.department"></el-input>
             </el-descriptions-item>
-
+            <!--      Email Input      -->
             <el-descriptions-item label="E-mail">
               <el-input :placeholder="profile_form.email" v-model="profile_form.email"></el-input>
             </el-descriptions-item>
@@ -92,7 +106,7 @@
             type="primary"
             block
             @click="changeSetting"
-        >Log Out</el-button>
+        >Save</el-button>
       </el-tab-pane>
 
 <!--     Change Password Tab pane           -->
@@ -144,16 +158,16 @@ export default {
   },
   data() {
     return {
-      // Log In User ID
-      user_id: 0,
-      tabPosition: 'left',
-      image: "",
-      uploadUrl: "",
+      user_id: 0,          // Log In User ID
+      tabPosition: 'left', // tabs position
+      image: "",           // image to display -- My Profile
+      uploadUrl: "",       // image uploaded   -- Photo Upload
+      gender: "",          // gender - bind to the form
       password_model: {
         old_password: "",
         new_password: "",
         new_password_verify: "",
-      },
+      }, // password model bind to the form of changing pwd
       password_rules:{
         old_password: [
           {
@@ -173,8 +187,8 @@ export default {
             trigger: "blur" },
         ],
 
-      },
-      profile_form: {
+      }, // password rules of changing pwd
+      profile_form: {       // profile model of changing profile information -- Profile Setting
         first_name: "",
         last_name: "",
         username:"unnamed user",
@@ -182,6 +196,17 @@ export default {
         department:'',
         email:'',
       },
+      genderOptions: [      // gender options allowed -- Profile Setting
+        {value:"1", label:"Male"},
+        {value:"2", label:"Female"},
+        {value:"3", label:"Other Gender"},
+      ],
+      // Reflecting GenderCode to corresponding text
+      genderMap:{
+        1: "Male",
+        2: "Female",
+        3: "Other Gender",
+      }
     };
 
   },
@@ -211,6 +236,7 @@ export default {
             this.profile_form.last_name = response.data.info.last_name;
             this.profile_form.username = response.data.info.username;
             this.profile_form.gender = response.data.info.gender;
+            this.gender = this.genderMap[response.data.info.gender];
             this.profile_form.department = response.data.info.department;
             this.profile_form.email = response.data.info.email;
             this.image = response.data.info.image;
@@ -252,12 +278,14 @@ export default {
             headers: headers
           })
           .then(response => {
+            // if upload successfully, then notify the user
             if (response.data.msg === "success"){
               this.$notify({
                 title: 'Success',
                 message: 'Successfully upload',
                 type: 'success'
               });
+              // refresh the image loaded in the website
               this.image = this.uploadUrl
             } else {
               this.$notify({
@@ -268,6 +296,7 @@ export default {
             }
           });
     },
+    // change the password
     changePassword: async function(){
       let url = "http://127.0.0.1:8000/" + "profile/changepwd";
       let headers = {
@@ -283,6 +312,7 @@ export default {
             headers: headers
           })
           .then(response => {
+            // if changed successfully, then notify the user
             if (response.data.msg === "success"){
               this.$notify({
                 title: 'Success',
@@ -298,6 +328,7 @@ export default {
             }
           });
     },
+    // change the profile basic data
     changeSetting: async function(){
       let url = "http://127.0.0.1:8000/" + "profile/modify_profile";
       let headers = {
@@ -306,7 +337,7 @@ export default {
       let sent={
         user_id: this.user_id,
         department: this.profile_form.department,
-        gender: this.profile_form.gender,
+        gender: this.gender,
         email: this.profile_form.email,
         first_name: this.profile_form.first_name,
         last_name: this.profile_form.last_name,
@@ -316,12 +347,16 @@ export default {
             headers: headers
           })
           .then(response => {
+            // if changed successfully, then notify the user
             if (response.data.msg === "success"){
               this.$notify({
                 title: 'Success',
                 message: 'The profile has been changed',
                 type: 'success'
               });
+
+              this.profile_form.gender = this.gender;
+              this.gender = this.genderMap[this.gender];
             } else {
               this.$notify({
                 title: 'Warning',
