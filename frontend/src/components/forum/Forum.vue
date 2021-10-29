@@ -3,7 +3,7 @@
     <el-container>
 <!--  Navigation Bar on the top   -->
       <el-header>
-        <NavigationBar></NavigationBar>
+        <NavigationBar class="navigation"></NavigationBar>
       </el-header>
       <el-container v-loading="loading">
 <!--   Progress Bar on the left     -->
@@ -44,20 +44,21 @@
             </div>
           </template>
         </el-aside>
+
+<!--   Posts List     -->
         <el-main>
 
-          <template>
+          <template class="posts">
             <el-table
                 :data="posts"
                 heigth="250"
-                style="width: 100%">
+                >
               <el-table-column
                   label="Student"
                   width="200">
                 <template slot-scope="scope">
                 <span style="margin-left: 10px" v-if="scope.row.avatar === ''">
                   <!--    Default Avatar     -->
-<!--       TODO to backend          -->
                   <el-avatar src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'></el-avatar>
                 </span>
                   <span v-else>
@@ -368,11 +369,20 @@ export default {
   margin-left: 40px;
   margin-right: 40px;
 }
-
+.navigation{
+  position: fixed;
+  /* to ensure that the navigation bar is always at the top & front */
+  z-index: 9999;
+  width: 100%;
+  margin-top: -10px;
+}
 .progress_panel{
   position: fixed;
 }
-
+.posts{
+  width: 100%;
+  margin-top: 20px;
+}
 h3 {
   margin: 40px 0 0;
 }

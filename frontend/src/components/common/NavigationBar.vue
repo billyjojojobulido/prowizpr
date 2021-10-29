@@ -29,7 +29,6 @@ export default {
         this.$router.push({name:"Goal"});
       }
       else if (key === "3"){
-        // TODO Profile site
         this.$router.push({name:"Profile"});
       }
       else {
