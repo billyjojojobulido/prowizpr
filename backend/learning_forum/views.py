@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
@@ -10,6 +11,7 @@ import learning_forum.utils as utils
 import time
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def show(request):
     first_catch = time.time()   # Timing
@@ -55,6 +57,7 @@ def show(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def retrieve_goal(request):
     first_catch = time.time()   # timing
@@ -116,6 +119,7 @@ def retrieve_goal(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def retrieve_comment(request):
     response = {}
@@ -155,6 +159,7 @@ def retrieve_comment(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def write_comment(request):
     response = {}
@@ -178,6 +183,7 @@ def write_comment(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def report_post(request):
     response = {}
@@ -195,6 +201,7 @@ def report_post(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def like_post(request):
     response = {}
