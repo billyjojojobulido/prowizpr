@@ -3,10 +3,14 @@ import json
 import re
 from random import Random
 from threading import Thread
+
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, get_user_model
+from django.middleware import csrf
+from django.middleware.csrf import get_token
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from goal_project import settings
 from .forms import CustomUserCreationForm
@@ -33,6 +37,7 @@ def register(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def login(request):
     response = {}
@@ -47,6 +52,7 @@ def login(request):
             response["status"] = "failed"
             response["msg"] = "user doesn't exists"
         else:
+            get_token(request)
             response["status"] = "success"
             response["msg"] = "log in"
             response["uid"] = user.id
@@ -60,10 +66,7 @@ def login(request):
 
 @require_http_methods(["POST"])
 def logout(request):
-    response = {}
-    logout(request)
-    response["status"] = "success"
-    response["msg"] = "the user have been logged out"
+    response = {"status": "success", "msg": "the user have been logged out"}
     return JsonResponse(response)
 
 
