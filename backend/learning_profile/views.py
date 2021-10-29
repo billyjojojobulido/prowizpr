@@ -224,6 +224,7 @@ def modify_basic_information(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def view_profile(request):
     response = {}
