@@ -26,6 +26,7 @@ class PostsManager(models.Manager):
                 post.status = const.POST_STATUS_BANNED
                 post.report_times = 0
                 post.save()
+                return True
         except Exception as e:
             print(e)
             return False
