@@ -10,6 +10,7 @@
     <el-menu-item index="1">Forum</el-menu-item>
     <el-menu-item index="2">Goal</el-menu-item>
     <el-menu-item index="3">Profile</el-menu-item>
+    <el-menu-item index="4">Admin</el-menu-item>
   </el-menu>
 
 </template>
@@ -30,6 +31,9 @@ export default {
       }
       else if (key === "3"){
         this.$router.push({name:"Profile"});
+      }
+      else if (key === "4"){
+        this.$router.push({name:"Admin"});
       }
       else {
         this.$router.push("/")
