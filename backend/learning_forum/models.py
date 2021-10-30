@@ -11,6 +11,38 @@ class PostsManager(models.Manager):
         posts = self.all().order_by("-created_at")
         return posts
 
+    # get posts of a user [admin] - access all posts
+    def get_posts_by_uid(self, uid):
+        posts = self.filter(user=uid).order_by("-report_times")
+        return posts
+
+    # ban a post [admin] - clear report times
+    def ban_a_post_by_pid(self, pid):
+        try:
+            post = self.get(pk=pid)
+            if post is None:
+                return False
+            else:
+                post.status = const.POST_STATUS_BANNED
+                post.report_times = 0
+                post.save()
+        except Exception as e:
+            print(e)
+            return False
+
+    # restore a post [admin]
+    def restore_a_post_by_pid(self, pid):
+        try:
+            post = self.get(pk=pid)
+            if post is None:
+                return False
+            else:
+                post.status = const.POST_STATUS_PUBLIC
+                post.save()
+        except Exception as e:
+            print(e)
+            return False
+
     # get posts [standard user] - access only standard posts
     def get_all_posts_desc_public(self):
         # User account has to be active and the posts must be sent in public
