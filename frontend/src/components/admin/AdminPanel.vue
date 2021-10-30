@@ -48,7 +48,7 @@
                 </span>
               <span v-else>
                     <!--    Restore Button     -->
-                <el-button type="success" @click="restoreUser(scope.$index)">Restore</el-button>
+                <el-button type="success" @click="restoreUser(scope.row)">Restore</el-button>
               </span>
             </template>
           </el-table-column>

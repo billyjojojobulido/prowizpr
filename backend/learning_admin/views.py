@@ -127,7 +127,7 @@ def restore_user(request):
         payload = json.loads(request.body.decode())
         uid = payload.get("user_id")
         # Retrieve User
-        user = User.objects.get(pk=uid)
+        user = User.objects.get(pk=uid, is_active=False)
         if user is None:
             # Invalid User Check
             response['status'] = 'failed'
