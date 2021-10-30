@@ -23,7 +23,7 @@ class PostsManager(models.Manager):
             if post is None:
                 return False
             else:
-                post.status = const.POST_STATUS_BANNED
+                post.active = const.POST_STATUS_BANNED
                 post.report_times = 0
                 post.save()
                 return True
@@ -38,8 +38,9 @@ class PostsManager(models.Manager):
             if post is None:
                 return False
             else:
-                post.status = const.POST_STATUS_PUBLIC
+                post.active = const.POST_STATUS_ACTIVE
                 post.save()
+                return True
         except Exception as e:
             print(e)
             return False
@@ -48,7 +49,8 @@ class PostsManager(models.Manager):
     def get_all_posts_desc_public(self):
         # User account has to be active and the posts must be sent in public
         posts = self.filter(
-            status=const.POST_STATUS_PUBLIC,
+            status=const.POST_PUBLISH_STATUS_PUBLIC,
+            active=const.POST_STATUS_ACTIVE,
             user__is_active=const.USER_ACCOUNT_ACTIVE,
         ).order_by("-created_at")
         return posts
@@ -86,6 +88,7 @@ class Posts(models.Model):
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
     likes = models.IntegerField()
     status = models.IntegerField()
+    active = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     content = models.CharField(max_length=255)
@@ -121,7 +124,8 @@ class CommentsManager(models.Manager):
     def get_comments_by_pid_transmit(self, pid):
         comments = self.filter(
             post=pid,
-            post__status=const.POST_STATUS_PUBLIC,
+            post__status=const.POST_PUBLISH_STATUS_PUBLIC,
+            post__active=const.POST_STATUS_ACTIVE,
             user__is_active=const.USER_ACCOUNT_ACTIVE,
         ).order_by("-created_at").values(
             'id',
