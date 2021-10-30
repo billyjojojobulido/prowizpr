@@ -2,7 +2,7 @@
   <el-container class="goal">
     <el-container>
       <el-header>
-        <NavigationBar></NavigationBar>
+        <NavigationBar class="navigation"></NavigationBar>
       </el-header>
       <el-container v-loading="loading">
         <el-aside width=45%>
@@ -405,6 +405,17 @@ export default {
 </script>
 
 <style scoped>
+.goal{
+  margin-left: 40px;
+  margin-right: 40px;
+}
+.navigation{
+  position: fixed;
+  /* to ensure that the navigation bar is always at the top & front */
+  z-index: 9999;
+  width: 100%;
+  margin-top: -10px;
+}
 .item {
   margin-top: 10px;
   margin-right: 40px;
