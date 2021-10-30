@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'learning_profile',
     'learning_goal',
     'learning_forum',
+    'learning_admin',
     'corsheaders',
 ]
 

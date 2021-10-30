@@ -22,6 +22,7 @@ urlpatterns = [
     path('forum/', include('learning_forum.urls')),
     path('goal/', include('learning_goal.urls')),
     path('profile/', include('learning_profile.urls')),
+    path('admins/', include('learning_admin.urls')),
     # path('', include('goal_project.urls')),
 
 ]
