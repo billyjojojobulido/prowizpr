@@ -18,15 +18,23 @@ def get_users(request):
     }
     try:
         # Retrieving Posts data
-        users = User.objects.admin_manage_users()
+        users = User.objects.filter(is_superuser=False)
         print(users)
         for u in users:
             user = {
-                "avatar": u.profile_image,
                 "uid": u.id,
                 "name": utils.get_full_name(u.first_name, u.last_name),
-                "is_active": u.is_active,
             }
+            # Profile Image Null Check
+            if u.profile_image is None:
+                user["avatar"] = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+            else:
+                user["avatar"] = u.profile_image
+            # Status Decode
+            if u.is_active:
+                user["status"] = "Active"
+            else:
+                user["status"] = "Banned"
             response["users"].append(user)
 
         response['status'] = "success"
@@ -73,3 +81,28 @@ def get_posts(request):
         print(e)
     return JsonResponse(response)
 
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def ban_user(request):
+    response = {}
+    try:
+        pass
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to ban user'
+        print(e)
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def restore_user(request):
+    response = {}
+    try:
+        pass
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to restore user'
+        print(e)
+    return JsonResponse(response)
