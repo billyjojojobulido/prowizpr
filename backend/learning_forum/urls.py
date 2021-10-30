@@ -11,4 +11,6 @@ urlpatterns = [
     path('write_comment', views.write_comment, name='write_comment'),
     path('report_post', views.report_post, name='report_post'),
     path('like_post', views.like_post, name='like_post'),
+    path('subscribe_post', views.subscribe_post, name='subscribe_post'),
+    path('unsubscribe_post', views.unsubscribe_post, name='unsubscribe_post'),
 ]
