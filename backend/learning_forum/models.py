@@ -219,9 +219,21 @@ class Like(models.Model):
         verbose_name_plural = 'Like'
 
 
+class SubscriptionManager(models.Manager):
+
+    def is_subscribed(self, pid, uid):
+        try:
+            if self.get(post_id=pid, user_id=uid) is not None:
+                return True
+            return False
+        except Exception as e:
+            return False
+
+
 class Subscription(models.Model):
     user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
     post = models.ForeignKey('Posts', on_delete=models.CASCADE)
+    objects = SubscriptionManager()
 
     def __str__(self):
         return self.user

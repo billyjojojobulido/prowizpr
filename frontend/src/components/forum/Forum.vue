@@ -135,10 +135,24 @@
                       <el-button size="small" type="primary" @click="handleMakeComment()">Comment</el-button>
                     </div>
                   </el-drawer>
+                  <!--       Report Button           -->
                   <el-button
                       size="mini"
                       type="danger"
                       @click="handleReport(scope.$index)" icon="el-icon-warning"></el-button>
+                  <span v-if="scope.row.uid!==user_id">
+                    <!--        No subscription option for my own post            -->
+                    <span v-if="scope.row.subscribed===false">
+                      <el-button
+                          size="mini"
+                          type="primary">subscribe</el-button>
+                    </span>
+                    <span v-else>
+                      <el-button
+                          size="mini"
+                          type="primary">unsubscribe</el-button>
+                    </span>
+                  </span>
                 </template>
               </el-table-column>
             </el-table>

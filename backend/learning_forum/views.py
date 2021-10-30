@@ -34,6 +34,7 @@ def show(request):
         for p in posts:
             ret_p = {
                 "pid": p.id,
+                "uid": p.user_id,
                 "avatar": p.user.profile_image,
                 "name": p.user.first_name + " " + p.user.last_name,
                 "date": utils.time_format(p.created_at),
@@ -41,7 +42,9 @@ def show(request):
                 "is_admin": p.user.is_superuser,
                 "liked": Like.objects.check_post_liked(p.id, uid),  # has the current user liked the post already
                 "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
+                "subscribed": Subscription.objects.is_subscribed(p.id, uid)
             }
+
             response["posts"].append(ret_p)
 
         response['status'] = "success"
