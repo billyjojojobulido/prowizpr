@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
@@ -10,6 +11,7 @@ import time
 from datetime import datetime, date
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def show(request):
     first_catch = time.time()
@@ -47,6 +49,7 @@ def show(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def retrieve_task(request):
     first_catch = time.time()
@@ -106,6 +109,7 @@ def retrieve_task(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def add_goal(request):
     first_catch = time.time()
@@ -143,6 +147,7 @@ def add_goal(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def add_task(request):
     first_catch = time.time()
@@ -173,6 +178,8 @@ def add_task(request):
     print("===========================")
     return JsonResponse(response)
 
+
+@csrf_exempt
 @require_http_methods(["POST"])
 def goal_status(request):
     response = {}
@@ -192,6 +199,7 @@ def goal_status(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def task_status(request):
     response = {}
