@@ -61,6 +61,7 @@ def login(request):
             response["status"] = "success"
             response["msg"] = "log in"
             response["uid"] = user.id
+            response["is_admin"] = user.is_superuser
     except Exception as e:
         response["status"] = "failed"
         response["msg"] = "failed to log in"

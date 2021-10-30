@@ -10,7 +10,7 @@
     <el-menu-item index="1">Forum</el-menu-item>
     <el-menu-item index="2">Goal</el-menu-item>
     <el-menu-item index="3">Profile</el-menu-item>
-    <el-menu-item index="4">Admin</el-menu-item>
+    <el-menu-item index="4" v-if="$store.getters.isAdmin">Admin</el-menu-item>
   </el-menu>
 
 </template>

@@ -84,9 +84,14 @@ export default {
           .then(response => {
             if (response.data.status === "success"){
               this.$store.commit('authenticate', response.data.uid);
+              this.$store.commit('admin_auth', response.data.is_admin);
               this.$router.push({name: 'Forum'});
             } else {
-              alert("Username and password do not match.")
+              this.$notify({
+                title: 'Warning',
+                message: 'Failed To Log In',
+                type: 'warning'
+              });
             }
           });
     },

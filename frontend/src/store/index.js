@@ -7,6 +7,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         authenticated: false,
+        is_admin: false,
         uid: 0,
     },
 
@@ -21,6 +22,9 @@ const store = new Vuex.Store({
             }
             return -1;
         },
+        isAdmin: (state) =>{
+            return state.is_admin
+        }
     },
 
     // mutations
@@ -29,9 +33,13 @@ const store = new Vuex.Store({
             state.authenticated = true;
             state.uid = uid;
         },
+        admin_auth (state, is_admin){
+            state.is_admin = is_admin;
+        },
         logout (state){
             state.authenticated = false;
             state.username = null;
+            state.is_admin = false;
             state.uid = 0;
         }
     }
