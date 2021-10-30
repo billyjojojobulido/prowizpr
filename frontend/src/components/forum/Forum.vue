@@ -92,14 +92,14 @@
                 <template slot-scope="scope">
                   <!--    Like Button    -->
                   <span  v-if="scope.row.liked === 1">
-                  <el-button size="mini"
+                    <el-button size="mini"
                              @click="handleLike(scope.$index, scope.row)"
                              type="warning" icon="el-icon-star-on"></el-button>
-                </span>
+                  </span>
                   <span v-else>
-                  <el-button size="mini"
+                    <el-button size="mini"
                              @click="handleLike(scope.$index, scope.row)" icon="el-icon-star-off"></el-button>
-                </span>
+                  </span>
                   <!--    Comment Button  -->
                   <el-button
                       size="mini"
@@ -145,12 +145,14 @@
                     <span v-if="scope.row.subscribed===false">
                       <el-button
                           size="mini"
-                          type="primary">subscribe</el-button>
+                          type="primary"
+                          @click="subscribe(scope.row)">subscribe</el-button>
                     </span>
                     <span v-else>
                       <el-button
                           size="mini"
-                          type="primary">unsubscribe</el-button>
+                          type="primary"
+                          @click="unsubscribe(scope.row)">unsubscribe</el-button>
                     </span>
                   </span>
                 </template>
@@ -373,7 +375,69 @@ export default {
               });
             }
           })
-    }
+    },
+    subscribe: async function(row){
+      let url = "http://127.0.0.1:8000/" + "forum/subscribe_post";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let send = {
+        user_id: this.user_id,
+        post_id: row.pid,
+      }
+      await axios
+          .post(url, JSON.stringify(send), {
+            headers: headers
+          }).then(response => {
+            if (response.data.status==="success"){
+              this.$notify({
+                title: 'Success',
+                message: response.data.msg,
+                type: 'success'
+              });
+              // Update frontend status
+              row.subscribed = false;
+
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: response.data.msg,
+                type: 'warning'
+              });
+            }
+          })
+    },
+    unsubscribe: async function(row){
+      let url = "http://127.0.0.1:8000/" + "forum/unsubscribe_post";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let send = {
+        user_id: this.user_id,
+        post_id: row.pid,
+      }
+      await axios
+          .post(url, JSON.stringify(send), {
+            headers: headers
+          }).then(response => {
+            if (response.data.status==="success"){
+              this.$notify({
+                title: 'Success',
+                message: response.data.msg,
+                type: 'success'
+              });
+            //  Update frontend status
+              row.subscribed = false;
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: response.data.msg,
+                type: 'warning'
+              });
+            }
+          })
+    },
+
   }
 }
 </script>

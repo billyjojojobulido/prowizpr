@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
@@ -32,6 +31,7 @@ def show(request):
         else:
             posts = Posts.objects.get_all_posts_desc_public()   # standard user
         for p in posts:
+            subscribed = Subscription.objects.is_subscribed(p.id, uid)
             ret_p = {
                 "pid": p.id,
                 "uid": p.user_id,
@@ -42,10 +42,13 @@ def show(request):
                 "is_admin": p.user.is_superuser,
                 "liked": Like.objects.check_post_liked(p.id, uid),  # has the current user liked the post already
                 "goal": p.post_type,  # post_type: 1 -> trivial post, 2 -> goal post
-                "subscribed": Subscription.objects.is_subscribed(p.id, uid)
+                "subscribed": subscribed
             }
 
-            response["posts"].append(ret_p)
+            if subscribed:  # if subscribed, then top it
+                response["posts"].insert(0, ret_p)
+            else:
+                response["posts"].append(ret_p)
 
         response['status'] = "success"
     except Exception as e:
@@ -129,7 +132,6 @@ def retrieve_comment(request):
     try:
         # LOADING PARAM
         payload = json.loads(request.body.decode())
-        print(payload)
         uid = int(payload.get("uid"))  # user id
         pid = int(payload.get("pid"))  # post id
 
@@ -238,13 +240,18 @@ def subscribe_post(request):
         pid = payload.get("post_id")  # post id
 
         # Duplication Check
-        dup = Subscription.objects.get(post_id=pid, user_id=uid)
-        if dup is None:
+        try:
+            dup = Subscription.objects.get(post_id=pid, user_id=uid)
+            if dup is None:
+                # Subscribe
+                Subscription.objects.create(post_id=pid, user_id=uid)
+                response['msg'] = 'subscribed successfully'
+            else:
+                response['msg'] = 'subscription exists'
+        except Exception as e:
             # Subscribe
             Subscription.objects.create(post_id=pid, user_id=uid)
             response['msg'] = 'subscribed successfully'
-        else:
-            response['msg'] = 'subscription exists'
 
         response['status'] = "success"
     except Exception as e:
