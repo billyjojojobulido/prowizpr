@@ -299,7 +299,7 @@ export default {
   margin-left: 40px;
   margin-right: 40px;
   /* to ensure that the navigation bar is always at the top & front */
-  z-index: 9999;
+  z-index: 1;
   width: 100%;
   margin-top: -10px;
 }
