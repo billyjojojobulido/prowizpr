@@ -87,7 +87,20 @@ def get_posts(request):
 def ban_user(request):
     response = {}
     try:
-        pass
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        uid = payload.get("user_id")
+        # Retrieve User
+        user = User.objects.get(pk=uid)
+        if user is None:
+            # Invalid User Check
+            response['status'] = 'failed'
+            response['msg'] = 'No such user'
+        else:
+            # Transform status
+            user.is_active = const.USER_ACCOUNT_BANNED
+            user.save()
+            response['status'] = 'success'
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to ban user'
@@ -100,7 +113,20 @@ def ban_user(request):
 def restore_user(request):
     response = {}
     try:
-        pass
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        uid = payload.get("user_id")
+        # Retrieve User
+        user = User.objects.get(pk=uid)
+        if user is None:
+            # Invalid User Check
+            response['status'] = 'failed'
+            response['msg'] = 'No such user'
+        else:
+            # Transform status
+            user.is_active = const.USER_ACCOUNT_ACTIVE
+            user.save()
+            response['status'] = 'success'
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to restore user'
