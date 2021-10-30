@@ -90,6 +90,8 @@ def ban_user(request):
         # LOADING PARAM
         payload = json.loads(request.body.decode())
         uid = payload.get("user_id")
+        print("haahah")
+        print(uid)
         # Retrieve User
         user = User.objects.get(pk=uid)
         if user is None:
