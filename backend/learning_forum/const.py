@@ -23,11 +23,13 @@ COMMENT_STATUS_ACTIVE = 1   # comments can be display
 COMMENT_STATUS_BANNED = 2   # comments force deleted by admin
 COMMENT_STATUS_DELETE = 3   # comments deleted by user who commented
 
-# posts
-POST_STATUS_PUBLIC = 1   # posts published in public
-POST_STATUS_PRIVATE = 2  # posts published in private
-POST_STATUS_BANNED = 3   # posts banned by admin [could be restored]
-POST_STATUS_DELETE = 4   # posts deleted by owner
+# posts publish
+POST_PUBLISH_STATUS_PUBLIC = 1   # posts published in public
+POST_PUBLISH_STATUS_PRIVATE = 2  # posts published in private
+
+# posts status
+POST_STATUS_ACTIVE = 1      # posts are active
+POST_STATUS_BANNED = 0      # posts are banned by admin
 
 # like
 LIKE_LIKE = 1

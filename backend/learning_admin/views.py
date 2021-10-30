@@ -69,10 +69,19 @@ def get_posts(request):
                 "created_at": utils.time_format(p.created_at),
                 "likes": p.likes,
                 "reports": p.report_times,
-                "status": p.status,
+                "content": p.content,
             }
+            # POST publish status decode
+            if p.status == const.POST_PUBLISH_STATUS_PUBLIC:
+                post["publish"] = "Public"
+            elif p.status == const.POST_PUBLISH_STATUS_PRIVATE:
+                post["publish"] = "Private"
+            # POST status decode
+            if p.active == const.POST_STATUS_ACTIVE:
+                post["status"] = "Active"
+            elif p.active == const.POST_STATUS_BANNED:
+                post["status"] = "Banned"
             response["posts"].append(post)
-
         response['status'] = 'success'
 
     except Exception as e:

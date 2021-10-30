@@ -56,14 +56,68 @@
           <el-table-column
               label="Check"
               width="100">
-            <el-button icon="el-icon-search" @click="getPosts(row)" circle></el-button>
+            <template slot-scope="scope">
+              <el-button icon="el-icon-search" @click="getPosts(scope.$index)" circle></el-button>
+            </template>
           </el-table-column>
         </el-table>
 
-
       </el-aside>
+      <!--  Post Management List : Lists all posts made by the selected user  -->
       <el-main>
+        <el-table
+            :data="posts">
+          <!--     PID     -->
+          <el-table-column
+              prop="pid"
+              label="pid"
+              width="50px"></el-table-column>
+          <!--    Content      -->
+          <el-table-column
+              prop="content"
+              label="Content"></el-table-column>
+          <!--     Create Time     -->
+          <el-table-column
+              prop="created_at"
+              label="Create At"
+              width="100px"></el-table-column>
+          <!--    Likes      -->
+          <el-table-column
+              prop="likes"
+              label="Likes"
+              width="100px"></el-table-column>
+          <!--     Report Times     -->
+          <el-table-column
+              prop="reports"
+              label="Report Times"
+              width="150px"></el-table-column>
+          <!--     Publish Status     -->
+          <el-table-column
+              prop="publish"
+              label="Publish"
+              width="100px"></el-table-column>
+          <!--    Activation Status      -->
+          <el-table-column
+              prop="status"
+              label="Status"
+              width="70px"></el-table-column>
+          <!--    Operations      -->
+          <el-table-column
+              label="Operation">
+            <template slot-scope="scope">
+                <span style="margin-left: 10px" v-if="scope.row.status === 'Banned'">
+                    <!--    Restore Button     -->
+                    <el-button type="success" @click="restorePost(scope.row)">Restore</el-button>
+                </span>
+              <span v-else>
+                  <!--        Ban Button          -->
+                  <el-button type="danger" @click="banPost(scope.row)">Ban</el-button>
+              </span>
+            </template>
+          </el-table-column>
 
+
+        </el-table>
       </el-main>
 
 
@@ -96,7 +150,6 @@ export default {
     // retrieve id of the user who currently logged in
     this.user_id = this.$store.state.uid;
     // load all data, then load the posts management panel of the first user
-    this.getUsers()
     Promise.all([this.getUsers()]).then(()=>
         this.getPosts(0))
   },
@@ -177,12 +230,63 @@ export default {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       };
       await axios
-          .post(url, {user_id: this.posts[index].uid},{
+          .post(url, {user_id: this.users[index].uid},{
             headers: headers
           })
           .then(response => {
             this.posts = response.data.posts;
-            this.loading = false;
+          });
+    },
+    banPost: async function(row){
+      let url = "http://127.0.0.1:8000/" + "admins/ban_post";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      };
+      await axios
+          .post(url, {post_id:row.pid},{
+            headers: headers
+          })
+          .then(response => {
+            if (response.data.status === "success"){
+              this.$notify({
+                title: 'Success',
+                message: 'Banned Successfully',
+                type: 'success'
+              });
+              row.status = "Banned"
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: 'Failed to ban this post',
+                type: 'warning'
+              });
+            }
+          });
+    },
+    restorePost: async function(row){
+      let url = "http://127.0.0.1:8000/" + "admins/restore_post";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      };
+      await axios
+          .post(url, {post_id:row.pid},{
+            headers: headers
+          })
+          .then(response => {
+            if (response.data.status === "success"){
+              this.$notify({
+                title: 'Success',
+                message: 'Restored Successfully',
+                type: 'success'
+              });
+              row.status = "Active"
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: 'Failed to restore this post',
+                type: 'warning'
+              });
+            }
           });
     }
   }
