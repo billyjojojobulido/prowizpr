@@ -48,7 +48,7 @@ class PostsManager(models.Manager):
         # User account has to be active and the posts must be sent in public
         posts = self.filter(
             status=const.POST_STATUS_PUBLIC,
-            user__account_status=const.USER_ACCOUNT_ACTIVE,
+            user__is_active=const.USER_ACCOUNT_ACTIVE,
         ).order_by("-created_at")
         return posts
 
