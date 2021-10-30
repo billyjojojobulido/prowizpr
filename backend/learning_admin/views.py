@@ -133,3 +133,49 @@ def restore_user(request):
         response['msg'] = 'Failed to restore user'
         print(e)
     return JsonResponse(response)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def ban_post(request):
+    response = {}
+    try:
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        pid = payload.get("post_id")
+        print("Banning Post: {}".format(pid))
+        # Ban the post
+        succeed = Posts.objects.ban_a_post_by_pid(pid)
+        if succeed:
+            response['status'] = 'success'
+        else:
+            response['status'] = 'failed'
+            response['msg'] = 'Failed to ban the post'
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to ban post'
+        print(e)
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def restore_post(request):
+    response = {}
+    try:
+        # LOADING PARAM
+        payload = json.loads(request.body.decode())
+        pid = payload.get("post_id")
+
+        # Restore the post
+        succeed = Posts.objects.restore_a_post_by_pid(pid)
+        if succeed:
+            response['status'] = 'success'
+        else:
+            response['status'] = 'failed'
+            response['msg'] = 'Failed to restore the post'
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to restore the post'
+        print(e)
+    return JsonResponse(response)
