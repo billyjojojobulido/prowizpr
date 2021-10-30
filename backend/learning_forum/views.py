@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
-from learning_forum.models import Comments, Posts, Like
+from learning_forum.models import Comments, Posts, Like, Subscription
 from learning_goal.models import Tasks, Goals
 import learning_forum.const as const
 import json
@@ -220,6 +220,57 @@ def like_post(request):
     except Exception as e:
         response['status'] = 'failed'
         response['msg'] = 'Failed to like'
+        print(e)
+
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def subscribe_post(request):
+    response = {}
+    try:
+        payload = json.loads(request.body.decode())
+        uid = payload.get("user_id")
+        pid = payload.get("post_id")  # post id
+
+        # Duplication Check
+        dup = Subscription.objects.get(post_id=pid, user_id=uid)
+        if dup is None:
+            # Subscribe
+            Subscription.objects.create(post_id=pid, user_id=uid)
+            response['msg'] = 'subscribed successfully'
+        else:
+            response['msg'] = 'subscription exists'
+
+        response['status'] = "success"
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to subscribe'
+        print(e)
+
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def unsubscribe_post(request):
+    response = {}
+    try:
+        payload = json.loads(request.body.decode())
+        uid = payload.get("user_id")
+        pid = payload.get("post_id")  # post id
+        # Unsubscribe
+        subscribed = Subscription.objects.get(user_id=uid, post_id=pid)
+        if subscribed is not None:
+            subscribed.delete()
+            response['msg'] = 'Unsubscribe successfully'
+        else:
+            response['msg'] = 'No such subscription'
+        response['status'] = "success"
+    except Exception as e:
+        response['status'] = 'failed'
+        response['msg'] = 'Failed to unsubscribe'
         print(e)
 
     return JsonResponse(response)
