@@ -217,3 +217,15 @@ class Like(models.Model):
     class Meta:
         db_table = 'Likes'
         verbose_name_plural = 'Like'
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey('learning_profile.User', on_delete=models.CASCADE)
+    post = models.ForeignKey('Posts', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        db_table = 'Subscription'
+        verbose_name_plural = 'Subscribe'
