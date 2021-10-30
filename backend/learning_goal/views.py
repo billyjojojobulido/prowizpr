@@ -25,6 +25,7 @@ def show(request):
         uid = payload.get("user")
         # Retrieving Goals data for specific user
         goals = Goals.objects.filter(post__user_id=uid)
+        print(goals)
         for g in goals:
             ret_g = {
                 "gid": g.id,
@@ -188,8 +189,11 @@ def goal_status(request):
         status = payload.get("status")
         goal_id = payload.get("goalID")
         goal = Goals.objects.get(id=goal_id)
+        post = Posts.objects.get(id=goal.post_id)
         goal.publish_status = status
+        post.status = status
         goal.save()
+        post.save()
         response['status'] = 'success'
         response['msg'] = 'successfully update the status of the goal'
     except Exception as e:
