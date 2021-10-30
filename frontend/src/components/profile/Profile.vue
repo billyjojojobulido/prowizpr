@@ -2,7 +2,7 @@
   <el-container class="profile-container">
 <!--  Navigation Bar  -->
     <el-header>
-      <NavigationBar></NavigationBar>
+      <NavigationBar class="navigation"></NavigationBar>
     </el-header>
 <!--  Make the Tabs on the left side of the page  -->
     <el-tabs :tab-position="tabPosition">
@@ -380,6 +380,15 @@ export default {
   background-color: aliceblue;
   width: 100%;
   height: 1000px;
+}
+.navigation{
+  position: fixed;
+  margin-left: 40px;
+  margin-right: 40px;
+  /* to ensure that the navigation bar is always at the top & front */
+  z-index: 9999;
+  width: 100%;
+  margin-top: -10px;
 }
 .profile-info{
   margin-left: 30%;
