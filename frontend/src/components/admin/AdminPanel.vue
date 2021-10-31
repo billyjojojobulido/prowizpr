@@ -4,7 +4,7 @@
     <el-header>
       <NavigationBar class="navigation"></NavigationBar>
     </el-header>
-    <el-container>
+    <el-container v-loading="loading">
       <!--  User Management List : Lists all non-admin users  -->
       <el-aside class="user-management" width="35%">
         <h1>Users Management</h1>
