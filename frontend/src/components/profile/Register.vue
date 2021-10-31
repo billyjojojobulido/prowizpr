@@ -26,9 +26,12 @@
               <el-input v-model="model.verification_code" placeholder="Verification code"></el-input>
             </el-col>
             <el-col :span="1">
-              <el-button type="info" size="small"
-                         @click="open();send()"
-              >Get Verification Code</el-button>
+              <el-button type="info"
+                         size="small"
+                         @click="send"
+                         :disabled="disabled=sendMsgDisabled">
+                <span v-if="sendMsgDisabled">{{"please send after "+time}}</span>
+                <span v-if="!sendMsgDisabled">Send Verification Code</span></el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -53,6 +56,8 @@ export default {
   name: "Register",
   data() {
     return {
+      time: 60, // 发送验证码倒计时
+      sendMsgDisabled: false,
       model:{
         username: "",
         password: "",
@@ -88,18 +93,6 @@ export default {
 
   },
   methods: {
-    open() {
-      this.$alert('We have sent you a verification code, please check your email inbox',
-          'Successfully send', {
-        confirmButtonText: 'OK',
-        callback: action => {
-          this.$message({
-            type: 'info',
-            message: `action: ${ action }`
-          });
-        }
-      });
-    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -116,6 +109,14 @@ export default {
         this.$notify({
           title: 'Warning',
           message: 'Two passwords do not match!',
+          type: 'warning'
+        });
+        return
+      }
+      if(this.model.verification_code === ''){
+        this.$notify({
+          title: 'Warning',
+          message: 'Verification code should not be empty',
           type: 'warning'
         });
         return
@@ -140,14 +141,14 @@ export default {
             if (response.data.status === "success"){
               this.$notify({
                 title: 'Success',
-                message: 'Registered Successfully',
+                message: response.data.msg,
                 type: 'success'
               });
               this.$router.push({name:"Login"})
             } else {
               this.$notify({
                 title: 'Warning',
-                message: 'Failed to register',
+                message: response.data.msg,
                 type: 'warning'
               });
             }
@@ -155,6 +156,24 @@ export default {
 
     },
     send: async function () {
+      let me = this;
+      me.sendMsgDisabled = true;
+      let interval = window.setInterval(function() {
+        if ((me.time--) <= 0) {
+          me.time = 60;
+          me.sendMsgDisabled = false;
+          window.clearInterval(interval);
+        }
+      }, 1000);
+
+      if (this.model.username ===''){
+        this.$notify({
+          title: 'Warning',
+          message: 'There is no user to send code',
+          type: 'warning'
+        });
+        return
+      }
       let url = "http://127.0.0.1:8000/" + "profile/reg_email";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -169,17 +188,27 @@ export default {
           })
           .then(response => {
             if (response.data.status === "success") {
-              this.$notify({
-                title: 'Success',
-                message: 'send Successfully',
-                type: 'success'
-              });
+              this.$alert('We have sent you a verification code, please check your email inbox',
+                  'Successfully send', {
+                    confirmButtonText: 'OK',
+                    callback: action => {
+                      this.$message({
+                        type: 'info',
+                        message: `action: ${ action }`
+                      });
+                    }
+                  });
             } else {
-              this.$notify({
-                title: 'Warning',
-                message: 'Failed to send',
-                type: 'warning'
-              });
+              this.$alert(response.data.msg,
+                  'Failed send', {
+                    confirmButtonText: 'OK',
+                    callback: action => {
+                      this.$message({
+                        type: 'info',
+                        message: `action: ${ action }`
+                      });
+                    }
+                  });
             }
           });
     }
