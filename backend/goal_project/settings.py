@@ -146,3 +146,15 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'kangjian@lightchaser.info'
 EMAIL_HOST_PASSWORD = 'Wbc990121'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION":"redis://redis-17122.c291.ap-southeast-2-1.ec2.cloud.redislabs.com:17122",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POLL_KWARGS": {"max_connections": 30},
+            "PASSWORD": "usyd3609"
+        }
+    }
+}

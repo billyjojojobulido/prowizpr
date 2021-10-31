@@ -13,5 +13,5 @@ urlpatterns = [
     path('modify_profile', views.modify_basic_information, name='modify_profile'),
     path('information', views.view_profile, name='information'),
     path('upload_image', views.upload_image, name='upload_image'),
-    path('flush', views.test, name='flush')
+    path('reg_email', views.register_email, name='reg_email')
 ]
