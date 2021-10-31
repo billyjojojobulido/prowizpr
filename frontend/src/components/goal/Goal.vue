@@ -151,6 +151,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       goals: [],
       posts: [],
       todo: [],

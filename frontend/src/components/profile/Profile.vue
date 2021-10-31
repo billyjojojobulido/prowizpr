@@ -5,7 +5,7 @@
       <NavigationBar class="navigation"></NavigationBar>
     </el-header>
 <!--  Make the Tabs on the left side of the page  -->
-    <el-tabs :tab-position="tabPosition">
+    <el-tabs :tab-position="tabPosition" v-loading="loading">
 <!--  Display Profile Information Page  -->
       <el-tab-pane label="My Profile">
         <h1>My Profile</h1>
@@ -163,6 +163,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       user_id: 0,          // Log In User ID
       tabPosition: 'left', // tabs position
       image: "",           // image to display -- My Profile
@@ -245,6 +246,7 @@ export default {
             this.profile_form.department = response.data.info.department;
             this.profile_form.email = response.data.info.email;
             this.image = response.data.info.image;
+            this.loading = false;
           });
     },
     logout: async function(){
