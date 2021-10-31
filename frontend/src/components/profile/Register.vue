@@ -6,26 +6,33 @@
           :model="model"
           :rules="rules"
           class="register-form"
-          ref="form">
+          ref="model">
         <!--    Username Input     -->
-        <el-form-item label="Username">
+        <el-form-item label="Username" prop="username">
           <el-input v-model="model.username" placeholder="Username"></el-input>
         </el-form-item>
         <!--    Password Input    -->
-        <el-form-item label="Password">
+        <el-form-item label="Password" prop="password">
           <el-input v-model="model.password" placeholder="Password" type="password"></el-input>
         </el-form-item>
         <!--    Input Password Again to Confirm    -->
-        <el-form-item label="Confirm Password">
+        <el-form-item label="Confirm Password" prop="password_verify">
           <el-input v-model="model.password_verify" placeholder="Confirm Password" type="password"></el-input>
+        </el-form-item>
+        <el-form-item label="Verification code"  prop="verification_code">
+          <el-button type="info" size="mini"
+                     @click="open();verify()"
+          >Get your Verification code</el-button>
+          <el-input v-model="model.verification_code" placeholder="Verification code"></el-input>
+
         </el-form-item>
         <!--    Submit Button    -->
         <el-button
             :loading="loading"
             type="primary"
             block
-            @click="register"
-        >Sign Up</el-button>
+            @click="submitForm('model')"
+        >Sign up</el-button>
 
       </el-form>
     </el-card>
@@ -44,6 +51,7 @@ export default {
         username: "",
         password: "",
         password_verify: "",
+        verification_code:'',
       },
       rules:{
         username: [
@@ -63,11 +71,39 @@ export default {
             message: "You have to type in the password again to verify it",
             trigger: "blur" },
         ],
+        verification_code: [
+          {required: true,
+            message: "Verification code is required",
+            trigger: "blur" },
+        ]
 
       },
     };
+
   },
   methods: {
+    open() {
+      this.$alert('We have sent you a verification code, please check your email inbox',
+          'Successfully send', {
+        confirmButtonText: 'OK',
+        callback: action => {
+          this.$message({
+            type: 'info',
+            message: `action: ${ action }`
+          });
+        }
+      });
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // this.register();
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
     register: async function (){
       // Verify the two passwords
       if (this.model.password !== this.model.password_verify){
@@ -78,6 +114,7 @@ export default {
         });
         return
       }
+      console.assert(this.model.username)
       // Send the Sign Up request to the backend
       let url = "http://127.0.0.1:8000/" + "profile/register";
       let headers = {
@@ -111,6 +148,7 @@ export default {
           });
 
     },
+    verify: async function (){}
   }
 };
 </script>
