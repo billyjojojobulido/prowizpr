@@ -1,9 +1,11 @@
 <template>
-    <el-container v-loading="loading">
+    <el-container>
 <!--  Navigation Bar on the top   -->
-      <NavigationBar class="navigation"></NavigationBar>
+      <el-header style="padding-left: 0">
+        <NavigationBar class="navigation"></NavigationBar>
+      </el-header>
 
-      <el-container>
+      <el-container v-loading="loading">
 <!--   Progress Bar on the left     -->
         <el-aside width=35%>
           <template>
@@ -44,7 +46,7 @@
         </el-aside>
 
 <!--   Posts List     -->
-        <el-main>
+        <el-main >
 
           <template class="posts">
             <el-table
@@ -444,7 +446,7 @@ export default {
   position: fixed;
   /* to ensure that the navigation bar is always at the top & front */
   z-index: 1;
-  width: 98%;
+  width: 100%;
   margin-top: -10px;
 }
 .progress_panel{

@@ -1,136 +1,134 @@
 <template>
-  <el-container class="goal">
-    <el-container>
-      <el-header>
-        <NavigationBar class="navigation"></NavigationBar>
-      </el-header>
-      <el-container v-loading="loading">
-        <el-aside width=45%>
-          <template>
-            <div class="progress_panel">
-              <el-progress type="dashboard" :percentage="progress.percentage" :color="progress.color"></el-progress>
-              <br>
-              <span class="progress">
-              {{progress.info}}
-            </span>
-              <h2>TODO List</h2>
-              <hr>
-              <el-table
-                  :data="todo"
-                  style="width: 100%">
-                <el-table-column
-                    prop="activity"
-                    label="Activity"
-                    width="170">
-                </el-table-column>
-                <el-table-column
-                    prop="due"
-                    label="Due Date"
-                    width="95">
-                </el-table-column>
-                <el-table-column
-                    prop="progress"
-                    label="Progress"
-                    width="600">
-                  <template slot-scope="scope">
-                    <el-radio-group v-model="scope.row.progress" size="mini" @change="changeProgressStatus($event,scope.row.tid)">
-                      <el-radio-button label="To Do">To Do</el-radio-button>
-                      <el-radio-button label="In Progress">in Progress</el-radio-button>
-                      <el-radio-button label="Done">Done</el-radio-button>
-                    </el-radio-group>
-                  </template>
-                </el-table-column>
-
-              </el-table>
-            </div>
-          </template>
-          <!--Add Task-->
-          <el-button type="text" @click="dialogFormVisible1 = true">Add Task</el-button>
-
-          <el-dialog title="Add Task" :visible.sync="dialogFormVisible1">
-            <el-form :model="taskForm">
-              <el-form-item label="Activity" :label-width="taskFormLabelWidth">
-                <el-input v-model="taskForm.task_to_write" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="Due Date" :label-width="taskFormLabelWidth">
-                <el-col :span="11">
-                  <el-date-picker type="date" placeholder="choose date" v-model="taskForm.date1"
-                                  value-format="yyyy-MM-dd 00:00:00.000000" style="width: 100%;"></el-date-picker>
-                </el-col>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogFormVisible1 = false">Cancel</el-button>
-              <el-button type="primary" @click=" handleAddTask(); dialogFormVisible1 = false">OK</el-button>
-            </div>
-          </el-dialog>
-        </el-aside>
-        <el-main>
-
-          <template>
+  <el-container>
+    <el-header  style="padding-left: 0">
+      <NavigationBar class="navigation"></NavigationBar>
+    </el-header>
+    <el-container v-loading="loading" class="goal">
+      <el-aside width=45%>
+        <template>
+          <div class="progress_panel">
+            <el-progress type="dashboard" :percentage="progress.percentage" :color="progress.color"></el-progress>
+            <br>
+            <span class="progress">
+            {{progress.info}}
+          </span>
+            <h2>TODO List</h2>
+            <hr>
             <el-table
-                :data="goals"
-                heigth="250"
+                :data="todo"
                 style="width: 100%">
               <el-table-column
-                  label="Update time"
-                  width="150">
-                <template slot-scope="scope">
-                  {{scope.row.date}}
-                  <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Check Goal</el-button>
-                </template>
-                <!--  POSTS SECTION    -->
+                  prop="activity"
+                  label="Activity"
+                  width="170">
               </el-table-column>
               <el-table-column
-                  label="description"
-                  width="150">
-                <template slot-scope="scope">
-                  {{scope.row.description}}
-                </template>
+                  prop="due"
+                  label="Due Date"
+                  width="95">
               </el-table-column>
-              <el-table-column label="Likes" width="100">
+              <el-table-column
+                  prop="progress"
+                  label="Progress"
+                  width="600">
                 <template slot-scope="scope">
-                  <!--    show likes    -->
-                  <span  v-if="scope.row.liked === 0">
-                  <el-badge :value="0" class = 'item'  type = "primary" size = 'mini'>
-                    <i class="el-icon-star-off"></i>
-                  </el-badge>
-                </span>
-                  <span v-else>
-                  <el-badge :value= "scope.row.liked" class = 'item'  type = "primary" size = 'mini'>
-                    <i class="el-icon-star-off" ></i>
-                  </el-badge>
-                </span>
-                </template>
-              </el-table-column>
-              <!--  publish status-->
-              <el-table-column label="Publish status">
-                <template slot-scope="scope">
-                  <el-radio-group v-model="scope.row.publish" size="mini" @change="changePublishStatus($event,scope.row.gid)">
-
-                    <el-radio-button label="Public" ></el-radio-button>
-                    <el-radio-button label="Private" ></el-radio-button>
+                  <el-radio-group v-model="scope.row.progress" size="mini" @change="changeProgressStatus($event,scope.row.tid)">
+                    <el-radio-button label="To Do">To Do</el-radio-button>
+                    <el-radio-button label="In Progress">in Progress</el-radio-button>
+                    <el-radio-button label="Done">Done</el-radio-button>
                   </el-radio-group>
                 </template>
               </el-table-column>
-            </el-table>
-            <!--Add Goal-->
-            <el-button type="text" @click=" getPosts(); dialogFormVisible2 = true">Add Goal</el-button>
 
-            <el-dialog title="Add Goal" :visible.sync="dialogFormVisible2">
-              <el-form :model="goalForm">
-                <el-form-item label="Description" :label-width="goalFormLabelWidth">
-                  <el-input v-model="goalForm.goal_to_write" autocomplete="off"></el-input>
-                </el-form-item>
-              </el-form>
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible2 = false">Cancel</el-button>
-                <el-button type="primary" @click=" handleAddGoal(); dialogFormVisible2 = false">OK</el-button>
-              </div>
-            </el-dialog>
-          </template>
-        </el-main>
-      </el-container>
+            </el-table>
+          </div>
+        </template>
+        <!--Add Task-->
+        <el-button type="text" @click="dialogFormVisible1 = true">Add Task</el-button>
+
+        <el-dialog title="Add Task" :visible.sync="dialogFormVisible1">
+          <el-form :model="taskForm">
+            <el-form-item label="Activity" :label-width="taskFormLabelWidth">
+              <el-input v-model="taskForm.task_to_write" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="Due Date" :label-width="taskFormLabelWidth">
+              <el-col :span="11">
+                <el-date-picker type="date" placeholder="choose date" v-model="taskForm.date1"
+                                value-format="yyyy-MM-dd 00:00:00.000000" style="width: 100%;"></el-date-picker>
+              </el-col>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible1 = false">Cancel</el-button>
+            <el-button type="primary" @click=" handleAddTask(); dialogFormVisible1 = false">OK</el-button>
+          </div>
+        </el-dialog>
+      </el-aside>
+      <el-main>
+
+        <template>
+          <el-table
+              :data="goals"
+              heigth="250"
+              style="width: 100%">
+            <el-table-column
+                label="Update time"
+                width="150">
+              <template slot-scope="scope">
+                {{scope.row.date}}
+                <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Check Goal</el-button>
+              </template>
+              <!--  POSTS SECTION    -->
+            </el-table-column>
+            <el-table-column
+                label="description"
+                width="150">
+              <template slot-scope="scope">
+                {{scope.row.description}}
+              </template>
+            </el-table-column>
+            <el-table-column label="Likes" width="100">
+              <template slot-scope="scope">
+                <!--    show likes    -->
+                <span  v-if="scope.row.liked === 0">
+                <el-badge :value="0" class = 'item'  type = "primary" size = 'mini'>
+                  <i class="el-icon-star-off"></i>
+                </el-badge>
+              </span>
+                <span v-else>
+                <el-badge :value= "scope.row.liked" class = 'item'  type = "primary" size = 'mini'>
+                  <i class="el-icon-star-off" ></i>
+                </el-badge>
+              </span>
+              </template>
+            </el-table-column>
+            <!--  publish status-->
+            <el-table-column label="Publish status">
+              <template slot-scope="scope">
+                <el-radio-group v-model="scope.row.publish" size="mini" @change="changePublishStatus($event,scope.row.gid)">
+
+                  <el-radio-button label="Public" ></el-radio-button>
+                  <el-radio-button label="Private" ></el-radio-button>
+                </el-radio-group>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!--Add Goal-->
+          <el-button type="text" @click=" getPosts(); dialogFormVisible2 = true">Add Goal</el-button>
+
+          <el-dialog title="Add Goal" :visible.sync="dialogFormVisible2">
+            <el-form :model="goalForm">
+              <el-form-item label="Description" :label-width="goalFormLabelWidth">
+                <el-input v-model="goalForm.goal_to_write" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible2 = false">Cancel</el-button>
+              <el-button type="primary" @click=" handleAddGoal(); dialogFormVisible2 = false">OK</el-button>
+            </div>
+          </el-dialog>
+        </template>
+      </el-main>
     </el-container>
   </el-container>
 </template>
