@@ -11,7 +11,6 @@ class User(AbstractUser):
     gender = models.IntegerField(blank=True, null=True)
     department = models.CharField(max_length=255, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
-    email_code = models.CharField(max_length=10, blank=True, null=True)
     email_code_time = models.IntegerField(blank=True, null=False, default=0)
 
     class Meta:
