@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from "vuex-persistedstate"
 
 Vue.use(Vuex)
 
@@ -10,6 +11,12 @@ const store = new Vuex.Store({
         is_admin: false,
         uid: 0,
     },
+
+    plugins:[
+      createPersistedState({
+          storage: window.localStorage
+      })
+    ],
 
     // getters
     getters: {
