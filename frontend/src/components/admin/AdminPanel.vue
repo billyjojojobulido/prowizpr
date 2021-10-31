@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <!--  Navigation Bar on the top   -->
-    <el-header>
+    <el-header style="padding-left: 0">
       <NavigationBar class="navigation"></NavigationBar>
     </el-header>
     <el-container v-loading="loading">

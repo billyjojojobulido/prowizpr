@@ -1,7 +1,7 @@
 <template>
   <el-container class="profile-container">
 <!--  Navigation Bar  -->
-    <el-header>
+    <el-header  style="padding-left: 0; padding-top: 0">
       <NavigationBar class="navigation"></NavigationBar>
     </el-header>
 <!--  Make the Tabs on the left side of the page  -->
@@ -385,8 +385,6 @@ export default {
 }
 .navigation{
   position: fixed;
-  margin-left: 40px;
-  margin-right: 40px;
   /* to ensure that the navigation bar is always at the top & front */
   z-index: 9999;
   width: 100%;
