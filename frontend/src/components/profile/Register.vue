@@ -19,19 +19,25 @@
         <el-form-item label="Confirm Password" prop="password_verify">
           <el-input v-model="model.password_verify" placeholder="Confirm Password" type="password"></el-input>
         </el-form-item>
-        <el-form-item label="Verification code"  prop="verification_code">
-          <el-button type="info" size="mini"
-                     @click="open();verify()"
-          >Get your Verification code</el-button>
-          <el-input v-model="model.verification_code" placeholder="Verification code"></el-input>
 
+        <el-form-item label="Verification code"  prop="verification_code" >
+          <el-row :gutter="10">
+            <el-col :span="15">
+              <el-input v-model="model.verification_code" placeholder="Verification code"></el-input>
+            </el-col>
+            <el-col :span="1">
+              <el-button type="info" size="small"
+                         @click="open();send()"
+              >Get Verification Code</el-button>
+            </el-col>
+          </el-row>
         </el-form-item>
         <!--    Submit Button    -->
         <el-button
             :loading="loading"
             type="primary"
             block
-            @click="submitForm('model')"
+            @click="submitForm('model');register()"
         >Sign up</el-button>
 
       </el-form>
@@ -114,7 +120,6 @@ export default {
         });
         return
       }
-      console.assert(this.model.username)
       // Send the Sign Up request to the backend
       let url = "http://127.0.0.1:8000/" + "profile/register";
       let headers = {
@@ -125,9 +130,10 @@ export default {
       form.append("email", this.model.username + "@uni.sydney.edu.au")
       form.append("password1", this.model.password)
       form.append("password2", this.model.password_verify)
+      form.append("verify_code",this.model.verification_code)
 
       await axios
-          .post(url, form, {
+          .post(url, form,{
             headers: headers
           })
           .then(response => {
@@ -141,14 +147,42 @@ export default {
             } else {
               this.$notify({
                 title: 'Warning',
-                message: 'Failed to Change',
+                message: 'Failed to register',
                 type: 'warning'
               });
             }
           });
 
     },
-    verify: async function (){}
+    send: async function () {
+      let url = "http://127.0.0.1:8000/" + "profile/reg_email";
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      }
+      let send = {
+        username:this.model.username,
+        email: this.model.username + "@uni.sydney.edu.au"
+      }
+      await axios
+          .post(url, JSON.stringify(send), {
+            headers: headers
+          })
+          .then(response => {
+            if (response.data.status === "success") {
+              this.$notify({
+                title: 'Success',
+                message: 'send Successfully',
+                type: 'success'
+              });
+            } else {
+              this.$notify({
+                title: 'Warning',
+                message: 'Failed to send',
+                type: 'warning'
+              });
+            }
+          });
+    }
   }
 };
 </script>
