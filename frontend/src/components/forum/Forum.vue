@@ -1,11 +1,9 @@
 <template>
-  <el-container class="forum">
-    <el-container>
+    <el-container v-loading="loading">
 <!--  Navigation Bar on the top   -->
-      <el-header>
-        <NavigationBar class="navigation"></NavigationBar>
-      </el-header>
-      <el-container v-loading="loading">
+      <NavigationBar class="navigation"></NavigationBar>
+
+      <el-container>
 <!--   Progress Bar on the left     -->
         <el-aside width=35%>
           <template>
@@ -162,7 +160,6 @@
         </el-main>
       </el-container>
     </el-container>
-  </el-container>
 </template>
 
 
@@ -443,23 +440,21 @@ export default {
 </script>
 
 <style scoped>
-.forum{
-  margin-left: 40px;
-  margin-right: 40px;
-}
 .navigation{
   position: fixed;
   /* to ensure that the navigation bar is always at the top & front */
   z-index: 1;
-  width: 100%;
+  width: 98%;
   margin-top: -10px;
 }
 .progress_panel{
   position: fixed;
+  margin-left: 40px;
 }
 .posts{
   width: 100%;
   margin-top: 20px;
+  margin-right: 100px;
 }
 h3 {
   margin: 40px 0 0;
