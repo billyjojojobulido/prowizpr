@@ -128,6 +128,7 @@ def random_code(length=6):
     return rand_str
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def find_password(request):
     response = {}
@@ -168,6 +169,7 @@ def find_password(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def verify_password(request):
     response = {}
@@ -196,6 +198,7 @@ def verify_password(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def change_password(request):
     response = {}
@@ -235,6 +238,7 @@ def check(address):
         return False
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def modify_basic_information(request):
     response = {}
@@ -299,6 +303,7 @@ def view_profile(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def upload_image(request):
     response = {}
