@@ -1,13 +1,14 @@
 import time
 import json
 import re
+from datetime import datetime, timedelta
 from random import Random
 from threading import Thread
 
+from django.core.cache import cache
 from django.core.mail import send_mail
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, get_user_model, logout
-from django.middleware import csrf
 from django.middleware.csrf import get_token
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -18,28 +19,68 @@ from .forms import CustomUserCreationForm
 User = get_user_model()
 DEFAULT_IMAGE_URL = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def register(request):
     response = {}
-    form = CustomUserCreationForm(data=request.POST)
-    print(request.POST)
-    if form.is_valid():
-        new_user = form.save()
-        response["status"] = "success"
-        response["msg"] = "The user has successfully registered"
-    else:
-        error_info = form.errors.as_json()
-        data = json.loads(error_info)
+    verification_code = request.POST["verify_code"]
+    username = request.POST["username"]
+    saved_code = cache.get("reg_" + username)
+    if saved_code != verification_code:
         response["status"] = "failed"
-        response["msg"] = tuple(data.items())[0][1]
-        print(data)
+        response["msg"] = "verification code does not match"
+    else:
+        form = CustomUserCreationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            response["status"] = "success"
+            response["msg"] = "The user has successfully registered"
+            cache.delete("reg_" + username)
+        else:
+            error_info = form.errors.as_json()
+            data = json.loads(error_info)
+            response["status"] = "failed"
+            response["msg"] = tuple(data.items())[0][1]
     return JsonResponse(response)
 
 
-def test(request):
-    request.session.flush()
-    return HttpResponse("slushed")
+@csrf_exempt
+@require_http_methods(["POST"])
+def register_email(request):
+    response = {}
+    try:
+        payload = json.loads(request.body.decode())
+        username = payload.get("username")
+        email = payload.get("email")
+        user = User.objects.filter(username=username)
+        if len(user) > 0:
+            response["status"] = "failed"
+            response["msg"] = "this username has been registered"
+            return JsonResponse(response)
+
+        code = random_code()
+        email_thread = Thread(target=send_mail, args=(
+            "reset your password",
+            "the verification code for the study forum is %s" % code,
+            settings.EMAIL_HOST_USER,
+            [email, ]
+        ))
+
+        email_thread.start()
+        key = "reg_" + username
+        cache.set(key, code, 60)
+        response["code"] = code
+        response["status"] = "success"
+        response["msg"] = "verification code successfully saved"
+        res = JsonResponse(response)
+        res.set_cookie("expire_time", datetime.now() + timedelta(seconds=60), max_age=60)
+        return res
+    except Exception as e:
+        print(e)
+        response["status"] = "failed"
+        response["msg"] = "redis internal error, check the connection"
+        return JsonResponse(response)
 
 
 @csrf_exempt
@@ -102,6 +143,8 @@ def find_password(request):
             response["time"] = seconds
             return JsonResponse(response)
 
+        key = "pwd_" + user.username
+        cache.set(key, verification_code, 60)
         email_thread = Thread(target=send_mail, args=(
             "reset your password",
             "the verification code for the study forum is %s" % verification_code,
@@ -109,7 +152,6 @@ def find_password(request):
             [user.email, ]
         ))
         email_thread.start()
-        user.email_code = verification_code
         user.email_code_time = time.time()
         user.save()
         response["status"] = "success"
@@ -133,7 +175,7 @@ def verify_password(request):
     password = payload.get("password")
     try:
         user = User.objects.get(id=userid)
-        user_code = user.email_code
+        user_code = cache.get("pwd_" + user.username)
         if code != user_code:
             response["status"] = "failed"
             response["msg"] = "verification code does not match"
