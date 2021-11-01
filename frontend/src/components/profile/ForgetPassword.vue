@@ -1,6 +1,13 @@
 <template>
   <div class="forget-password-panel">
     <el-card>
+      <el-button
+          class="back-button"
+          type="info" round
+          icon="el-icon-arrow-left"
+          @click="back"
+      ></el-button>
+      <br>
       <h2>Forget Password</h2>
       <el-form
           :model="model"
@@ -87,6 +94,9 @@ export default {
     };
   },
   methods: {
+    back: async function (){
+      await this.$router.push({name:"Login"});
+    },
     sendCode: async function(){
       let url = "http://127.0.0.1:8000/" + "profile/password";
       let headers = {
@@ -169,13 +179,17 @@ export default {
   justify-content: center;
   align-items: center;
   font-family: ManropeRegular;
-  background-color:  antiquewhite;
+  background-color: cornflowerblue;
   width: 100%;
   height: 1000px;
   border: 2px solid black;
 }
+.back-button{
+  float: left;
+}
 
 .forget-password-form{
+  opacity: 0.9;
   margin: 10px 100px;
 }
 

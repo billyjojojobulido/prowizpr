@@ -133,7 +133,7 @@ export default {
 }
 
 .info-block {
-  opacity: 0.9;
+  opacity: 1;
   width: 20%;
   height: 60%;
 }
