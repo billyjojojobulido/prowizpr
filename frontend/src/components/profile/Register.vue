@@ -22,10 +22,10 @@
 
         <el-form-item label="Verification code"  prop="verification_code" >
           <el-row :gutter="10">
-            <el-col :span="15">
+            <el-col :div="15" id="code-input">
               <el-input v-model="model.verification_code" placeholder="Verification code"></el-input>
             </el-col>
-            <el-col :span="1">
+            <el-col :span="1" id="code-button">
               <el-button type="info"
                          size="small"
                          @click="send"
@@ -234,5 +234,13 @@ export default {
 .verification{
   display: inline-block;
   position: relative;
+}
+
+#code-input{
+  width: 70%;
+}
+
+#code-button{
+  width: 30%;
 }
 </style>

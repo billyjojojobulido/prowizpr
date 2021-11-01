@@ -61,8 +61,8 @@ def register_email(request):
 
         code = random_code()
         email_thread = Thread(target=send_mail, args=(
-            "reset your password",
-            "the verification code for the study forum is %s" % code,
+            "WELCOME!",
+            "the verification code for signing up the study forum is %s, the code will become invalid in 60 seconds" % code,
             settings.EMAIL_HOST_USER,
             [email, ]
         ))
