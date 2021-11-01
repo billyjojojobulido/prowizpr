@@ -26,7 +26,7 @@
               <el-input v-model="model.verification_code" placeholder="Verification code"></el-input>
             </el-col>
             <el-col :span="1">
-              <el-button type="info"
+              <el-button type="primary"
                          size="small"
                          @click="send"
                          :disabled="disabled=sendMsgDisabled">
@@ -51,6 +51,7 @@
 
 <script>
 import axios from "axios";
+// import cookies from"vue-cookies"
 
 export default {
   name: "Register",
@@ -156,16 +157,6 @@ export default {
 
     },
     send: async function () {
-      let me = this;
-      me.sendMsgDisabled = true;
-      let interval = window.setInterval(function() {
-        if ((me.time--) <= 0) {
-          me.time = 60;
-          me.sendMsgDisabled = false;
-          window.clearInterval(interval);
-        }
-      }, 1000);
-
       const pattern = /\b[a-z]{4}[0-9]{4}\b/;
       if(pattern.test(this.model.username) === false){
         await this.$alert('Your username format is wrong, please check your username',
@@ -183,6 +174,7 @@ export default {
         });
         return
       }
+
       let url = "http://127.0.0.1:8000/" + "profile/reg_email";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -197,10 +189,20 @@ export default {
           })
           .then(response => {
             if (response.data.status === "success") {
+              let me = this;
+              me.sendMsgDisabled = true;
+              let interval = window.setInterval(function() {
+                if ((me.time--) <= 0) {
+                  me.time = 60;
+                  me.sendMsgDisabled = false;
+                  window.clearInterval(interval);
+                }
+              }, 1000);
               this.$alert('We have sent you a verification code, please check your email inbox',
                   'Successfully send', {
                     confirmButtonText: 'OK',
                   });
+              // console.log(this.$cookies.keys())
             } else {
               this.$alert(response.data.msg,
                   'Failed send', {
