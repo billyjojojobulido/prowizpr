@@ -30,9 +30,9 @@
               <el-button type="primary"
                          size="small"
                          @click="send"
-                         :disabled="disabled=sendMsgDisabled">
-                <span v-if="sendMsgDisabled">{{"please send after "+time}}</span>
-                <span v-if="!sendMsgDisabled">Send Verification Code</span></el-button>
+                         :disabled="disabled=!show">
+                <span v-if="!show">{{"please send after "+count}}</span>
+                <span v-if="show">Send Verification Code</span></el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -51,6 +51,7 @@
 </template>
 
 <script>
+let TIME_COUNT = 60; // Global variable counting time
 import axios from "axios";
 // import cookies from"vue-cookies"
 
@@ -58,8 +59,9 @@ export default {
   name: "Register",
   data() {
     return {
-      time: 60, // 发送验证码倒计时
-      sendMsgDisabled: false,
+      show: true,
+      count:"",
+      timer:null,
       model:{
         username: "",
         password: "",
@@ -93,6 +95,24 @@ export default {
       },
     };
 
+  },
+  created(){
+    // get the timer which stop last time and continue counting
+    if (localStorage.regtime > 0 && localStorage.regtime <= TIME_COUNT){
+      TIME_COUNT = localStorage.regtime;
+      this.count = TIME_COUNT;
+      this.show = false;
+      this.timer = setInterval(() => {
+        if (this.count > 0 && this.count <= TIME_COUNT) {
+          this.count--
+          localStorage.regtime = this.count;
+        } else {
+          this.show = true;
+          clearInterval(this.timer);
+          this.timer = null
+        }
+      }, 1000)
+    }
   },
   methods: {
     submitForm(formName) {
@@ -190,20 +210,27 @@ export default {
           })
           .then(response => {
             if (response.data.status === "success") {
-              let me = this;
-              me.sendMsgDisabled = true;
-              let interval = window.setInterval(function() {
-                if ((me.time--) <= 0) {
-                  me.time = 60;
-                  me.sendMsgDisabled = false;
-                  window.clearInterval(interval);
-                }
-              }, 1000);
+              if (!this.timer) {
+                this.count = TIME_COUNT
+                localStorage.regtime = this.count;
+                this.show = false
+                this.timer = setInterval(() => {
+                  if (this.count > 0 && this.count <= TIME_COUNT) {
+                    this.count--
+                    localStorage.regtime = this.count;
+                  } else {
+                    this.show = true
+                    clearInterval(this.timer)
+                    this.timer = null
+                  }
+                }, 1000);
+              }
+
               this.$alert('We have sent you a verification code, please check your email inbox',
                   'Successfully send', {
                     confirmButtonText: 'OK',
                   });
-              // console.log(this.$cookies.keys())
+
             } else {
               this.$alert(response.data.msg,
                   'Failed send', {
