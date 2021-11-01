@@ -10,6 +10,7 @@ import learning_forum.utils as utils
 import time
 
 
+# Retrieving all the non-admin users
 @require_http_methods(["GET"])
 def get_users(request):
     first_catch = time.time()   # Timing
@@ -19,7 +20,6 @@ def get_users(request):
     try:
         # Retrieving Posts data
         users = User.objects.filter(is_superuser=False)
-        print(users)
         for u in users:
             user = {
                 "uid": u.id,
@@ -27,10 +27,11 @@ def get_users(request):
             }
             # Profile Image Null Check
             if u.profile_image is None:
+                # Default image
                 user["avatar"] = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
             else:
                 user["avatar"] = u.profile_image
-            # Status Decode
+            # Status Decode [int -> string]
             if u.is_active:
                 user["status"] = "Active"
             else:
@@ -50,6 +51,7 @@ def get_users(request):
     return JsonResponse(response)
 
 
+# Retrieving Posts made by a chosen user
 @csrf_exempt
 @require_http_methods(["POST"])
 def get_posts(request):
@@ -91,6 +93,7 @@ def get_posts(request):
     return JsonResponse(response)
 
 
+# Ban the chosen user account [is_active: ->false]
 @csrf_exempt
 @require_http_methods(["POST"])
 def ban_user(request):
@@ -118,6 +121,7 @@ def ban_user(request):
     return JsonResponse(response)
 
 
+# Restore the banned user account [is_active: ->true]
 @csrf_exempt
 @require_http_methods(["POST"])
 def restore_user(request):
@@ -144,6 +148,7 @@ def restore_user(request):
     return JsonResponse(response)
 
 
+# Ban the chosen post [is_active: ->false]
 @csrf_exempt
 @require_http_methods(["POST"])
 def ban_post(request):
@@ -167,6 +172,7 @@ def ban_post(request):
     return JsonResponse(response)
 
 
+# Restore the banned post [is_active: ->true]
 @csrf_exempt
 @require_http_methods(["POST"])
 def restore_post(request):

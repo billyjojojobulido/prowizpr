@@ -224,6 +224,7 @@ export default {
             }
           });
     },
+    // Retrieve all the posts that the selected user have made [non-admin users]
     getPosts: async function(index){
       let url = "http://127.0.0.1:8000/" + "admins/get_posts";
       let headers = {
@@ -237,6 +238,7 @@ export default {
             this.posts = response.data.posts;
           });
     },
+    // Ban the chosen post via pid
     banPost: async function(row){
       let url = "http://127.0.0.1:8000/" + "admins/ban_post";
       let headers = {
@@ -263,6 +265,7 @@ export default {
             }
           });
     },
+    // Restore the posts banned
     restorePost: async function(row){
       let url = "http://127.0.0.1:8000/" + "admins/restore_post";
       let headers = {
