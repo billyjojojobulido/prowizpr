@@ -1,17 +1,22 @@
 <template>
   <el-container>
+    <!--Navigation part on top-->
     <el-header  style="padding-left: 0">
       <NavigationBar class="navigation"></NavigationBar>
     </el-header>
     <el-container v-loading="loading" class="goal">
+      <!--   Progress Bar on the left     -->
       <el-aside width=45%>
         <template>
           <div class="progress_panel">
+            <!--      The dashboard diagram of the progress        -->
             <el-progress type="dashboard" :percentage="progress.percentage" :color="progress.color"></el-progress>
             <br>
+            <!--      Description of progress     -->
             <span class="progress">
             {{progress.info}}
           </span>
+            <!--      To Do List       -->
             <h2>TODO List</h2>
             <hr>
             <el-table
@@ -65,7 +70,7 @@
         </el-dialog>
       </el-aside>
       <el-main>
-
+        <!--chekc goal Button-->
         <template>
           <el-table
               :data="goals"
@@ -78,8 +83,9 @@
                 {{scope.row.date}}
                 <el-button size="mini" type="primary" @click="handleGoalClick(scope.row)">Check Goal</el-button>
               </template>
-              <!--  POSTS SECTION    -->
+              <!--  Goals List    -->
             </el-table-column>
+            <!--Goals description-->
             <el-table-column
                 label="description"
                 width="150">
@@ -157,6 +163,7 @@ export default {
       publish: {},
       // Log In User ID
       user_id: 0,
+      //pop up dialogue for adding tasks or goals
       dialogFormVisible1: false,
       dialogFormVisible2: false,
       taskForm: {
@@ -175,7 +182,9 @@ export default {
   },
 
   mounted: function () {
+    // retrieve id of the user who currently logged in
     this.user_id = this.$store.state.uid;
+    // load all data, then load the progress panel of the first goal
     Promise.all([this.show()]).then(() =>
         this.refreshTask(this.goals[0].gid));
   },
@@ -387,6 +396,7 @@ export default {
                 message: 'Task created successfully',
                 type: 'success'
               });
+              //automatically refresh the list after adding
               this.show();
               this.refreshTask(this.gid_to_add);
 
