@@ -166,6 +166,15 @@ export default {
         }
       }, 1000);
 
+      const pattern = /\b[a-z]{4}[0-9]{4}\b/;
+      if(pattern.test(this.model.username) === false){
+        await this.$alert('Your username format is wrong, please check your username',
+            'Failed send', {
+              confirmButtonText: 'OK',
+            });
+        return
+      }
+
       if (this.model.username ===''){
         this.$notify({
           title: 'Warning',
@@ -191,23 +200,12 @@ export default {
               this.$alert('We have sent you a verification code, please check your email inbox',
                   'Successfully send', {
                     confirmButtonText: 'OK',
-                    callback: action => {
-                      this.$message({
-                        type: 'info',
-                        message: `action: ${ action }`
-                      });
-                    }
                   });
             } else {
               this.$alert(response.data.msg,
                   'Failed send', {
                     confirmButtonText: 'OK',
-                    callback: action => {
-                      this.$message({
-                        type: 'info',
-                        message: `action: ${ action }`
-                      });
-                    }
+
                   });
             }
           });
