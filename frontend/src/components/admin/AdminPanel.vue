@@ -296,8 +296,6 @@ export default {
 <style scoped>
 .navigation{
   position: fixed;
-  margin-left: 40px;
-  margin-right: 40px;
   /* to ensure that the navigation bar is always at the top & front */
   z-index: 1;
   width: 100%;
