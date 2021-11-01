@@ -10,11 +10,11 @@
           ref="form"
           @submit.native.prevent="login">
 <!--    Username Input    -->
-        <el-form-item prop="username">
+        <el-form-item label="Username" prop="username">
           <el-input v-model="model.username" placeholder="Username"></el-input>
         </el-form-item>
 <!--    Password Input    -->
-        <el-form-item prop="password">
+        <el-form-item label="Password" prop="password">
           <el-input
               v-model="model.password"
               placeholder="Password"
@@ -126,22 +126,27 @@ export default {
   justify-content: center;
   align-items: center;
   font-family: ManropeRegular;
-  background-color: antiquewhite;
+  background-color: cornflowerblue;
   width: 100%;
   height: 100%;
   border: 2px solid black;
 }
 
 .info-block {
-  width: 30%;
+  opacity: 0.9;
+  width: 20%;
   height: 60%;
 }
 
+.login-form{
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
 .user-button {
-	box-shadow:inset 0px 1px 0px 0px #54a3f7;
-	background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
-	background-color:#007dc1;
-	border-radius:3px;
+	box-shadow:inset 0 1px 0 0 #54a3f7;
+  background: #007dc1 linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+  border-radius:3px;
 	border:1px solid #124d77;
 	display:inline-block;
 	cursor:pointer;
@@ -151,12 +156,11 @@ export default {
   margin: 10px 0 10px 0;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #154682;
-  width: 200px;
+  width: 150px;
   text-align: center;
 }
 .user-button:hover {
-	background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
-	background-color:#0061a7;
+  background: #0061a7 linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
 }
 .user-button:active {
 	position:relative;
