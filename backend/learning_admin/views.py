@@ -2,8 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
-from learning_forum.models import Comments, Posts, Like
-from learning_goal.models import Tasks, Goals
+from learning_forum.models import Posts
 import learning_forum.const as const
 import json
 import learning_forum.utils as utils
@@ -102,7 +101,6 @@ def ban_user(request):
         # LOADING PARAM
         payload = json.loads(request.body.decode())
         uid = payload.get("user_id")
-        print("Banning User: {}".format(uid))
         # Retrieve User
         user = User.objects.get(pk=uid)
         if user is None:
@@ -157,7 +155,6 @@ def ban_post(request):
         # LOADING PARAM
         payload = json.loads(request.body.decode())
         pid = payload.get("post_id")
-        print("Banning Post: {}".format(pid))
         # Ban the post
         succeed = Posts.objects.ban_a_post_by_pid(pid)
         if succeed:
