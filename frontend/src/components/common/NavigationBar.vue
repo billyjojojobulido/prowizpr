@@ -7,6 +7,7 @@
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b">
+    <el-menu-item index="0"><i class="el-icon-arrow-left el-icon--left"></i></el-menu-item>
     <el-menu-item index="1">Forum</el-menu-item>
     <el-menu-item index="2">Goal</el-menu-item>
     <el-menu-item index="3">Profile</el-menu-item>
@@ -23,6 +24,9 @@ export default {
   },
   methods: {
     handleSelect(key){
+      if (key === '0'){
+        this.$router.push({name:"Login"});
+      }
       if (key === '1'){
         this.$router.push({name:"Forum"});
       }
