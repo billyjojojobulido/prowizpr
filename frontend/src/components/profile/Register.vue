@@ -25,13 +25,13 @@
             <el-col :div="15" id="code-input">
               <el-input v-model="model.verification_code" placeholder="Verification code"></el-input>
             </el-col>
-            <el-col :span="1" id="code-button">
-              <el-button type="info"
+            <el-col :span="1">
+              <el-button type="primary"
                          size="small"
                          @click="send"
-                         :disabled="disabled=sendMsgDisabled">
-                <span v-if="sendMsgDisabled">{{"please send after "+time}}</span>
-                <span v-if="!sendMsgDisabled">Send Verification Code</span></el-button>
+                         :disabled="disabled=!show">
+                <span v-if="!show">{{"please send after "+count}}</span>
+                <span v-if="show">Send Verification Code</span></el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -50,14 +50,17 @@
 </template>
 
 <script>
+let TIME_COUNT = 60; // Global variable counting time
 import axios from "axios";
+// import cookies from"vue-cookies"
 
 export default {
   name: "Register",
   data() {
     return {
-      time: 60, // 发送验证码倒计时
-      sendMsgDisabled: false,
+      show: true,
+      count:"",
+      timer:null,
       model:{
         username: "",
         password: "",
@@ -91,6 +94,24 @@ export default {
       },
     };
 
+  },
+  created(){
+    // get the timer which stop last time and continue counting
+    if (localStorage.regtime > 0 && localStorage.regtime <= TIME_COUNT){
+      TIME_COUNT = localStorage.regtime;
+      this.count = TIME_COUNT;
+      this.show = false;
+      this.timer = setInterval(() => {
+        if (this.count > 0 && this.count <= TIME_COUNT) {
+          this.count--
+          localStorage.regtime = this.count;
+        } else {
+          this.show = true;
+          clearInterval(this.timer);
+          this.timer = null
+        }
+      }, 1000)
+    }
   },
   methods: {
     submitForm(formName) {
@@ -156,16 +177,6 @@ export default {
 
     },
     send: async function () {
-      let me = this;
-      me.sendMsgDisabled = true;
-      let interval = window.setInterval(function() {
-        if ((me.time--) <= 0) {
-          me.time = 60;
-          me.sendMsgDisabled = false;
-          window.clearInterval(interval);
-        }
-      }, 1000);
-
       const pattern = /\b[a-z]{4}[0-9]{4}\b/;
       if(pattern.test(this.model.username) === false){
         await this.$alert('Your username format is wrong, please check your username',
@@ -183,6 +194,7 @@ export default {
         });
         return
       }
+
       let url = "http://127.0.0.1:8000/" + "profile/reg_email";
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -197,10 +209,27 @@ export default {
           })
           .then(response => {
             if (response.data.status === "success") {
+              if (!this.timer) {
+                this.count = TIME_COUNT
+                localStorage.regtime = this.count;
+                this.show = false
+                this.timer = setInterval(() => {
+                  if (this.count > 0 && this.count <= TIME_COUNT) {
+                    this.count--
+                    localStorage.regtime = this.count;
+                  } else {
+                    this.show = true
+                    clearInterval(this.timer)
+                    this.timer = null
+                  }
+                }, 1000);
+              }
+
               this.$alert('We have sent you a verification code, please check your email inbox',
                   'Successfully send', {
                     confirmButtonText: 'OK',
                   });
+
             } else {
               this.$alert(response.data.msg,
                   'Failed send', {

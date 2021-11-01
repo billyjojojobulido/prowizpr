@@ -12,6 +12,7 @@ Vue.config.productionTip = false
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 Vue.prototype.$axios = axios
 Vue.use(ElementUI, {locale})
+Vue.use(VueCookies);
 
 new Vue({
   el: '#app',
