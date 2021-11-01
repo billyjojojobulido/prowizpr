@@ -6,7 +6,8 @@ import axios from 'axios';
 import locale from "../node_modules/element-ui/lib/locale/lang/en.js";
 import router from "./router";
 import store from "./store";
-
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
 Vue.config.productionTip = false
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 Vue.prototype.$axios = axios
