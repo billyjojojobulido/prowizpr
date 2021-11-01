@@ -375,6 +375,7 @@ export default {
             }
           })
     },
+    // subscribe a chosen post
     subscribe: async function(row){
       let url = "http://127.0.0.1:8000/" + "forum/subscribe_post";
       let headers = {
@@ -406,6 +407,7 @@ export default {
             }
           })
     },
+    // unsubscribe a subscribed post
     unsubscribe: async function(row){
       let url = "http://127.0.0.1:8000/" + "forum/unsubscribe_post";
       let headers = {

@@ -3,13 +3,14 @@ from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from learning_profile.models import User
 from learning_forum.models import Comments, Posts, Like, Subscription
-from learning_goal.models import Tasks, Goals
+from learning_goal.models import Tasks
 import learning_forum.const as const
 import json
 import learning_forum.utils as utils
 import time
 
 
+# Combining all the data to display on the Post Panel
 @csrf_exempt
 @require_http_methods(["POST"])
 def show(request):
@@ -63,6 +64,7 @@ def show(request):
     return JsonResponse(response)
 
 
+# Retrieve the tasks of a chosen goal
 @csrf_exempt
 @require_http_methods(["POST"])
 def retrieve_goal(request):
@@ -125,6 +127,7 @@ def retrieve_goal(request):
     return JsonResponse(response)
 
 
+# retrieve all comments of a chosen post
 @csrf_exempt
 @require_http_methods(["POST"])
 def retrieve_comment(request):
@@ -164,6 +167,7 @@ def retrieve_comment(request):
     return JsonResponse(response)
 
 
+# Create a comment under a chose post
 @csrf_exempt
 @require_http_methods(["POST"])
 def write_comment(request):
@@ -175,6 +179,7 @@ def write_comment(request):
         pid = payload.get("pid")
         content = payload.get("content")
 
+        # Write comment
         ack = Comments.objects.write_comment(pid, uid, content)
         if ack:
             response['status'] = "success"
@@ -188,6 +193,7 @@ def write_comment(request):
     return JsonResponse(response)
 
 
+# Report a malicious post [report_times ++]
 @csrf_exempt
 @require_http_methods(["POST"])
 def report_post(request):
@@ -206,6 +212,7 @@ def report_post(request):
     return JsonResponse(response)
 
 
+# like a post [likes ++ , create like instance]
 @csrf_exempt
 @require_http_methods(["POST"])
 def like_post(request):
@@ -230,6 +237,7 @@ def like_post(request):
     return JsonResponse(response)
 
 
+# subscribe a post [subscribed post on the top]
 @csrf_exempt
 @require_http_methods(["POST"])
 def subscribe_post(request):
@@ -262,6 +270,7 @@ def subscribe_post(request):
     return JsonResponse(response)
 
 
+# unsubscribe a post [drop the subscription instance]
 @csrf_exempt
 @require_http_methods(["POST"])
 def unsubscribe_post(request):
