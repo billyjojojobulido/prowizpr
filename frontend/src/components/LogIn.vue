@@ -28,12 +28,14 @@
               type="primary"
               native-type="submit"
               block
-          >Login</el-button>
-        </el-form-item>
-<!--    Forget Password     -->
-        <a class="user-button" @click="forgetPassword">Forgot password</a>
+              class="user-button"
+          >Login</el-button><br>
+          <!--    Forget Password     -->
+        <a class="user-button" @click="forgetPassword">Forgot password</a><br>
 <!--    Register    -->
         <a class="user-button" @click="register">Register</a>
+        </el-form-item>
+
       </el-form>
     </el-card>
   </div>
@@ -124,14 +126,14 @@ export default {
   justify-content: center;
   align-items: center;
   font-family: ManropeRegular;
-  background-color:  #233142;
+  background-color: antiquewhite;
   width: 100%;
   height: 100%;
   border: 2px solid black;
 }
 
 .info-block {
-  width: 40%;
+  width: 30%;
   height: 60%;
 }
 
@@ -146,9 +148,11 @@ export default {
 	color:#ffffff;
 	font-family:Arial;
 	font-size:13px;
-	padding:6px 24px;
+  margin: 10px 0 10px 0;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #154682;
+  width: 200px;
+  text-align: center;
 }
 .user-button:hover {
 	background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
