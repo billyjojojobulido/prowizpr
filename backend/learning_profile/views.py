@@ -133,10 +133,11 @@ def random_code(length=6):
 def find_password(request):
     response = {}
     payload = json.loads(request.body.decode())
-    userid = payload.get("user_id")
+    username = payload.get("username")
     verification_code = random_code()
+    print("Verification Code is {}".format(verification_code))
     try:
-        user = User.objects.get(id=userid)
+        user = User.objects.get(username=username)
         last_email_time = user.email_code_time
         current_time = time.time()
         seconds = int(current_time) - last_email_time
@@ -174,11 +175,11 @@ def find_password(request):
 def verify_password(request):
     response = {}
     payload = json.loads(request.body.decode())
-    userid = payload.get("user_id")
+    username = payload.get("username")
     code = payload.get("code")
     password = payload.get("password")
     try:
-        user = User.objects.get(id=userid)
+        user = User.objects.get(username=username)
         user_code = cache.get("pwd_" + user.username)
         if code != user_code:
             response["status"] = "failed"
@@ -245,7 +246,13 @@ def modify_basic_information(request):
     payload = json.loads(request.body.decode())
     department = payload.get("department")
     gender = payload.get("gender")
-    username= payload.get("username")
+    if gender == "Male":
+        gender = 1
+    elif gender == "Female":
+        gender = 2
+    else:
+        gender = 3
+    userid = payload.get("user_id")
     email = payload.get("email")
     first_name = payload.get("first_name")
     last_name = payload.get("last_name")
@@ -288,6 +295,7 @@ def view_profile(request):
             "gender": user.gender,
             "department": user.department
         }
+        print(info)
         # If user has not uploaded any profile image, use Default one
         if user.profile_image is None:
             info["image"] = DEFAULT_IMAGE_URL

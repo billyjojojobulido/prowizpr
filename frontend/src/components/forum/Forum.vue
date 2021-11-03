@@ -396,7 +396,7 @@ export default {
                 type: 'success'
               });
               // Update frontend status
-              row.subscribed = false;
+              row.subscribed = true;
 
             } else {
               this.$notify({
