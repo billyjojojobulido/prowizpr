@@ -25,6 +25,7 @@ def show(request):
         uid = payload.get("user")
         # Retrieving Goals data for specific user
         goals = Goals.objects.filter(post__user_id=uid)
+        print(uid)
         print(goals)
         for g in goals:
             ret_g = {
@@ -128,10 +129,11 @@ def add_goal(request):
                                     post_type=2,
                                     user_id=uid,
                                     report_times=0)
+        print(ack1)
         ack = Goals.objects.create(likes=0,
                                    publish_status=1,
                                    description=description,
-                                   post_id=post_id)
+                                   post_id=ack1.id)
         if ack and ack1:
             response['status'] = "success"
         else:
