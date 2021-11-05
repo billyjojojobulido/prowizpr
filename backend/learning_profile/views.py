@@ -245,12 +245,6 @@ def modify_basic_information(request):
     payload = json.loads(request.body.decode())
     department = payload.get("department")
     gender = payload.get("gender")
-    if gender == "Male":
-        gender = 1
-    elif gender == "Female":
-        gender = 2
-    else:
-        gender = 3
     userid = payload.get("user_id")
     email = payload.get("email")
     first_name = payload.get("first_name")
