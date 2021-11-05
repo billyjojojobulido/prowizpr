@@ -60,6 +60,7 @@ def register_email(request):
             return JsonResponse(response)
 
         code = random_code()
+        print("Verification Code is: {}".format(code))
         email_thread = Thread(target=send_mail, args=(
             "WELCOME!",
             "the verification code for signing up the study forum is %s, the code will become invalid in 60 seconds" % code,
@@ -158,7 +159,6 @@ def find_password(request):
         user.save()
         response["status"] = "success"
         response["msg"] = "the verification code is sent"
-        # TODO will delete
         response["code"] = verification_code
 
     except Exception as e:
@@ -192,6 +192,7 @@ def verify_password(request):
             response["msg"] = "successfully changed the password"
 
     except Exception as e:
+        print(e)
         response["status"] = "failed"
         response["msg"] = "there is no such username"
     return JsonResponse(response)
@@ -205,8 +206,6 @@ def change_password(request):
     userid = payload.get("user_id")
     old_password = payload.get("oldpwd")
     new_password = payload.get("newpwd")
-    print(old_password)
-    print(new_password)
     try:
         user = User.objects.get(id=userid)
         validation = user.check_password(old_password)
@@ -293,7 +292,6 @@ def view_profile(request):
             "first_name": user.first_name,
             "last_name": user.last_name,
         }
-        print(info)
         # If user has not uploaded any profile image, use Default one
         if user.profile_image is None:
             info["image"] = DEFAULT_IMAGE_URL
