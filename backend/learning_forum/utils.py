@@ -62,3 +62,12 @@ def get_progress_msg(status):
     if status == const.STATUS_COMPLETE:
         return "Done"
     return "Invalid Task Progress"
+
+
+# get_publish_msg() generate the string msg based on the publish status int
+def get_publish_msg(publish_status):
+    if publish_status == const.POST_PUBLISH_STATUS_PUBLIC:
+        return "Public"
+    if publish_status == const.POST_PUBLISH_STATUS_PRIVATE:
+        return "Private"
+    return "Invalid publish status"

@@ -5,7 +5,7 @@ from learning_forum.models import Posts
 from learning_goal.models import Tasks, Goals
 import learning_forum.const as const
 import json
-import learning_goal.utils as utils
+import learning_forum.utils as utils
 import time
 from datetime import datetime
 
