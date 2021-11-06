@@ -1,5 +1,4 @@
-import time
-import learning_goal.const as const
+import learning_forum.const as const
 
 
 # time_format() format the time value to

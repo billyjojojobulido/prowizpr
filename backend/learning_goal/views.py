@@ -1,14 +1,13 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
-from learning_profile.models import User
-from learning_forum.models import Comments, Posts, Like
+from learning_forum.models import Posts
 from learning_goal.models import Tasks, Goals
-import learning_goal.const as const
+import learning_forum.const as const
 import json
 import learning_goal.utils as utils
 import time
-from datetime import datetime, date
+from datetime import datetime
 
 
 @csrf_exempt
