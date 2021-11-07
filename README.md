@@ -11,9 +11,9 @@
 
 ## How To Run Server?
 
-* [Frontend Instruction](F15-Group-7/frontend/README.md)
+* [Frontend Instruction](/frontend/README.md)
 
-* [Backend Instruction](F15-Group-7/backend/README.md)
+* [Backend Instruction](/backend/README.md)
 
 
 ## How to change the database configuration?
