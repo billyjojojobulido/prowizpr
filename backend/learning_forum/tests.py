@@ -1,5 +1,4 @@
-# from django.test import TestCase
-from unittest import TestCase
+from django.test import TestCase
 from datetime import datetime
 import learning_forum.utils as utils
 import pytz
