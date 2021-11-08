@@ -9,65 +9,11 @@
 | Yanhao Xu | yaxu5503 | 490147935 |
 
 
-## Setup 
+## How To Run Server?
 
-### if you have already had virtualenv, please skip to step 3 ###
+* [Frontend Instruction](/frontend/README.md)
 
-
-1.  Install `virtualenv` to create virtual environment
-
-   > `pip3 install virtualenv`
-
-
-2. Create Virtual Environment
-
-   > `python3 -m venv venv`
-
-
-3. Activate the Virtual Environment
-
-   > `source venv/bin/activate`
-
-
-4. Install the Dependencies
-
-   > `pip3 install -r requirement.txt`
-
-
-## How To Run? 
-
-1. Activate the Virtual Environment
-
-   > `source venv/bin/activate`
-
-
-3. Run the server
-
-    > `python3 manage.py runserver`
-
-
-5. The server
-
-    > `http://127.0.0.1:8000/...`
-
-
-## How to Quit?
-
-1. Quit the server
-
-   > `Ctrl C`
-
-2. Deactive the virtual environment
-
-   > `deactive`
-
-
-## Database
-
-| DBMS | DB Type | Role |
-| ---- | ---- | ---- |
-| MySQL | Tencent Cloud database instacne | Main |
-| Redis | AWS Cloud Redis instance | Cache |
+* [Backend Instruction](/backend/README.md)
 
 
 ## How to change the database configuration?
@@ -88,3 +34,19 @@ sample accounts are provided:
   | ---- | ---- | ---- |
   | Standard User | timi1234 | 1234 |
   | Admin | bwan3675 | bwan3675 |
+
+
+## How To Upload Profile Image
+
+Users are allowed to upload some images as his or her profile images, but the system does not support uploading the pictures from the local machine.
+
+To upload an image, the user will have to:
+
+* Find an image on the internet
+
+* Copy its url
+
+* Pasted it in the text area in the “Photo Upload” section. Ideally, the preview of the picture will be displayed on the square area above.
+
+* Click the “Submit” button to upload.
+
