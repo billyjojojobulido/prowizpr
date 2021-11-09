@@ -2,8 +2,9 @@ from django.test import TestCase
 from unittest import TestCase as UnitTestCase
 from datetime import datetime
 import learning_forum.utils as utils
-from learning_profile.models import  User
+from learning_profile.models import User
 from learning_forum.models import Posts, Comments, Like, Subscription
+from learning_goal.models import Goals
 import pytz
 
 
@@ -139,6 +140,12 @@ class TestForumModels(TestCase):
             status=1,
             likes=0,
         )
+        Goals.objects.create(
+            likes=0,
+            publish_status=1,
+            description="Something",
+            post_id=post.id,
+        )
         global user_id, post_id, comment_id
         user_id = user.id
         post_id = post.id
@@ -251,10 +258,16 @@ class TestForumModels(TestCase):
         global post_id, user_id
         self.assertTrue(Comments.objects.write_comment(post_id, user_id, "Test Comment"))
 
-    def test_write_comment_invalid_1(self):
-        global user_id
-        self.assertFalse(Comments.objects.write_comment(0, user_id, "Test Comment"))
+    def test_like_post_orm(self):
+        global post_id, user_id
+        Like.objects.like_post(post_id, user_id)
+        likes = Like.objects.filter(post_id=post_id, user_id=user_id)
+        self.assertEqual(likes.count(), 1)
 
-    def test_write_comment_invalid_2(self):
-        global post_id
-        self.assertFalse(Comments.objects.write_comment(post_id, 0, "Test Comment"))
+    def test_dislike_post_orm(self):
+        global post_id, user_id
+        Like.objects.like_post(post_id, user_id)
+        Like.objects.dislike_post(post_id, user_id)
+        likes = Like.objects.filter(post_id=post_id, user_id=user_id)
+        self.assertEqual(likes.count(), 0)
+
