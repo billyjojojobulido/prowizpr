@@ -95,6 +95,8 @@ class TestForumModels(TestCase):
             username="test1234",
             password="1234",
             email="test1234@gmail.com",
+            first_name="Unit",
+            last_name="Testing",
             is_superuser=False,
             is_active=True,
         )
@@ -190,3 +192,16 @@ class TestForumModels(TestCase):
         Posts.objects.dislike_post(post_id)
         post = Posts.objects.get(pk=post_id)
         self.assertEqual(post.likes, 0)
+
+    def test_dislike_post_below_zero(self):
+        global post_id
+        Posts.objects.dislike_post(post_id)
+        post = Posts.objects.get(pk=post_id)
+        self.assertEqual(post.likes, 0)
+
+    def test_get_full_name_by_pid(self):
+        global post_id
+        first_name, last_name = Posts.objects.get_full_name_by_pid(post_id)
+        self.assertEqual(first_name, "Unit")
+        self.assertEqual(last_name, "Testing")
+        
