@@ -100,6 +100,15 @@ class TestForumModels(TestCase):
             is_superuser=False,
             is_active=True,
         )
+        banned_user = User.objects.create(
+            username="test5678",
+            password="1234",
+            email="test5678@gmail.com",
+            first_name="Regression",
+            last_name="Testing",
+            is_superuser=False,
+            is_active=False,
+        )
         post = Posts.objects.create(
             user_id=user.id,
             content="How you like that",
@@ -116,9 +125,24 @@ class TestForumModels(TestCase):
             likes=10,
             post_type=1,
         )
+        comment = Comments.objects.create(
+            user_id=user.id,
+            post_id=post.id,
+            content="Hello World",
+            status=1,
+            likes=0,
+        )
+        Comments.objects.create(
+            user_id=banned_user.id,
+            post_id=post.id,
+            content="Goodbye World",
+            status=1,
+            likes=0,
+        )
         global user_id, post_id, comment_id
         user_id = user.id
         post_id = post.id
+        comment_id = comment.id
 
     def test_set_up(self):
         global user_id, post_id
@@ -204,4 +228,33 @@ class TestForumModels(TestCase):
         first_name, last_name = Posts.objects.get_full_name_by_pid(post_id)
         self.assertEqual(first_name, "Unit")
         self.assertEqual(last_name, "Testing")
-        
+
+    def test_get_all_comments_by_pid(self):
+        global post_id
+        comments = Comments.objects.get_all_comments_by_pid(post_id)
+        self.assertEqual(len(comments), 2)
+
+    def test_get_all_comments_by_invalid_pid(self):
+        comments = Comments.objects.get_all_comments_by_pid(0)
+        self.assertEqual(len(comments), 0)
+
+    def test_get_comments_by_pid(self):
+        global post_id
+        comments = Comments.objects.get_comments_by_pid_transmit(post_id)
+        self.assertEqual(len(comments), 1)
+
+    def test_get_comments_by_pid_invalid(self):
+        comments = Comments.objects.get_comments_by_pid_transmit(0)
+        self.assertEqual(len(comments), 0)
+
+    def test_write_comment(self):
+        global post_id, user_id
+        self.assertTrue(Comments.objects.write_comment(post_id, user_id, "Test Comment"))
+
+    def test_write_comment_invalid_1(self):
+        global user_id
+        self.assertFalse(Comments.objects.write_comment(0, user_id, "Test Comment"))
+
+    def test_write_comment_invalid_2(self):
+        global post_id
+        self.assertFalse(Comments.objects.write_comment(post_id, 0, "Test Comment"))
