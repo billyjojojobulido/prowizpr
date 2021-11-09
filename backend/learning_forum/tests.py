@@ -271,3 +271,20 @@ class TestForumModels(TestCase):
         likes = Like.objects.filter(post_id=post_id, user_id=user_id)
         self.assertEqual(likes.count(), 0)
 
+    def test_checked_post_liked_positive(self):
+        global post_id, user_id
+        Like.objects.like_post(post_id, user_id)
+        self.assertEqual(Like.objects.check_post_liked(post_id, user_id), 1)
+
+    def test_checked_post_liked_negative(self):
+        global post_id, user_id
+        self.assertEqual(Like.objects.check_post_liked(post_id, user_id), 0)
+
+    def test_is_subscribed_negative(self):
+        global post_id, user_id
+        self.assertFalse(Subscription.objects.is_subscribed(post_id, user_id))
+
+    def test_is_subscribed_invalid(self):
+        self.assertFalse(Subscription.objects.is_subscribed(None, None))
+
+
