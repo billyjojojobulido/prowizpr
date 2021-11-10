@@ -82,6 +82,10 @@ class TestForumUtils(UnitTestCase):
         self.assertEqual(utils.get_progress_msg(1), "To Do")
         self.assertEqual(utils.get_progress_msg(2), "In Progress")
         self.assertEqual(utils.get_progress_msg(3), "Done")
+
+    def test_publish_msg(self):
+        self.assertEqual(utils.get_publish_msg(1), "Public")
+        self.assertEqual(utils.get_publish_msg(2), "Private")
     
 user_id = 0
 post_id = 0
