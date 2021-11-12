@@ -6,6 +6,7 @@ from learning_goal.models import Goals
 from .views import *
 
 
+# TEST Helper functions
 class TestForumUtils(UnitTestCase):
 
     def setUp(self):
@@ -155,7 +156,11 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = show(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(len(content['posts']), 1)
         self.assertEqual(response.status_code, 200)
+
+    # TEST Feature: Users can access other's goal
 
     def test_retrieve_goal(self):
         payload = {
@@ -167,6 +172,8 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = retrieve_goal(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(len(content['todo']), 0)
         self.assertEqual(response.status_code, 200)
 
     def test_retrieve_comment(self):
@@ -180,7 +187,11 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = retrieve_comment(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(len(content['comments']), 1)
         self.assertEqual(response.status_code, 200)
+
+    # TEST Feature: report malicious post
 
     def test_report_post(self):
         payload = {
@@ -192,7 +203,11 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = report_post(request)
+        post = Posts.objects.get(id=self.post.id)
+        self.assertEqual(post.report_times, 1)
         self.assertEqual(response.status_code, 200)
+
+    # TEST Feature: commenting
 
     def test_write_comment(self):
         payload = {
@@ -206,12 +221,16 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = write_comment(request)
+        comments = Comments.objects.filter(user_id=self.user.id, post_id=self.post.id)
+        self.assertEqual(len(comments), 2)
         self.assertEqual(response.status_code, 200)
+
+    # TEST Feature: liking
 
     def test_like_post(self):
         payload = {
             "user_id": self.user.id,
-            "pid": self.post.id,
+            "post_id": self.post.id,
             "like": 1,
         }
         request = self.factory.post(
@@ -220,12 +239,14 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = like_post(request)
+        post = Posts.objects.get(id=self.post.id)
+        self.assertEqual(post.likes, 1)
         self.assertEqual(response.status_code, 200)
 
     def test_dislike_post(self):
         payload = {
             "user_id": self.user.id,
-            "pid": self.post.id,
+            "post_id": self.post.id,
             "like": 0,
         }
         request = self.factory.post(
@@ -234,12 +255,17 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = like_post(request)
+        post = Posts.objects.get(id=self.post.id)
+        self.assertEqual(post.likes, 0)
+        self.assertEqual(Like.objects.count(), 0)
         self.assertEqual(response.status_code, 200)
+
+    # TEST Feature: subscribing post
 
     def test_subscribe(self):
         payload = {
             "user_id": self.user.id,
-            "pid": self.post.id,
+            "post_id": self.post.id,
         }
         request = self.factory.post(
             '/forum/subscribe_post',
@@ -247,12 +273,14 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = subscribe_post(request)
+        subscribes = Subscription.objects.filter(user_id=self.user.id, post_id=self.post.id)
+        self.assertEqual(len(subscribes), 1)
         self.assertEqual(response.status_code, 200)
 
     def test_unsubscribe(self):
         payload = {
             "user_id": self.user.id,
-            "pid": self.post.id,
+            "post_id": self.post.id,
         }
         request = self.factory.post(
             '/forum/unsubscribe_post',
@@ -260,11 +288,11 @@ class TestForumModels(TestCase):
             content_type='application/json'
         )
         response = unsubscribe_post(request)
+        subscribes = Subscription.objects.filter(user_id=self.user.id, post_id=self.post.id)
+        self.assertEqual(len(subscribes), 0)
         self.assertEqual(response.status_code, 200)
 
-    def test_set_up(self):
-        self.assertNotEqual(self.user.id, 0)
-        self.assertNotEqual(self.post.id, 0)
+    # TESTING ORM FUNCTIONS
 
     def test_retrieve_posts_desc_length(self):
         posts = Posts.objects.get_all_posts_desc()
