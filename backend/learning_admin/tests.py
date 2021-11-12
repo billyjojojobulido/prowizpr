@@ -49,6 +49,8 @@ class AdminViewTest(TestCase):
     def test_get_users(self):
         request = self.factory.get('/admins/get_users')
         response = get_users(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(len(content["users"]), 2)
         self.assertEqual(response.status_code, 200)
 
     def test_get_posts(self):
@@ -61,7 +63,11 @@ class AdminViewTest(TestCase):
             content_type='application/json'
         )
         response = get_posts(request)
+        content = json.loads(response.content.decode())
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(content['posts']), 2)
+
+    # TEST: Feature Ban/Restore Malicious User Accounts
 
     def test_ban_user(self):
         payload = {
@@ -87,6 +93,8 @@ class AdminViewTest(TestCase):
             content_type='application/json'
         )
         response = ban_user(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(content['status'], "failed")
         self.assertEqual(response.status_code, 200)
 
     def test_restore_user(self):
@@ -113,7 +121,11 @@ class AdminViewTest(TestCase):
             content_type='application/json'
         )
         response = restore_user(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(content['status'], "failed")
         self.assertEqual(response.status_code, 200)
+
+    # TEST Feature: Ban/Restore Malicious Posts
 
     def test_ban_post(self):
         payload = {
@@ -139,6 +151,8 @@ class AdminViewTest(TestCase):
             content_type='application/json'
         )
         response = ban_post(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(content['status'], "failed")
         self.assertEqual(response.status_code, 200)
 
     def test_restore_post(self):
@@ -165,4 +179,6 @@ class AdminViewTest(TestCase):
             content_type='application/json'
         )
         response = restore_post(request)
+        content = json.loads(response.content.decode())
+        self.assertEqual(content['status'], "failed")
         self.assertEqual(response.status_code, 200)
