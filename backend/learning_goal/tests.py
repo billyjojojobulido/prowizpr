@@ -1,10 +1,11 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from unittest import TestCase as UnitTestCase
 from datetime import datetime
 import learning_forum.utils as utils
 from learning_profile.models import User
 from learning_forum.models import Posts
 from learning_goal.models import Goals,Tasks
+from .views import *
 import pytz
 
 
@@ -96,9 +97,10 @@ task_id = 0
 
 
 class TestGoalModels(TestCase):
-
+    
     def setUp(self):
-        user = User.objects.create(
+        self.factory = RequestFactory()
+        self.user = User.objects.create(
             username="test1234",
             password="1234",
             email="test1234@gmail.com",
@@ -108,8 +110,8 @@ class TestGoalModels(TestCase):
             is_active=True,
         )
     
-        post = Posts.objects.create(
-            user_id=user.id,
+        self.post = Posts.objects.create(
+            user_id=self.user.id,
             content="How you like that",
             status=1,
             active=1,
@@ -117,28 +119,113 @@ class TestGoalModels(TestCase):
             post_type=1,
         )
         
-        goal = Goals.objects.create(
+        self.goal = Goals.objects.create(
             likes=10,
             publish_status=1,
             description="Something",
-            post_id=post.id,
+            post_id=self.post.id,
         )
 
-        task = Tasks.objects.create(
+        self.task = Tasks.objects.create(
             content = "Test",
             status = 1,
-            goal_id = goal.id,
+            goal_id = self.goal.id,
         )
         global user_id, post_id, goal_id,task_id
-        user_id = user.id
-        post_id = post.id
-        goal_id = goal.id
-        task_id = task.id
+        user_id = self.user.id
+        post_id = self.post.id
+        goal_id = self.goal.id
+        task_id = self.task.id
 
     def test_set_up(self):
         global post_id, goal_id
         self.assertNotEqual(post_id, 0)
         self.assertNotEqual(goal_id, 0)
+    
+    def test_show(self):
+        payload = {
+            # "user_id": self.user.id,
+            "gid": self.goal.id,
+        }
+        request = self.factory.post(
+            '/goal/show',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        response = show(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_retrieve_task(self):
+        payload = {
+            # "user_id": self.user.id,
+            "gid": self.goal.id,
+        }
+        request = self.factory.post(
+            '/goal/retrieve_task',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        response = retrieve_task(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_goal_status(self):
+        payload = {
+            "status": self.goal.publish_status,
+            "goalID": self.goal.id,
+        }
+        request = self.factory.post(
+            '/goal/goal_status',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        response = goal_status(request)
+        self.assertEqual(response.status_code, 200)
+    
+    def test_task_status(self):
+        payload = {
+            "status": self.task.status,
+            "taskID": self.task.id,
+        }
+        request = self.factory.post(
+            '/goal/task_status',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        response = task_status(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_goal(self):
+        payload = {
+            "pid": self.post.id,
+            "description": "Test"
+        }
+        request = self.factory.post(
+            '/goal/add_goal',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        response = add_goal(request)
+        self.assertEqual(response.status_code, 200)
+    
+    def test_add_task(self):
+        payload = {
+            "gid": self.goal.id,
+            "content": "Test task"
+        }
+        request = self.factory.post(
+            '/goal/add_task',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        response = add_task(request)
+        # tasks = Tasks.objects.get_tasks_from_pid(post_id)
+        self.assertEqual(response.status_code, 200)
+        # print(tasks)
+        # self.assertEqual(len(tasks),2)
+    
+
+
+
 
     def test_retrieve_goals_desc_length(self):
         goals = Goals.objects.get_all_goals_desc()
@@ -149,6 +236,7 @@ class TestGoalModels(TestCase):
         Goals.objects.check_goals_liked(goal_id)
         goal = Goals.objects.get(pk=goal_id)
         self.assertEqual(goal.likes , 10)
+
     def test_check_likes_fail(self):
         global goal_id
         self.assertFalse( Goals.objects.check_goals_liked(0))
