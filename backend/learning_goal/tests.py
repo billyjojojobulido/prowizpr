@@ -217,10 +217,10 @@ class TestGoalModels(TestCase):
             data=json.dumps(payload),
             content_type='application/json'
         )
-        response = add_task(request)
-        # tasks = Tasks.objects.get_tasks_from_pid(post_id)
-        self.assertEqual(response.status_code, 200)
-        # print(tasks)
+        add_task(request)
+        tasks = Tasks.objects.filter(goal_id=self.goal.id)
+        # self.assertEqual(response.status_code, 200)
+        print(tasks)
         # self.assertEqual(len(tasks),2)
     
 
