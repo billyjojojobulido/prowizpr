@@ -22,9 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-zivl3r4g3dpqq$-#)l^_2@w86z^dxweo2^y*i^zi5_6b#bzt_n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['13.211.23.226']
 
 # Application definition
 
@@ -87,11 +87,11 @@ WSGI_APPLICATION = 'goal_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'remote3609',
-        'USER': 'goal3609',
-        'PASSWORD': 'Goal3609',
-        'HOST': 'bj-cynosdbmysql-grp-98kxy0la.sql.tencentcdb.com',
-        'PORT': '23853',
+        'NAME': 'pwp_db',
+        'USER': 'pwp3609',
+        'PASSWORD': 'MIHcAgEBBEIBPYGC',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
