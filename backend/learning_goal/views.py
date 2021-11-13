@@ -24,8 +24,7 @@ def show(request):
         uid = payload.get("user")
         # Retrieving Goals data for specific user
         goals = Goals.objects.filter(post__user_id=uid)
-        print(uid)
-        print(goals)
+
         for g in goals:
             ret_g = {
                 "gid": g.id,
