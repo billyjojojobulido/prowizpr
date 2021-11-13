@@ -37,36 +37,6 @@ class TestProfileModels(TestCase):
         response = register_email(request)
         self.assertEqual(response.status_code, 200)
 
-    def test_login(self):
-        payload = {
-            "username": "test1234",
-            "password": "1234",
-        }
-        request = self.factory.post(
-            '/profile/login',
-            data=json.dumps(payload),
-            content_type='application/json'
-        )
-        response = login(request)
-        content = json.loads(response.content.decode())  
-        self.assertEqual(content['status'],'success')
-        self.assertEqual(response.status_code, 200)
-
-    def test_change_password(self):
-        payload = {
-            "user_id": self.user.id,
-            "oldpwd": "1234",
-            "newpwd": "12345",
-        }
-        request = self.factory.post(
-            '/profile/changepwd',
-            data=json.dumps(payload),
-            content_type='application/json'
-        )
-        change_password(request)
-        user = User.objects.get(id=self.user.id)
-        self.assertEqual(user.password,'12345')
-
     def test_verify_password(self):
         payload = {
             "username": self.user.username,
